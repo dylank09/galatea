@@ -1,4 +1,4 @@
-const CACHE_NAME = "galatea-shell-v1";
+const CACHE_NAME = "galatea-shell-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -11,7 +11,8 @@ const APP_SHELL = [
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./icons/apple-touch-icon.png"
+  "./icons/apple-touch-icon.png",
+  "./icons/portrait.png"
 ];
 
 self.addEventListener("install", (event) => {

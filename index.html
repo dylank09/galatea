@@ -15,7 +15,7 @@
   <script src="./assets/pwa.js" defer></script>
   <title>Galatea</title>
 </head>
-<body>
+<body class="home-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
@@ -28,55 +28,66 @@
   </header>
 
   <main id="main" class="page-shell">
-    <section class="hero" aria-labelledby="home-title">
-      <p class="eyebrow">Personal systems, made usable</p>
-      <h1 id="home-title">A clearer way to train, dress, and decide.</h1>
-      <p class="lede">Galatea keeps practical personal guides in one calm, private-on-device space. Choose a system, follow the useful rules, and spend less time rebuilding the decision from scratch.</p>
-      <div class="hero-actions">
-        <a class="button button-primary" href="./gym/">Open Gym Plan</a>
-        <a class="button button-secondary" href="./style/">Open Style Guide</a>
+    <section class="hero home-hero" aria-labelledby="home-title">
+      <div class="home-hero-copy">
+        <p class="home-greeting" data-time-greeting aria-live="polite">Hello</p>
+        <p class="eyebrow">Your little corner</p>
+        <h1 id="home-title">A small nudge for the version of today you have.</h1>
+        <p class="lede">Open the gym plan when you want to move, or the style guide when getting dressed needs to be easy. No big ceremony required.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="./gym/">Move with Gym</a>
+          <a class="button button-secondary" href="./style/">Get dressed with Style</a>
+        </div>
+        <p class="status" data-pwa-status aria-live="polite">Preparing offline support…</p>
       </div>
-      <p class="status" data-pwa-status aria-live="polite">Preparing offline support…</p>
+      <figure class="home-portrait">
+        <div class="home-portrait-orbit" aria-hidden="true"></div>
+        <img src="./icons/portrait.png" alt="Galatea's illustrated character icon" width="320" height="320">
+        <figcaption>A little less deciding.<br>A little more doing.</figcaption>
+      </figure>
     </section>
 
-    <section class="section" aria-labelledby="systems-title">
+    <section class="section home-choices" aria-labelledby="systems-title">
       <div class="section-heading">
-        <p class="eyebrow">Your systems</p>
-        <h2 id="systems-title">Choose the next useful action.</h2>
+        <p class="eyebrow">Pick a lane</p>
+        <h2 id="systems-title">What sounds good right now?</h2>
       </div>
       <div class="choice-grid">
-        <a class="choice-card choice-card-gym" href="./gym/">
-          <p class="eyebrow">Training</p>
-          <h2>12-week Gym Plan</h2>
-          <p>Workout sequencing, readiness-aware training, progression logging, and private progress data.</p>
-          <span class="card-link">Open the plan →</span>
+        <a class="choice-card choice-card-gym home-choice-card" href="./gym/">
+          <p class="eyebrow">For a gym day</p>
+          <h2>Move your body</h2>
+          <p>Your 12-week plan is ready when you are, with workouts, progression, and your own notes waiting inside.</p>
+          <span class="card-link">Open Gym →</span>
         </a>
-        <a class="choice-card choice-card-style" href="./style/">
-          <p class="eyebrow">Personal style</p>
-          <h2>Style Shopping Guide</h2>
-          <p>Colour, proportion, fit, outfit formulas, and a focused 24-piece rebuild checklist.</p>
-          <span class="card-link">Open the guide →</span>
+        <a class="choice-card choice-card-style home-choice-card" href="./style/">
+          <p class="eyebrow">For a getting-dressed day</p>
+          <h2>Make getting dressed easier</h2>
+          <p>Colour, fit, outfit formulas, and a shopping checklist that help you choose without the spiral.</p>
+          <span class="card-link">Open Style →</span>
         </a>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="how-title">
+    <section class="section home-reminders" aria-labelledby="how-title">
       <div class="section-heading">
-        <p class="eyebrow">Designed for real life</p>
-        <h2 id="how-title">Keep the advice, not the friction.</h2>
+        <p class="eyebrow">A few kind reminders</p>
+        <h2 id="how-title">This is here to make real life lighter.</h2>
       </div>
-      <div class="info-grid">
-        <article class="info-card">
-          <h3>Mobile-first</h3>
-          <p class="meta">Built for quick use from a phone, in the gym or in a fitting room.</p>
+      <div class="info-grid home-reminder-grid">
+        <article class="info-card home-reminder">
+          <p class="reminder-number" aria-hidden="true">01</p>
+          <h3>Start where you are</h3>
+          <p class="meta">A useful five minutes counts. So does a changed plan, a softer day, or just checking what is next.</p>
         </article>
-        <article class="info-card">
-          <h3>Device-local</h3>
-          <p class="meta">Gym logs and Style checklist progress are saved in this browser, not sent to a server.</p>
+        <article class="info-card home-reminder">
+          <p class="reminder-number" aria-hidden="true">02</p>
+          <h3>Your notes stay yours</h3>
+          <p class="meta">Your gym logs and Style checklist live in this browser, not in someone else’s dashboard.</p>
         </article>
-        <article class="info-card">
-          <h3>Works offline</h3>
-          <p class="meta">Open each section once online, then use the app shell without a connection.</p>
+        <article class="info-card home-reminder">
+          <p class="reminder-number" aria-hidden="true">03</p>
+          <h3>Shortcuts are allowed</h3>
+          <p class="meta">Use the guide in a fitting room, the plan at the gym, or either one offline once it has loaded.</p>
         </article>
       </div>
     </section>
@@ -88,7 +99,16 @@
   </aside>
 
   <footer class="site-footer">
-    <div class="page-shell">Galatea · personal systems, stored on this device.</div>
+    <div class="page-shell">Galatea · a few useful things, stored on this device.</div>
   </footer>
+  <script>
+    (() => {
+      const greeting = document.querySelector("[data-time-greeting]");
+      if (!greeting) return;
+
+      const hour = new Date().getHours();
+      greeting.textContent = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    })();
+  </script>
 </body>
 </html>
