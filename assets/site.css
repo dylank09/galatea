@@ -436,6 +436,250 @@ h3 {
   text-decoration: none;
 }
 
+.style-section-nav {
+  width: min(100% - 32px, 1080px);
+  min-height: 48px;
+  margin: 0 auto;
+  padding: 0 0 10px;
+  align-items: center;
+}
+
+.style-section-nav a {
+  display: inline-flex;
+  min-height: 38px;
+  padding: 0 13px;
+  align-items: center;
+  border-color: #ccd8e0;
+  color: #526c80;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.style-section-nav a:hover,
+.style-section-nav a[aria-current="location"] {
+  border-color: var(--navy);
+  color: #fff;
+  background: var(--navy);
+}
+
+.style-page section[id] {
+  scroll-margin-top: 134px;
+}
+
+.profile-card {
+  border-top: 4px solid #8ca9ba;
+}
+
+.profile-card:nth-child(2) {
+  border-top-color: #788da3;
+}
+
+.profile-card:nth-child(3) {
+  border-top-color: var(--berry);
+}
+
+.profile-card .eyebrow {
+  margin-bottom: 7px;
+}
+
+.profile-card h3 {
+  margin-bottom: 8px;
+}
+
+.check-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.check-copy strong {
+  color: var(--navy-deep);
+  font-size: 0.9rem;
+}
+
+.check-copy small {
+  color: var(--muted);
+  font-size: 0.79rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.style-tag-list {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 0 0 13px;
+}
+
+.style-tag-list span {
+  padding: 6px 9px;
+  border: 1px solid #bbd0db;
+  border-radius: 999px;
+  color: #395e75;
+  background: #edf5f7;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.style-tag-list-skip span {
+  border-color: #e3c8d3;
+  color: #7f435e;
+  background: #fbf0f3;
+}
+
+.style-tag-list-large span {
+  padding: 8px 10px;
+}
+
+.fit-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fit-card {
+  border-top: 4px solid #617f94;
+}
+
+.fit-card .eyebrow {
+  margin-bottom: 7px;
+}
+
+.fit-details {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.fit-details div {
+  display: grid;
+  gap: 3px;
+}
+
+.fit-details dt {
+  color: #49687e;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fit-details dd {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.38;
+}
+
+.fit-skip {
+  margin-top: 14px;
+}
+
+.fit-skip h3 {
+  margin-bottom: 12px;
+}
+
+.outfit-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.outfit-list li {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.outfit-list span {
+  display: inline-flex;
+  padding: 5px 7px;
+  border: 1px solid #d3dfe6;
+  border-radius: 8px;
+  color: #40586c;
+  background: #fff;
+  font-size: 0.76rem;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.outfit-list span + span::before {
+  margin-right: 5px;
+  color: #7f8994;
+  content: "+";
+}
+
+.decision-flow {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.decision-step {
+  display: flex;
+  min-height: 142px;
+  gap: 10px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-top: 4px solid #617f94;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 24px rgba(35, 52, 73, 0.055);
+}
+
+.decision-step > span {
+  display: grid;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #617f94;
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.decision-step h3 {
+  margin-bottom: 5px;
+  font-size: 0.98rem;
+}
+
+.decision-step p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.decision-tailor {
+  border-top-color: #7894a5;
+}
+
+.decision-tailor > span {
+  background: #7894a5;
+}
+
+.decision-release {
+  border-top-color: var(--berry);
+}
+
+.decision-release > span {
+  background: var(--berry);
+}
+
+.decision-test {
+  border-top-color: #8d6f94;
+}
+
+.decision-test > span {
+  background: #8d6f94;
+}
+
 .callout {
   padding: 14px 16px;
   border-left: 4px solid var(--berry);
@@ -494,7 +738,7 @@ h3 {
 
 .progress-card {
   position: sticky;
-  top: 82px;
+  top: 128px;
 }
 
 .progress-track {
@@ -879,7 +1123,9 @@ h3 {
   .check-layout,
   .rules-grid,
   .formula-grid,
-  .retailer-grid {
+  .retailer-grid,
+  .fit-grid,
+  .decision-flow {
     grid-template-columns: 1fr;
   }
 
@@ -942,6 +1188,16 @@ h3 {
 
   .page-shell {
     padding-top: 20px;
+  }
+
+  .style-section-nav {
+    width: min(100% - 24px, 1080px);
+  }
+
+  .style-section-nav a {
+    min-height: 36px;
+    padding: 0 11px;
+    font-size: 0.79rem;
   }
 
   .home-hero {
