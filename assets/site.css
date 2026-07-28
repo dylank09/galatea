@@ -110,7 +110,7 @@ summary:focus-visible {
   text-decoration: none;
 }
 
-.brand-mark {
+.brand-icon {
   display: block;
   width: 30px;
   height: 30px;
@@ -1177,7 +1177,7 @@ h3 {
     gap: 7px;
   }
 
-  .brand-mark {
+  .brand-icon {
     width: 27px;
     height: 27px;
   }
