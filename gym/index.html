@@ -247,6 +247,28 @@
     textarea { min-height: 76px; resize: vertical; }
     .readiness-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .readiness-output { margin-top: 12px; }
+    .cycle-context {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .cycle-context > p { margin: 7px 0 0; }
+    .cycle-guidance {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fdf8f7;
+      color: var(--ink);
+    }
+    .cycle-guidance h3 { margin-bottom: 7px; color: var(--rose-deep); }
+    .cycle-guidance p { margin-bottom: 8px; font-size: .85rem; }
+    .cycle-guidance p:last-child { margin-bottom: 0; }
+    .cycle-food {
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+    .backup-reminder { margin-bottom: 0; }
+    .backup-reminder .button-primary { margin-top: 9px; }
     .session-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 14px; }
     .session-tabs button {
       min-height: 58px;
@@ -303,9 +325,40 @@
     .exercise-name { display: block; color: var(--ink); font-weight: 850; }
     .exercise-meta { display: block; margin-top: 2px; color: var(--muted); font-size: .77rem; }
     .exercise-body { padding: 0 12px 12px; }
+    .rest-timer {
+      margin: 14px 0;
+      padding: 13px;
+      border: 1px solid var(--blush-strong);
+      border-radius: 14px;
+      background: #fff9f8;
+    }
+    .rest-timer h3 { margin-bottom: 4px; }
+    .timer-display {
+      margin: 10px 0;
+      color: var(--rose-deep);
+      font-size: 2.1rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 850;
+      line-height: 1;
+    }
+    .timer-display.complete { color: var(--sage-ink); }
+    .timer-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .timer-preset {
+      min-height: 38px;
+      padding: 0 11px;
+      border: 1px solid var(--blush-strong);
+      background: #fffefa;
+      color: var(--rose-deep);
+      font-size: .82rem;
+      font-weight: 800;
+    }
     .set-grid {
       display: grid;
-      grid-template-columns: 32px 1fr 1fr 1fr;
+      grid-template-columns: 32px 1fr 1fr;
       gap: 6px;
       align-items: end;
       margin-top: 8px;
@@ -376,7 +429,7 @@
       .readiness-grid { grid-template-columns: repeat(4, 1fr); }
       .session-tabs { grid-template-columns: repeat(4, 1fr); }
       .session-tabs button { min-height: 66px; }
-      .set-grid { grid-template-columns: 38px 1fr 1fr 1fr; }
+      .set-grid { grid-template-columns: 38px 1fr 1fr; }
     }
   </style>
 </head>
@@ -402,6 +455,7 @@
           <button id="go-workout" class="button-primary" type="button">Open workout</button>
           <button id="mark-night" class="button-secondary" type="button">Mark night-block week</button>
         </div>
+        <div id="plan-backup-reminder" class="notice warning backup-reminder hidden"></div>
       </section>
       <section class="card">
         <h2>Flexible weekly rule</h2>
@@ -436,6 +490,19 @@
           <label>Symptoms<select id="symptom-score"><option value="1">None</option><option value="2">Mild</option><option value="3" selected>Manageable</option><option value="4">High</option><option value="5">Severe</option></select></label>
         </div>
         <div id="readiness-output" class="readiness-output"></div>
+        <div class="cycle-context">
+          <label>Cycle context, optional<select id="cycle-context">
+            <option value="">Not selected</option>
+            <option value="bleeding">Bleeding / period</option>
+            <option value="follicular">After bleeding / before ovulation</option>
+            <option value="ovulation">Around ovulation, if known</option>
+            <option value="luteal">After ovulation / premenstrual</option>
+            <option value="unsure">Unsure / irregular</option>
+          </select></label>
+          <p class="small">Choose manually for this workout. It gives context only, your symptoms and readiness still guide today.</p>
+          <div id="cycle-guidance" class="cycle-guidance hidden" aria-live="polite"></div>
+        </div>
+        <div id="workout-backup-reminder" class="notice warning backup-reminder hidden"></div>
       </section>
       <div id="session-tabs" class="session-tabs" role="tablist" aria-label="Workout selection"></div>
       <section id="workout-content"></section>
@@ -445,6 +512,15 @@
       <p class="eyebrow">Trends, not single readings</p>
       <h1 id="progress-title">Progress</h1>
       <p class="subtle">Track consistency, performance and standardized Evolt trends. A gym-only plan cannot guarantee a specific scale change.</p>
+      <section class="card">
+        <h2>Performance markers</h2>
+        <p class="subtle">Review every exercise you log. Use the graph to compare your best working weight week by week.</p>
+        <div class="progress-form">
+          <label>Exercise<select id="performance-exercise"></select></label>
+        </div>
+        <div id="performance-chart" class="chart"></div>
+        <div id="performance-summary"></div>
+      </section>
       <section class="card">
         <h2>Weekly body weight</h2>
         <div class="progress-form">
@@ -470,11 +546,6 @@
         </div>
         <ul id="evolt-list" class="log-list"></ul>
       </section>
-      <section class="card">
-        <h2>Performance markers</h2>
-        <p class="subtle">The clearest gym markers are better reps, load and control at the same RIR. Use the workout log suggestions, then compare your Weeks 1, 6 and 12 entries for hip thrust, squat or leg press, RDL, lat pulldown and incline press.</p>
-        <div id="performance-summary"></div>
-      </section>
     </section>
 
     <section id="more" class="tab-view" aria-labelledby="more-title">
@@ -483,16 +554,17 @@
       <section class="card">
         <h2>Double progression</h2>
         <ol class="subtle">
-          <li>Start at the lower end of the prescribed rep range at the assigned RIR.</li>
+          <li>Start at the lower end of the prescribed rep range with controlled technique.</li>
           <li>Add repetitions with the same load.</li>
-          <li>When every set reaches the top of the range at target RIR, add the smallest practical load increment next session.</li>
+          <li>When every set reaches the top of the range, add the smallest practical load increment next session.</li>
           <li>If technique deteriorates, reps fall below the range, or readiness is poor, hold or reduce. Do not force progression.</li>
         </ol>
         <p class="small">Most compound lifts use 2–3 minutes rest; unilateral and machine exercises use 90–120 seconds; isolation and core use 60–90 seconds.</p>
       </section>
       <section class="card">
-        <h2>Endometriosis and lower-energy days</h2>
-        <p class="subtle">Use symptoms, not a rigid cycle phase, to decide adjustments. On 1–2 lower-energy or painful days, remain at 3–4 RIR, reduce sets or load, choose stable machines and low-impact warm-up cardio, and avoid any bracing, range or impact that aggravates symptoms. Resume normally when symptoms settle.</p>
+        <h2>Cycle context, endometriosis and lower-energy days</h2>
+        <p class="subtle">Use cycle stage as context, not a prescription. With irregular cycles, do not rely on calendar dates to identify ovulation. Use symptoms, readiness and personal movement triggers to decide adjustments. On 1–2 lower-energy or painful days, reduce sets or load, choose stable machines and low-impact warm-up cardio, and avoid any bracing, range or impact that aggravates symptoms. Resume normally when symptoms settle.</p>
+        <p class="small">Food supports training, but no food pattern treats endometriosis or confirms a cycle stage. A copper IUD can make bleeding heavier for some people. Seek clinical advice for persistent fatigue, breathlessness, dizziness, unusually heavy or prolonged bleeding, and before taking an iron supplement.</p>
         <div class="notice warning"><strong>Seek clinical advice</strong> for new or escalating pelvic pain, fainting, unusually heavy bleeding, neurological symptoms or symptoms persisting beyond your usual pattern.</div>
       </section>
       <section class="card">
@@ -517,8 +589,13 @@
             <li>Cui J, et al. <a href="https://pubmed.ncbi.nlm.nih.gov/40276368/">Resistance training and gluteus maximus hypertrophy</a>, 2025.</li>
             <li>Schumann M, et al. <a href="https://doi.org/10.1007/s40279-021-01587-7">Concurrent aerobic and strength training</a>, 2022.</li>
             <li>Craven J, et al. <a href="https://doi.org/10.1007/s40279-022-01706-y">Acute sleep loss and physical performance</a>, 2022.</li>
+            <li>McNulty KL, et al. <a href="https://doi.org/10.1007/s40279-020-01319-3">Menstrual-cycle phase and exercise performance</a>, 2020.</li>
             <li>Blagrove RC, et al. <a href="https://doi.org/10.3389/fspor.2023.1054542">Menstrual-cycle phase and resistance exercise performance</a>, 2023.</li>
+            <li>Sims ST, et al. <a href="https://doi.org/10.1080/15502783.2023.2204066">Nutritional concerns of the female athlete</a>, 2023.</li>
+            <li>Mountjoy M, et al. <a href="https://doi.org/10.1136/bjsports-2023-106994">IOC consensus statement on Relative Energy Deficiency in Sport</a>, 2023.</li>
+            <li>Xie Y, et al. <a href="https://doi.org/10.1371/journal.pone.0317820">Physical activity and exercise in endometriosis</a>, 2025.</li>
             <li>ESHRE Guideline Group. <a href="https://doi.org/10.1093/hropen/hoac009">ESHRE guideline: endometriosis</a>, 2022.</li>
+            <li>RANZCOG. <a href="https://ranzcog.edu.au/womens-health/endometriosis/">Australian Living Evidence Guideline: Endometriosis</a>.</li>
           </ol>
         </div>
       </details>
@@ -544,69 +621,74 @@
     const STORAGE_KEY = "twelveWeekGymPlanV1";
     const weeks = Array.from({ length: 12 }, (_, index) => index + 1);
     const phaseForWeek = (week) => {
-      if (week <= 3) return { name: "Calibrate", rir: "3 RIR", note: "Build consistent technique and baseline loads." };
-      if (week <= 7) return { name: "Build", rir: "1–3 RIR", note: "Add reps first, and add priority glute volume only if recovery is good." };
-      if (week === 8) return { name: "Deload", rir: "4 RIR", note: "Use about half the working sets and skip hard conditioning." };
-      return { name: "Perform", rir: "1–2 RIR", note: "Progress quality reps and finish with rep PRs, not 1RM tests." };
+      if (week <= 3) return { name: "Calibrate", note: "Build consistent technique and baseline loads." };
+      if (week <= 7) return { name: "Build", note: "Add reps first, and add priority glute volume only if recovery is good." };
+      if (week === 8) return { name: "Deload", note: "Use about half the working sets and skip hard conditioning." };
+      return { name: "Perform", note: "Progress quality reps and finish with rep PRs, not 1RM tests." };
     };
     const workouts = [
       {
         id: "lower-a", short: "Lower A", title: "Lower A", focus: "Hip thrust + squat",
         intro: "Five easy cardio minutes, then 2–4 non-fatiguing hip-thrust ramp sets.",
         exercises: [
-          { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rir: "2–3", rest: "2–3 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
-          { id: "smith-squat", name: "Smith high-bar squat", sets: 3, reps: "6–10", rir: "2", rest: "2–3 min", alt: "Leg press or goblet squat", cue: "Use a stable stance and a comfortable depth with controlled knees and torso.", priority: true },
-          { id: "split-squat", name: "Bulgarian split squat", sets: 2, reps: "8–12 / side", rir: "1–2", rest: "90–120 sec", alt: "Reverse lunge or step-up", cue: "Use a stride that lets you feel both glute and thigh work without losing balance." },
-          { id: "leg-curl-a", name: "Seated leg curl", sets: 3, reps: "10–15", rir: "1–2", rest: "90 sec", alt: "Lying leg curl", cue: "Control the return, rather than bouncing into the stretch.", priority: true },
-          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rir: "1–2", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range. Superset with Pallof presses." },
-          { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rir: "Controlled", rest: "60 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis." }
+          { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
+          { id: "smith-squat", name: "Smith high-bar squat", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Leg press or goblet squat", cue: "Use a stable stance and a comfortable depth with controlled knees and torso.", priority: true },
+          { id: "split-squat", name: "Bulgarian split squat", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Reverse lunge or step-up", cue: "Use a stride that lets you feel both glute and thigh work without losing balance." },
+          { id: "leg-curl-a", name: "Seated leg curl", sets: 3, reps: "10–15", rest: "90 sec", alt: "Lying leg curl", cue: "Control the return, rather than bouncing into the stretch.", priority: true },
+          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range. Superset with Pallof presses." },
+          { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "60 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis." }
         ]
       },
       {
         id: "upper-a", short: "Upper A", title: "Upper A", focus: "Pull, press, shoulders and arms",
         intro: "Five easy cardio minutes, shoulder movement, then 2–3 ramp sets for pulldowns.",
         exercises: [
-          { id: "pulldown-a", name: "Lat pulldown", sets: 3, reps: "8–12", rir: "2", rest: "2 min", alt: "Assisted pull-up", cue: "Drive elbows down without leaning far back.", priority: true },
-          { id: "incline-press", name: "Incline dumbbell press", sets: 3, reps: "8–12", rir: "2", rest: "2 min", alt: "Incline Smith or chest press machine", cue: "Use a stable bench angle and a controlled depth.", priority: true },
-          { id: "chest-row", name: "Chest-supported row", sets: 3, reps: "8–12", rir: "1–2", rest: "90–120 sec", alt: "Seated cable row", cue: "Pull elbows toward hips while keeping chest supported.", priority: true },
-          { id: "lateral-raise", name: "Cable lateral raise", sets: 2, reps: "12–20", rir: "1–2", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Superset with pressdowns." },
-          { id: "pressdown", name: "Rope pressdown", sets: 2, reps: "10–15", rir: "1–2", rest: "60–90 sec", alt: "Overhead cable extension", cue: "Keep upper arms still and finish without forcing elbow lockout." },
-          { id: "incline-curl", name: "Incline dumbbell curl", sets: 2, reps: "10–15", rir: "1–2", rest: "60–90 sec", alt: "Cable curl", cue: "Avoid swinging the torso to complete reps." }
+          { id: "pulldown-a", name: "Lat pulldown", sets: 3, reps: "8–12", rest: "2 min", alt: "Assisted pull-up", cue: "Drive elbows down without leaning far back.", priority: true },
+          { id: "incline-press", name: "Incline dumbbell press", sets: 3, reps: "8–12", rest: "2 min", alt: "Incline Smith or chest press machine", cue: "Use a stable bench angle and a controlled depth.", priority: true },
+          { id: "chest-row", name: "Chest-supported row", sets: 3, reps: "8–12", rest: "90–120 sec", alt: "Seated cable row", cue: "Pull elbows toward hips while keeping chest supported.", priority: true },
+          { id: "lateral-raise", name: "Cable lateral raise", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Superset with pressdowns." },
+          { id: "pressdown", name: "Rope pressdown", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Overhead cable extension", cue: "Keep upper arms still and finish without forcing elbow lockout." },
+          { id: "incline-curl", name: "Incline dumbbell curl", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Cable curl", cue: "Avoid swinging the torso to complete reps." }
         ]
       },
       {
         id: "lower-b", short: "Lower B", title: "Lower B", focus: "RDL + unilateral-leg emphasis",
         intro: "Five easy cardio minutes, then 2–4 controlled RDL ramp sets.",
         exercises: [
-          { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 3, reps: "6–10", rir: "2", rest: "2–3 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled.", priority: true },
-          { id: "reverse-lunge", name: "Reverse lunge", sets: 2, reps: "8–12 / side", rir: "1–2", rest: "90–120 sec", alt: "Bulgarian split squat", cue: "Step back softly and use a stable range. Load only after control is reliable." },
-          { id: "leg-press", name: "Leg press", sets: 3, reps: "8–12", rir: "1–2", rest: "2 min", alt: "Smith squat", cue: "Keep the pelvis stable against the pad and use a controlled depth.", priority: true },
-          { id: "leg-extension", name: "Leg extension", sets: 2, reps: "10–15", rir: "1–2", rest: "60–90 sec", alt: "Heel-elevated split squat", cue: "Control the lowering phase. Superset with leg curls." },
-          { id: "leg-curl-b", name: "Lying or seated leg curl", sets: 3, reps: "10–15", rir: "1–2", rest: "90 sec", alt: "Slider leg curl", cue: "Keep the tempo controlled instead of using momentum.", priority: true },
-          { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rir: "1–2", rest: "60–90 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range. Superset with dead bugs." },
-          { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rir: "Controlled", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady." }
+          { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled.", priority: true },
+          { id: "reverse-lunge", name: "Reverse lunge", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Bulgarian split squat", cue: "Step back softly and use a stable range. Load only after control is reliable." },
+          { id: "leg-press", name: "Leg press", sets: 3, reps: "8–12", rest: "2 min", alt: "Smith squat", cue: "Keep the pelvis stable against the pad and use a controlled depth.", priority: true },
+          { id: "leg-extension", name: "Leg extension", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Heel-elevated split squat", cue: "Control the lowering phase. Superset with leg curls." },
+          { id: "leg-curl-b", name: "Lying or seated leg curl", sets: 3, reps: "10–15", rest: "90 sec", alt: "Slider leg curl", cue: "Keep the tempo controlled instead of using momentum.", priority: true },
+          { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rest: "60–90 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range. Superset with dead bugs." },
+          { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady." }
         ]
       },
       {
         id: "upper-b", short: "Upper B", title: "Upper B", focus: "Shoulders, back, chest and arms",
         intro: "Five easy cardio minutes, shoulder movement, then 2–3 shoulder-press ramp sets.",
         exercises: [
-          { id: "shoulder-press", name: "Dumbbell or Smith shoulder press", sets: 3, reps: "6–10", rir: "2", rest: "2 min", alt: "Machine shoulder press", cue: "Use a comfortable grip and range. Keep ribs stacked rather than leaning back.", priority: true },
-          { id: "cable-row", name: "Seated cable row", sets: 3, reps: "8–12", rir: "1–2", rest: "90–120 sec", alt: "Chest-supported row", cue: "Control the reach and pull elbows back without shrugging.", priority: true },
-          { id: "chest-press", name: "Machine chest press", sets: 2, reps: "8–12", rir: "1–2", rest: "90–120 sec", alt: "Flat dumbbell press", cue: "Keep shoulder blades controlled against the pad.", priority: true },
-          { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 2, reps: "8–12", rir: "1–2", rest: "90–120 sec", alt: "Assisted pull-up", cue: "Keep the path controlled and elbows travelling down.", priority: true },
-          { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rir: "1–2", rest: "60–90 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder. Superset with triceps." },
-          { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rir: "1–2", rest: "60–90 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false },
-          { id: "cable-curl", name: "Cable curl", sets: 2, reps: "10–15", rir: "1–2", rest: "60–90 sec", alt: "Dumbbell hammer curl", cue: "Keep the torso still. Superset with cable crunches." },
-          { id: "cable-crunch", name: "Cable crunch", sets: 2, reps: "10–15", rir: "Comfortable", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Use a comfortable range. Swap if bracing or flexion aggravates symptoms." }
+          { id: "shoulder-press", name: "Dumbbell or Smith shoulder press", sets: 3, reps: "6–10", rest: "2 min", alt: "Machine shoulder press", cue: "Use a comfortable grip and range. Keep ribs stacked rather than leaning back.", priority: true },
+          { id: "cable-row", name: "Seated cable row", sets: 3, reps: "8–12", rest: "90–120 sec", alt: "Chest-supported row", cue: "Control the reach and pull elbows back without shrugging.", priority: true },
+          { id: "chest-press", name: "Machine chest press", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Flat dumbbell press", cue: "Keep shoulder blades controlled against the pad.", priority: true },
+          { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Assisted pull-up", cue: "Keep the path controlled and elbows travelling down.", priority: true },
+          { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder. Superset with triceps." },
+          { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false },
+          { id: "cable-curl", name: "Cable curl", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Dumbbell hammer curl", cue: "Keep the torso still. Superset with cable crunches." },
+          { id: "cable-crunch", name: "Cable crunch", sets: 2, reps: "10–15", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Use a comfortable range. Swap if bracing or flexion aggravates symptoms." }
         ]
       }
     ];
+    const performanceExercises = workouts.flatMap((workout) =>
+      workout.exercises.map((exercise) => ({ ...exercise, workoutId: workout.id, workoutName: workout.short }))
+    );
 
     const defaultData = () => ({
       logs: {},
       completed: {},
       readiness: {},
+      cycleContexts: {},
+      weeklyBackups: {},
       weights: {},
       evolt: {},
       nightWeeks: { 2: true },
@@ -616,6 +698,34 @@
     });
     let data = defaultData();
     let storageAvailable = true;
+    let selectedPerformanceExercise = performanceExercises[0].id;
+    const cycleGuidance = {
+      bleeding: {
+        title: "Bleeding / period",
+        training: "A period does not automatically require a deload. Keep the planned session if you feel well. If pain, fatigue or heavy flow affects readiness, use short mode, comfortable substitutions or rest.",
+        food: "Include an iron-rich food such as meat, seafood, lentils, tofu or iron-fortified cereal. Pair plant iron with vitamin-C-rich fruit or vegetables, and choose familiar foods and fluids you tolerate."
+      },
+      follicular: {
+        title: "After bleeding / before ovulation",
+        training: "Keep the planned session and normal progression. Current evidence does not support automatically adding load or volume at this stage.",
+        food: "There is no proven special post-period diet. Support training with a familiar carbohydrate-and-protein meal or snack, plus fluids."
+      },
+      ovulation: {
+        title: "Around ovulation, if known",
+        training: "Keep normal progression and normal injury precautions. Do not chase a personal best or change your plan based on this stage alone.",
+        food: "No specific ovulation food is proven to improve strength or recovery. Use your usual carbohydrate, protein and fluids for the session."
+      },
+      luteal: {
+        title: "After ovulation / premenstrual",
+        training: "Keep the planned session unless readiness or symptoms say otherwise. If you feel warmer, fatigued or uncomfortable, extra rest or short mode is appropriate.",
+        food: "If you are hungrier, add a satisfying carbohydrate-and-protein meal or snack rather than restricting or compensating. If bloating or bowel symptoms flare, choose familiar foods you tolerate."
+      },
+      unsure: {
+        title: "Unsure / irregular",
+        training: "You do not need a phase estimate to train well. Use your readiness, symptoms and personal movement triggers to guide today.",
+        food: "Focus on regular meals, protein, workout carbohydrate and fluids. Avoid skipping food around training."
+      }
+    };
 
     function initialiseStorage() {
       try {
@@ -660,6 +770,20 @@
       const difference = Math.floor((now - START_DATE) / 86400000);
       return Math.min(12, Math.max(1, Math.floor(difference / 7) + 1));
     }
+    function calendarWeekHasEnded(week) {
+      const nextWeek = dateForWeek(week);
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      return Date.now() >= nextWeek.getTime();
+    }
+    function completedWorkoutCount(week) {
+      return workouts.filter((workout) => data.completed?.[sessionKey(week, workout.id)]).length;
+    }
+    function pendingWeeklyBackupWeek() {
+      const pending = weeks.filter((week) => !data.weeklyBackups?.[week] && (
+        completedWorkoutCount(week) === workouts.length || calendarWeekHasEnded(week)
+      ));
+      return pending[pending.length - 1];
+    }
     function workoutById(id) {
       return workouts.find((workout) => workout.id === id) || workouts[0];
     }
@@ -671,16 +795,19 @@
     function sessionKey(week, workoutId) {
       return `${week}:${workoutId}`;
     }
+    function cycleContextKey() {
+      return sessionKey(Number(data.selectedWeek), data.selectedWorkout);
+    }
     function setLog(week, workoutId, exerciseId, setIndex, key, value) {
       const keyForSession = sessionKey(week, workoutId);
       data.logs[keyForSession] ||= {};
       data.logs[keyForSession][exerciseId] ||= [];
-      data.logs[keyForSession][exerciseId][setIndex] ||= { weight: "", reps: "", rir: "" };
+      data.logs[keyForSession][exerciseId][setIndex] ||= { weight: "", reps: "" };
       data.logs[keyForSession][exerciseId][setIndex][key] = value;
       saveData();
     }
     function getSetLog(week, workoutId, exerciseId, setIndex) {
-      return data.logs?.[sessionKey(week, workoutId)]?.[exerciseId]?.[setIndex] || { weight: "", reps: "", rir: "" };
+      return data.logs?.[sessionKey(week, workoutId)]?.[exerciseId]?.[setIndex] || { weight: "", reps: "" };
     }
     function latestExerciseLogs(workoutId, exerciseId, week) {
       for (let candidateWeek = week; candidateWeek >= 1; candidateWeek -= 1) {
@@ -694,29 +821,27 @@
       if (exercise.addSet && ((week >= 4 && week <= 7) || week >= 9)) return exercise.sets + 1;
       return exercise.sets;
     }
-    function targetRir(exercise, week) {
-      if (exercise.rir === "Controlled" || exercise.rir === "Comfortable") return exercise.rir;
-      if (week <= 3) return "3";
-      if (week === 8) return "4";
-      if (week >= 9) return "1–2";
-      return exercise.rir;
-    }
     function loadSuggestion(workoutId, exercise, week) {
       const range = parseRepRange(exercise.reps);
       const latest = latestExerciseLogs(workoutId, exercise.id, week);
       const logs = latest.logs
         .slice(0, phaseSetCount(exercise, week))
-        .filter((set) => set.reps !== "" && set.rir !== "");
+        .filter((set) => set.reps !== "");
       if (!range || logs.length < phaseSetCount(exercise, week)) {
         return { type: "hold", text: "Log all working sets to receive a next-load suggestion." };
       }
       const reps = logs.map((set) => Number(set.reps));
-      const rirs = logs.map((set) => Number(set.rir));
-      if (reps.every((value) => value >= range.max) && rirs.every((value) => value >= 1)) {
-        return { type: "increase", text: `Week ${latest.week}: all sets reached the top of ${exercise.reps}. Next time, try the smallest practical load increase and restart near the lower end.` };
+      if (reps.every((value) => value >= range.max)) {
+        const hasWeight = logs.some((set) => set.weight !== "");
+        return {
+          type: "increase",
+          text: hasWeight
+            ? `Week ${latest.week}: all sets reached the top of ${exercise.reps}. Next time, try the smallest practical load increase and restart near the lower end.`
+            : `Week ${latest.week}: all sets reached the top of ${exercise.reps}. Next time, add difficulty or restart near the lower end.`
+        };
       }
-      if (reps.some((value) => value < range.min) || rirs.some((value) => value <= 0)) {
-        return { type: "caution", text: "Hold this load, or reduce it 5–10% if technique broke down. Aim to reach the rep range with 1–3 clean reps in reserve." };
+      if (reps.some((value) => value < range.min)) {
+        return { type: "caution", text: "Hold this load, or reduce it 5–10% if technique broke down. Aim to reach the rep range with clean, controlled reps." };
       }
       return { type: "hold", text: "Hold the load and add reps within the prescribed range before increasing." };
     }
@@ -728,9 +853,9 @@
         return { type: "warning", title: "Red: rest or easy movement", text: "Do not force lifting. Resume the rolling sequence after recovery. Seek clinical advice for new, severe or unusual symptoms." };
       }
       if (night || score.sleep <= 2 || score.energy <= 2 || score.soreness >= 4 || score.symptoms >= 4) {
-        return { type: "warning", title: "Amber: shorten or reduce", text: "Use the priority version, remove one set per exercise or reduce load 5–10%, stay at 3–4 RIR and skip conditioning." };
+        return { type: "warning", title: "Amber: shorten or reduce", text: "Use the priority version, remove one set per exercise or reduce load 5–10%, and skip conditioning." };
       }
-      return { type: "good", title: "Green: complete the planned session", text: "Use the full session, assigned RIR and standard rests. You can still stop early if technique changes." };
+      return { type: "good", title: "Green: complete the planned session", text: "Use the full session and standard rests. You can still stop early if technique changes." };
     }
     function renderStorageNotice() {
       const notice = document.getElementById("storage-notice");
@@ -743,9 +868,9 @@
     }
     function renderRoadmap() {
       const roadmap = [
-        ["Weeks 1–3", "Calibrate", "3 RIR, build technique and baseline loads."],
-        ["Weeks 4–7", "Build", "1–3 RIR, add priority glute volume only when recovery is good."],
-        ["Week 8", "Deload", "About half the working sets, 4 RIR and no hard conditioning."],
+        ["Weeks 1–3", "Calibrate", "Build technique and baseline loads."],
+        ["Weeks 4–7", "Build", "Add reps first, and add priority glute volume only when recovery is good."],
+        ["Week 8", "Deload", "Use about half the working sets and skip hard conditioning."],
         ["Weeks 9–12", "Perform", "Progress quality reps, finish with rep PRs and compare trends."]
       ];
       document.getElementById("roadmap").innerHTML = roadmap.map((item) =>
@@ -764,6 +889,34 @@
         <span class="pill">${data.nightWeeks?.[week] ? "Night block marked" : "Normal week"}</span>
         <span class="pill amber">${weight ? `${weight} kg logged` : "Weight not logged"}</span>
       `;
+      renderBackupReminders();
+    }
+    function renderBackupReminders() {
+      const week = pendingWeeklyBackupWeek();
+      const targets = ["plan-backup-reminder", "workout-backup-reminder"].map((id) => document.getElementById(id));
+      if (!week) {
+        targets.forEach((target) => {
+          target.classList.add("hidden");
+          target.innerHTML = "";
+        });
+        return;
+      }
+      const complete = completedWorkoutCount(week) === workouts.length;
+      const calendarEnded = calendarWeekHasEnded(week);
+      const trigger = complete && calendarEnded
+        ? "All four planned sessions are complete and the calendar week has ended."
+        : complete
+          ? "All four planned sessions are complete."
+          : "The calendar week has ended.";
+      const markup = `
+        <strong>Week ${week} backup reminder</strong><br>
+        ${trigger} Your data is stored on this phone, so download a JSON backup now.
+        <br><button class="button-primary" data-weekly-backup="${week}" type="button">Download week ${week} backup</button>
+      `;
+      targets.forEach((target) => {
+        target.classList.remove("hidden");
+        target.innerHTML = markup;
+      });
     }
     function renderWeekOptions() {
       const optionMarkup = weeks.map((week) => `<option value="${week}">${weekLabel(week)}</option>`).join("");
@@ -785,6 +938,25 @@
       const target = document.getElementById("readiness-output");
       target.className = `notice ${advice.type === "good" ? "good" : "warning"}`;
       target.innerHTML = `<strong>${advice.title}</strong><br>${advice.text}`;
+      renderCycleContext();
+    }
+    function renderCycleContext() {
+      const select = document.getElementById("cycle-context");
+      const target = document.getElementById("cycle-guidance");
+      const selected = data.cycleContexts?.[cycleContextKey()] || "";
+      select.value = selected;
+      const guidance = cycleGuidance[selected];
+      if (!guidance) {
+        target.classList.add("hidden");
+        target.innerHTML = "";
+        return;
+      }
+      target.classList.remove("hidden");
+      target.innerHTML = `
+        <h3>${guidance.title}</h3>
+        <p><strong>Training:</strong> ${guidance.training}</p>
+        <p class="cycle-food"><strong>Food prompt:</strong> ${guidance.food}</p>
+      `;
     }
     function renderSessionTabs() {
       const active = data.selectedWorkout;
@@ -793,6 +965,62 @@
           ${workout.short}<span>${workout.focus}</span>
         </button>
       `).join("");
+    }
+    let restTimer = { duration: 0, endsAt: null, intervalId: null, complete: false };
+    function formatTimer(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainder = seconds % 60;
+      return `${minutes}:${String(remainder).padStart(2, "0")}`;
+    }
+    function renderRestTimer() {
+      const display = document.getElementById("rest-timer-display");
+      const status = document.getElementById("rest-timer-status");
+      const cancel = document.getElementById("cancel-rest-timer");
+      if (!display || !status || !cancel) return;
+      const remaining = restTimer.endsAt
+        ? Math.max(0, Math.ceil((restTimer.endsAt - Date.now()) / 1000))
+        : restTimer.duration;
+      display.classList.toggle("complete", restTimer.complete);
+      display.textContent = restTimer.complete ? "Rest complete" : (remaining ? formatTimer(remaining) : "Choose a time");
+      status.textContent = restTimer.complete
+        ? "Rest complete."
+        : restTimer.endsAt
+          ? "Rest timer running."
+          : "Choose a preset to start your rest timer.";
+      cancel.disabled = !restTimer.endsAt && !restTimer.complete;
+      cancel.textContent = restTimer.complete ? "Dismiss" : "Cancel timer";
+    }
+    function cancelRestTimer() {
+      if (restTimer.intervalId !== null) window.clearInterval(restTimer.intervalId);
+      restTimer = { duration: 0, endsAt: null, intervalId: null, complete: false };
+      renderRestTimer();
+    }
+    function finishRestTimer() {
+      if (restTimer.intervalId !== null) window.clearInterval(restTimer.intervalId);
+      restTimer.intervalId = null;
+      restTimer.endsAt = null;
+      restTimer.duration = 0;
+      restTimer.complete = true;
+      navigator.vibrate?.([180, 90, 180]);
+      renderRestTimer();
+    }
+    function updateRestTimer() {
+      if (!restTimer.endsAt) return;
+      if (restTimer.endsAt <= Date.now()) {
+        finishRestTimer();
+        return;
+      }
+      renderRestTimer();
+    }
+    function startRestTimer(seconds) {
+      if (restTimer.intervalId !== null) window.clearInterval(restTimer.intervalId);
+      restTimer = {
+        duration: seconds,
+        endsAt: Date.now() + seconds * 1000,
+        intervalId: window.setInterval(updateRestTimer, 1000),
+        complete: false
+      };
+      renderRestTimer();
     }
     function exerciseMarkup(workout, exercise, week) {
       const count = phaseSetCount(exercise, week);
@@ -803,7 +1031,6 @@
             <span class="set-number">${index + 1}</span>
             <label>kg<input inputmode="decimal" type="number" min="0" step="0.5" data-log-week="${week}" data-log-workout="${workout.id}" data-log-exercise="${exercise.id}" data-log-set="${index}" data-log-key="weight" value="${escapeHtml(set.weight)}"></label>
             <label>reps<input inputmode="numeric" type="number" min="0" max="99" step="1" data-log-week="${week}" data-log-workout="${workout.id}" data-log-exercise="${exercise.id}" data-log-set="${index}" data-log-key="reps" value="${escapeHtml(set.reps)}"></label>
-            <label>RIR<input inputmode="decimal" type="number" min="0" max="10" step="0.5" data-log-week="${week}" data-log-workout="${workout.id}" data-log-exercise="${exercise.id}" data-log-set="${index}" data-log-key="rir" value="${escapeHtml(set.rir)}"></label>
           </div>`;
       }).join("");
       const suggestion = loadSuggestion(workout.id, exercise, week);
@@ -811,7 +1038,7 @@
         <details class="exercise">
           <summary>
             <span class="exercise-name">${exercise.name}</span>
-            <span class="exercise-meta">${count} × ${exercise.reps} · ${targetRir(exercise, week)} RIR · ${exercise.rest}</span>
+            <span class="exercise-meta">${count} × ${exercise.reps} · ${exercise.rest}</span>
           </summary>
           <div class="exercise-body">
             ${setInputs}
@@ -829,9 +1056,10 @@
       const phase = phaseForWeek(week);
       const isShort = Boolean(data.shortMode);
       document.getElementById("workout-week").textContent = `Week ${week} · ${phase.name}`;
-      document.getElementById("week-dates").textContent = `${weekLabel(week)} · ${phase.rir}`;
+      document.getElementById("week-dates").textContent = weekLabel(week);
       document.getElementById("week-night-toggle").textContent = `Night block: ${data.nightWeeks?.[week] ? "on" : "off"}`;
       renderReadiness();
+      renderBackupReminders();
       renderSessionTabs();
       const exercises = isShort ? workout.exercises.filter((exercise) => exercise.priority).slice(0, 3) : workout.exercises;
       document.getElementById("workout-content").innerHTML = `
@@ -842,11 +1070,23 @@
           </div>
           <p class="subtle">${workout.intro}</p>
           <label class="toggle-row"><input id="short-mode" type="checkbox" ${isShort ? "checked" : ""}>Use the 35–45 minute priority version</label>
+          <section class="rest-timer" aria-labelledby="rest-timer-title">
+            <h3 id="rest-timer-title">Rest timer</h3>
+            <p id="rest-timer-status" class="small" aria-live="polite">Choose a preset to start your rest timer.</p>
+            <div id="rest-timer-display" class="timer-display" role="timer" aria-live="off">Choose a time</div>
+            <div class="timer-controls">
+              ${[[60, "1 min"], [90, "1.5 min"], [120, "2 min"], [180, "3 min"]].map(([seconds, label]) =>
+                `<button class="timer-preset" data-rest-seconds="${seconds}" type="button">${label}</button>`
+              ).join("")}
+              <button id="cancel-rest-timer" class="button-quiet" type="button" disabled>Cancel timer</button>
+            </div>
+          </section>
           <div class="notice"><strong>Rest:</strong> 2–3 min after demanding compounds, 90–120 sec after unilateral or machine work, 60–90 sec after isolation and core. Keep main lifts as straight sets; only superset accessories.</div>
           ${exercises.map((exercise) => exerciseMarkup(workout, exercise, week)).join("")}
           <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(data.logs?.[sessionKey(week, workout.id)]?.sessionNote || "")}</textarea></label>
           <label class="session-complete"><input id="complete-session" type="checkbox" ${data.completed?.[sessionKey(week, workout.id)] ? "checked" : ""}>Mark ${workout.short} complete</label>
         </section>`;
+      renderRestTimer();
     }
     function chartMarkup(entries, label) {
       if (entries.length < 2) return `<p class="small">Add at least two ${label.toLowerCase()} entries to view a trend.</p>`;
@@ -886,27 +1126,36 @@
       document.getElementById("evolt-list").innerHTML = evoltEntries.length
         ? evoltEntries.map((entry) => `<li><span><strong>Week ${entry.week}</strong><br><span class="small">Weight ${entry.weight || "—"} kg · Fat ${entry.fat || "—"}% · Muscle ${entry.muscle || "—"} kg</span></span><button class="button-quiet" data-delete-evolt="${entry.week}" type="button">Remove</button></li>`).join("")
         : "<li><span>No Evolt checkpoint saved yet.</span></li>";
-      const markers = ["hip-thrust", "smith-squat", "leg-press", "rdl", "pulldown-a", "incline-press"];
-      const performance = [];
-      markers.forEach((marker) => {
-        let found;
-        workouts.forEach((workout) => {
-          for (let week = 12; week >= 1; week -= 1) {
-            const sets = data.logs?.[sessionKey(week, workout.id)]?.[marker];
-            if (sets?.length) {
-              const completed = sets.filter((set) => set.weight !== "" && set.reps !== "");
-              if (completed.length) {
-                found = { exercise: workout.exercises.find((item) => item.id === marker)?.name, set: completed[completed.length - 1], week };
-                break;
-              }
-            }
-          }
-        });
-        if (found) performance.push(found);
+      const selectedExercise = performanceExercises.find((exercise) => exercise.id === selectedPerformanceExercise) || performanceExercises[0];
+      selectedPerformanceExercise = selectedExercise.id;
+      document.getElementById("performance-exercise").innerHTML = performanceExercises.map((exercise) =>
+        `<option value="${exercise.id}">${exercise.workoutName} · ${exercise.name}</option>`
+      ).join("");
+      document.getElementById("performance-exercise").value = selectedExercise.id;
+      const performanceEntries = weeks.flatMap((week) => {
+        const sets = data.logs?.[sessionKey(week, selectedExercise.workoutId)]?.[selectedExercise.id] || [];
+        const weights = sets
+          .filter((set) => set.weight !== "" && Number.isFinite(Number(set.weight)))
+          .map((set) => Number(set.weight));
+        return weights.length ? [{ week, value: Math.max(...weights) }] : [];
       });
-      document.getElementById("performance-summary").innerHTML = performance.length
-        ? `<ul class="log-list">${performance.map((item) => `<li><span>${item.exercise}<br><span class="small">Latest: Week ${item.week}</span></span><strong>${item.set.weight} kg × ${item.set.reps}, RIR ${item.set.rir || "—"}</strong></li>`).join("")}</ul>`
-        : "<p class=\"small\">Log key lifts in the Workout tab to populate this summary.</p>";
+      document.getElementById("performance-chart").innerHTML = chartMarkup(performanceEntries, `${selectedExercise.name} best weight`);
+      const performance = performanceExercises.map((exercise) => {
+        for (let week = 12; week >= 1; week -= 1) {
+          const sets = data.logs?.[sessionKey(week, exercise.workoutId)]?.[exercise.id] || [];
+          const completed = sets.filter((set) => set.weight !== "" || set.reps !== "");
+          if (completed.length) return { ...exercise, set: completed[completed.length - 1], week };
+        }
+        return { ...exercise, set: null, week: null };
+      });
+      document.getElementById("performance-summary").innerHTML = `<ul class="log-list">${performance.map((item) => {
+        const result = item.set
+          ? item.set.weight !== ""
+            ? `${escapeHtml(item.set.weight)} kg × ${escapeHtml(item.set.reps || "—")}`
+            : `${escapeHtml(item.set.reps || "—")} reps`
+          : "Not logged";
+        return `<li><span>${item.name}<br><span class="small">${item.workoutName}${item.week ? ` · Latest: Week ${item.week}` : ""}</span></span><strong>${result}</strong></li>`;
+      }).join("")}</ul>`;
     }
     function renderAll() {
       renderStorageNotice();
@@ -919,6 +1168,7 @@
     function setActiveTab(tabId) {
       document.querySelectorAll(".tab-view").forEach((view) => view.classList.toggle("active", view.id === tabId));
       document.querySelectorAll(".nav button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tabId));
+      if (tabId === "progress") renderProgress();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
     function updateReadiness() {
@@ -932,15 +1182,33 @@
       saveData();
       renderReadiness();
     }
-    function exportData() {
+    function updateCycleContext(value) {
+      const key = cycleContextKey();
+      data.cycleContexts ||= {};
+      if (value) data.cycleContexts[key] = value;
+      else delete data.cycleContexts[key];
+      saveData();
+      renderCycleContext();
+    }
+    function exportData(week) {
+      if (week) {
+        data.weeklyBackups ||= {};
+        weeks.filter((item) => item <= week).forEach((item) => {
+          data.weeklyBackups[item] = new Date().toISOString();
+        });
+        saveData();
+      }
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "12-week-gym-plan-backup.json";
+      link.download = week ? `12-week-gym-plan-week-${week}-backup.json` : "12-week-gym-plan-backup.json";
       document.body.appendChild(link);
       link.click();
       link.remove();
+      if (week) {
+        renderBackupReminders();
+      }
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
     function restoreData(file) {
@@ -1026,6 +1294,9 @@
       ["sleep-score", "energy-score", "soreness-score", "symptom-score"].forEach((id) => {
         document.getElementById(id).addEventListener("change", updateReadiness);
       });
+      document.getElementById("cycle-context").addEventListener("change", (event) => {
+        updateCycleContext(event.target.value);
+      });
       document.getElementById("session-tabs").addEventListener("click", (event) => {
         const button = event.target.closest("button[data-workout]");
         if (!button) return;
@@ -1033,6 +1304,14 @@
         data.shortMode = false;
         saveData();
         renderWorkout();
+      });
+      document.getElementById("workout-content").addEventListener("click", (event) => {
+        const preset = event.target.closest("button[data-rest-seconds]");
+        if (preset) {
+          startRestTimer(Number(preset.dataset.restSeconds));
+          return;
+        }
+        if (event.target.closest("#cancel-rest-timer")) cancelRestTimer();
       });
       document.getElementById("workout-content").addEventListener("input", (event) => {
         const input = event.target;
@@ -1084,6 +1363,16 @@
         };
         saveData();
         renderProgress();
+      });
+      document.getElementById("performance-exercise").addEventListener("change", (event) => {
+        selectedPerformanceExercise = event.target.value;
+        renderProgress();
+      });
+      ["plan-backup-reminder", "workout-backup-reminder"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", (event) => {
+          const button = event.target.closest("button[data-weekly-backup]");
+          if (button) exportData(Number(button.dataset.weeklyBackup));
+        });
       });
       document.getElementById("evolt-list").addEventListener("click", (event) => {
         const button = event.target.closest("button[data-delete-evolt]");
