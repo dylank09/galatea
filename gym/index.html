@@ -397,6 +397,40 @@
       font-weight: 800;
     }
     .session-complete input { width: 22px; min-height: 22px; margin: 0; accent-color: var(--rose); }
+    .pelvic-grid { display: grid; gap: 12px; margin-top: 14px; }
+    .pelvic-card {
+      padding: 13px;
+      border: 1px solid #eadde0;
+      border-radius: 15px;
+      background: #fffefa;
+    }
+    .pelvic-card h3 { color: var(--rose-deep); }
+    .pelvic-visual {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      margin: 9px auto 12px;
+      padding: 8px;
+      border-radius: 11px;
+      background: #fdf8f7;
+    }
+    .pelvic-card ol { margin: 10px 0; padding-left: 20px; }
+    .pelvic-card li { margin: 7px 0; font-size: .84rem; }
+    .pelvic-choice {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 11px;
+      border-top: 1px solid var(--line);
+      color: var(--rose-deep);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+    .pelvic-choice input { width: 22px; min-height: 22px; margin: 0; accent-color: var(--rose); }
+    .resource-list { margin: 10px 0 0; padding-left: 18px; }
+    .resource-list li { margin: 8px 0; font-size: .84rem; }
     .progress-form { display: grid; gap: 10px; }
     .chart {
       width: 100%;
@@ -581,7 +615,7 @@
       <section class="card">
         <h2>Cycle context, endometriosis and lower-energy days</h2>
         <p class="subtle">Use cycle stage as context, not a prescription. With irregular cycles, do not rely on calendar dates to identify ovulation. Use symptoms, readiness and personal movement triggers to decide adjustments. On 1–2 lower-energy or painful days, reduce sets or load, choose stable machines and low-impact warm-up cardio, and avoid any bracing, range or impact that aggravates symptoms. Resume normally when symptoms settle.</p>
-        <p class="small">Food supports training, but no food pattern treats endometriosis or confirms a cycle stage. A copper IUD can make bleeding heavier for some people. Seek clinical advice for persistent fatigue, breathlessness, dizziness, unusually heavy or prolonged bleeding, and before taking an iron supplement.</p>
+        <p class="small">Pelvic-floor care is not always strengthening. Before the pelvic-health assessment, choose only comfortable relaxation and mobility work from the optional Pelvic care card. Food supports training, but no food pattern treats endometriosis or confirms a cycle stage. A copper IUD can make bleeding heavier for some people. Seek clinical advice for persistent fatigue, breathlessness, dizziness, unusually heavy or prolonged bleeding, and before taking an iron supplement.</p>
         <div class="notice warning"><strong>Seek clinical advice</strong> for new or escalating pelvic pain, fainting, unusually heavy bleeding, neurological symptoms or symptoms persisting beyond your usual pattern.</div>
       </section>
       <section class="card">
@@ -611,6 +645,7 @@
             <li>Sims ST, et al. <a href="https://doi.org/10.1080/15502783.2023.2204066">Nutritional concerns of the female athlete</a>, 2023.</li>
             <li>Mountjoy M, et al. <a href="https://doi.org/10.1136/bjsports-2023-106994">IOC consensus statement on Relative Energy Deficiency in Sport</a>, 2023.</li>
             <li>Xie Y, et al. <a href="https://doi.org/10.1371/journal.pone.0317820">Physical activity and exercise in endometriosis</a>, 2025.</li>
+            <li>Can G, et al. <a href="https://pubmed.ncbi.nlm.nih.gov/40705433/">Physiotherapy for endometriosis-associated pelvic pain: a systematic review and meta-analysis</a>, 2026. Studies are heterogeneous, so individual pelvic-health assessment remains important.</li>
             <li>ESHRE Guideline Group. <a href="https://doi.org/10.1093/hropen/hoac009">ESHRE guideline: endometriosis</a>, 2022.</li>
             <li>RANZCOG. <a href="https://ranzcog.edu.au/womens-health/endometriosis/">Australian Living Evidence Guideline: Endometriosis</a>.</li>
           </ol>
@@ -694,6 +729,51 @@
         ]
       }
     ];
+    const pelvicCare = {
+      id: "pelvic-care",
+      short: "Pelvic care",
+      title: "Pelvic care",
+      focus: "Optional 1–2 exercise routine",
+      intro: "Choose one or two comfortable cards during a warm-up or cooldown. This is optional, does not count as a workout and does not change your four-session sequence.",
+      cards: [
+        {
+          id: "360-breathing",
+          name: "360° breathing and release",
+          duration: "4–6 slow breaths",
+          visual: "breathing",
+          steps: [
+            "Sit supported or lie comfortably. Let your shoulders, jaw and buttocks soften.",
+            "Breathe in slowly and allow the lower ribs and abdomen to expand in all directions.",
+            "Let the pelvic-floor area soften with the inhale. Do not push down or strain.",
+            "Breathe out without squeezing, gripping or holding your breath."
+          ]
+        },
+        {
+          id: "supported-release",
+          name: "Supported pelvic-floor release",
+          duration: "3–5 slow breaths",
+          visual: "release",
+          steps: [
+            "Choose a supported position: lie with calves on a bench or sofa, or lie on your side with pillows between the knees.",
+            "Unclench the jaw, abdomen and buttocks.",
+            "On the inhale, imagine the base of the pelvis widening or an elevator settling to ground level.",
+            "Stay with a comfortable breath. Do not bear down, stretch forcefully or chase a sensation."
+          ]
+        },
+        {
+          id: "pelvic-clock",
+          name: "Gentle pelvic clock",
+          duration: "6–8 small movements",
+          visual: "clock",
+          steps: [
+            "Lie on your back with knees bent, feet supported and breathing easy.",
+            "Gently tip the pelvis a small amount toward 12 o’clock, then toward 6 o’clock.",
+            "Keep the motion slow and pain-free. Let the abdomen and buttocks stay soft.",
+            "Stop if movement causes cramping, pressure or more pain."
+          ]
+        }
+      ]
+    };
     const archivedPerformanceExercises = [
       { id: "smith-squat", name: "Smith high-bar squat", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
       { id: "split-squat", name: "Bulgarian split squat", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
@@ -722,6 +802,10 @@
       nightWeeks: { 2: true },
       selectedWeek: 1,
       selectedWorkout: "lower-a",
+      activeSession: "",
+      pelvicCare: {},
+      pelvicCareNotes: {},
+      pelvicCareLogs: [],
       shortMode: false
     });
     let data = defaultData();
@@ -787,6 +871,14 @@
     function formatDate(date) {
       return new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short" }).format(date);
     }
+    function formatDateTime(value) {
+      return new Intl.DateTimeFormat("en-AU", {
+        day: "numeric",
+        month: "short",
+        hour: "numeric",
+        minute: "2-digit"
+      }).format(new Date(value));
+    }
     function weekLabel(week) {
       const start = dateForWeek(week);
       const end = new Date(start);
@@ -814,6 +906,31 @@
     }
     function workoutById(id) {
       return workouts.find((workout) => workout.id === id) || workouts[0];
+    }
+    function activeSessionId() {
+      return data.activeSession || data.selectedWorkout;
+    }
+    function pelvicCardById(id) {
+      return pelvicCare.cards.find((card) => card.id === id);
+    }
+    function migrateLegacyPelvicCareSelections() {
+      if (!data.pelvicCare || data.pelvicCareLogs?.length) return;
+      const legacyEntries = Object.entries(data.pelvicCare)
+        .map(([week, choices]) => ({
+          week: Number(week),
+          cards: Object.entries(choices || {}).filter(([, selected]) => selected).map(([id]) => id)
+        }))
+        .filter((entry) => entry.cards.length);
+      if (!legacyEntries.length) return;
+      data.pelvicCareLogs = legacyEntries.map((entry) => ({
+        id: `legacy-${entry.week}-${entry.cards.join("-")}`,
+        week: entry.week,
+        timestamp: dateForWeek(entry.week).toISOString(),
+        cards: entry.cards,
+        note: "Imported from a previous weekly pelvic-care selection."
+      }));
+      data.pelvicCare = {};
+      saveData();
     }
     function parseRepRange(reps) {
       const values = String(reps).match(/\d+/g);
@@ -988,10 +1105,10 @@
       `;
     }
     function renderSessionTabs() {
-      const active = data.selectedWorkout;
-      document.getElementById("session-tabs").innerHTML = workouts.map((workout) => `
-        <button class="${workout.id === active ? "active" : ""}" data-workout="${workout.id}" type="button" role="tab" aria-selected="${workout.id === active}">
-          ${workout.short}<span>${workout.focus}</span>
+      const active = activeSessionId();
+      document.getElementById("session-tabs").innerHTML = [...workouts, pelvicCare].map((session) => `
+        <button class="${session.id === active ? "active" : ""}" data-session="${session.id}" type="button" role="tab" aria-selected="${session.id === active}">
+          ${session.short}<span>${session.focus}</span>
         </button>
       `).join("");
     }
@@ -1079,17 +1196,106 @@
           </div>
         </details>`;
     }
+    function pelvicVisualMarkup(type) {
+      if (type === "breathing") {
+        return `
+          <svg class="pelvic-visual" viewBox="0 0 280 120" role="img" aria-label="A calm torso outline with arrows expanding around the lower ribs">
+            <path d="M115 18 Q140 8 165 18 L188 86 Q180 104 140 106 Q100 104 92 86 Z" fill="#fffdfa" stroke="#b85f76" stroke-width="3"/>
+            <path d="M111 50 C96 45 84 45 68 50 M111 72 C94 77 82 78 66 74 M169 50 C184 45 196 45 212 50 M169 72 C186 77 198 78 214 74" fill="none" stroke="#43614b" stroke-width="3" stroke-linecap="round"/>
+            <path d="M68 50 l8 -5 M68 50 l8 5 M66 74 l8 -5 M66 74 l8 5 M212 50 l-8 -5 M212 50 l-8 5 M214 74 l-8 -5 M214 74 l-8 5" fill="none" stroke="#43614b" stroke-width="3" stroke-linecap="round"/>
+            <text x="140" y="116" text-anchor="middle" fill="#7d6c74" font-size="12">Breathe wide and soften</text>
+          </svg>`;
+      }
+      if (type === "release") {
+        return `
+          <svg class="pelvic-visual" viewBox="0 0 280 120" role="img" aria-label="A gentle line returning to a calm baseline">
+            <line x1="42" y1="88" x2="238" y2="88" stroke="#b85f76" stroke-width="3" stroke-linecap="round"/>
+            <path d="M92 42 C116 50 138 62 140 88 C142 62 164 50 188 42" fill="none" stroke="#43614b" stroke-width="4" stroke-linecap="round"/>
+            <path d="M140 34 v40 M140 74 l-7 -8 M140 74 l7 -8" fill="none" stroke="#43614b" stroke-width="3" stroke-linecap="round"/>
+            <text x="140" y="110" text-anchor="middle" fill="#7d6c74" font-size="12">Return gently to neutral</text>
+          </svg>`;
+      }
+      return `
+        <svg class="pelvic-visual" viewBox="0 0 280 120" role="img" aria-label="A clock face showing small pelvic tilts toward twelve and six o'clock">
+          <circle cx="140" cy="58" r="38" fill="#fffdfa" stroke="#b85f76" stroke-width="3"/>
+          <text x="140" y="16" text-anchor="middle" fill="#7d6c74" font-size="12">12</text>
+          <text x="140" y="115" text-anchor="middle" fill="#7d6c74" font-size="12">6</text>
+          <path d="M140 48 v-18 M140 30 l-6 8 M140 30 l6 8 M140 68 v18 M140 86 l-6 -8 M140 86 l6 -8" fill="none" stroke="#43614b" stroke-width="3" stroke-linecap="round"/>
+          <text x="140" y="62" text-anchor="middle" fill="#7d6c74" font-size="12">small</text>
+        </svg>`;
+    }
+    function renderPelvicCare() {
+      const week = Number(data.selectedWeek);
+      const choices = data.pelvicCare?.[week] || {};
+      const note = data.pelvicCareNotes?.[week] || "";
+      const entries = (data.pelvicCareLogs || []).filter((entry) => entry.week === week);
+      document.getElementById("workout-content").innerHTML = `
+        <section class="card">
+          <div class="workout-header">
+            <div><p class="eyebrow">${pelvicCare.focus}</p><h2>${pelvicCare.title}</h2></div>
+            <span class="pill sage">5–10 min</span>
+          </div>
+          <p class="subtle">${pelvicCare.intro}</p>
+          <div class="notice warning"><strong>Start with relaxation, not strengthening.</strong><br>Pelvic pain can involve muscles that are weak, overactive or both. This app cannot tell which applies. Until the pelvic-health assessment, use only the cards below. They support awareness and comfort, but do not treat endometriosis.</div>
+          <div class="notice"><strong>Choose up to two.</strong><br>On a green day, choose one or two if they feel comfortable. On an amber day, use a relaxation card only if it feels soothing. On a red day or during severe symptoms, skip it.</div>
+          <div class="pelvic-grid">
+            ${pelvicCare.cards.map((card) => `
+              <article class="pelvic-card">
+                <h3>${card.name}</h3>
+                <p class="exercise-meta">${card.duration}</p>
+                ${pelvicVisualMarkup(card.visual)}
+                <ol>${card.steps.map((step) => `<li>${step}</li>`).join("")}</ol>
+                <label class="pelvic-choice"><input type="checkbox" data-pelvic-card="${card.id}" ${choices[card.id] ? "checked" : ""}>Add to this entry</label>
+              </article>
+            `).join("")}
+          </div>
+          <label class="exercise-notes">Optional note for a pelvic-health professional<textarea id="pelvic-care-note" placeholder="For example: where you felt tension, what felt comfortable, and whether symptoms changed.">${escapeHtml(note)}</textarea></label>
+          <div class="inline-actions">
+            <button id="save-pelvic-care" class="button-primary" type="button">Save pelvic-care entry</button>
+          </div>
+          <p class="small">Each saved entry records the date and time, plan week, selected cards and note in this device’s local data and JSON backup. Treat an exported backup as sensitive health information when sharing it with a pelvic-health professional.</p>
+          <div id="pelvic-care-log">
+            <h3>This week’s entries</h3>
+            <ul class="log-list">
+              ${entries.length ? entries.map((entry) => {
+                const cardNames = entry.cards.map((id) => pelvicCardById(id)?.name || id).join(" · ");
+                return `
+                  <li>
+                    <span><strong>${formatDateTime(entry.timestamp)}</strong><br><span class="small">${escapeHtml(cardNames)}${entry.note ? `<br>${escapeHtml(entry.note)}` : ""}</span></span>
+                    <button class="button-quiet danger" data-delete-pelvic-entry="${entry.id}" type="button">Remove</button>
+                  </li>`;
+              }).join("") : "<li><span>No pelvic-care entry saved for this week.</span></li>"}
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <h3>After the pelvic-health assessment</h3>
+          <p class="subtle">Use pelvic-floor contractions, quick contractions, or a pre-lift/cough contraction only if the clinician recommends them and gives a dose. Full relaxation between contractions matters as much as the lift. Do not hold a constant pelvic-floor squeeze while training.</p>
+          <div class="notice warning"><strong>Stop and seek advice</strong> if this brings on or worsens pelvic, abdominal, back or genital pain; cramping; pressure or heaviness; urinary or bowel symptoms; dizziness; unusual bleeding; breath-holding; or forceful bearing down. Never practise by repeatedly stopping urine mid-flow.</div>
+          <h3>Learn more</h3>
+          <ul class="resource-list">
+            <li><a href="https://www.continence.org.au/news/hypertonic-pelvic-floor" target="_blank" rel="noopener noreferrer">Continence Health Australia: the hypertonic pelvic floor</a></li>
+            <li><a href="https://www.endometriosisaustralia.org/post/overactive-pelvic-floor-muscles-in-endometriosis" target="_blank" rel="noopener noreferrer">Endometriosis Australia: overactive pelvic-floor muscles in endometriosis</a></li>
+            <li><a href="https://www.plymouthhospitals.nhs.uk/display-pil/pil-pelvic-floor-relaxation-4057/" target="_blank" rel="noopener noreferrer">University Hospitals Plymouth: pelvic-floor relaxation</a></li>
+            <li><a href="https://www.healthdirect.gov.au/pelvic-floor-exercises" target="_blank" rel="noopener noreferrer">Healthdirect Australia: general pelvic-floor information</a></li>
+            <li><a href="https://www.pelvicfloorfirst.org.au/news/660/a-physios-favourite-pelvic-mobility-stretches.html" target="_blank" rel="noopener noreferrer">Pelvic Floor First: pelvic mobility stretches</a></li>
+          </ul>
+        </section>`;
+    }
     function renderWorkout() {
       const week = Number(data.selectedWeek);
-      const workout = workoutById(data.selectedWorkout);
       const phase = phaseForWeek(week);
-      const isShort = Boolean(data.shortMode);
       document.getElementById("workout-week").textContent = `Week ${week} · ${phase.name}`;
       document.getElementById("week-dates").textContent = weekLabel(week);
       document.getElementById("week-night-toggle").textContent = `Night block: ${data.nightWeeks?.[week] ? "on" : "off"}`;
       renderReadiness();
       renderBackupReminders();
       renderSessionTabs();
+      if (activeSessionId() === pelvicCare.id) {
+        renderPelvicCare();
+        return;
+      }
+      const workout = workoutById(activeSessionId());
+      const isShort = Boolean(data.shortMode);
       const exercises = isShort ? workout.exercises.filter((exercise) => exercise.priority).slice(0, 3) : workout.exercises;
       document.getElementById("workout-content").innerHTML = `
         <section class="card">
@@ -1343,9 +1549,12 @@
         updateCycleContext(event.target.value);
       });
       document.getElementById("session-tabs").addEventListener("click", (event) => {
-        const button = event.target.closest("button[data-workout]");
+        const button = event.target.closest("button[data-session]");
         if (!button) return;
-        data.selectedWorkout = button.dataset.workout;
+        data.activeSession = button.dataset.session;
+        if (workouts.some((workout) => workout.id === data.activeSession)) {
+          data.selectedWorkout = data.activeSession;
+        }
         data.shortMode = false;
         saveData();
         renderWorkout();
@@ -1354,6 +1563,37 @@
         const preset = event.target.closest("button[data-rest-seconds]");
         if (preset) {
           startRestTimer(Number(preset.dataset.restSeconds));
+          return;
+        }
+        if (event.target.closest("#save-pelvic-care")) {
+          const week = Number(data.selectedWeek);
+          const cards = Object.entries(data.pelvicCare?.[week] || {})
+            .filter(([, selected]) => selected)
+            .map(([id]) => id);
+          if (!cards.length) {
+            alert("Choose one or two pelvic-care cards before saving an entry.");
+            return;
+          }
+          const note = data.pelvicCareNotes?.[week] || "";
+          data.pelvicCareLogs ||= [];
+          data.pelvicCareLogs.unshift({
+            id: globalThis.crypto?.randomUUID?.() || `pelvic-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            week,
+            timestamp: new Date().toISOString(),
+            cards,
+            note
+          });
+          data.pelvicCare[week] = {};
+          data.pelvicCareNotes[week] = "";
+          saveData();
+          renderPelvicCare();
+          return;
+        }
+        const deletePelvicEntry = event.target.closest("button[data-delete-pelvic-entry]");
+        if (deletePelvicEntry) {
+          data.pelvicCareLogs = (data.pelvicCareLogs || []).filter((entry) => entry.id !== deletePelvicEntry.dataset.deletePelvicEntry);
+          saveData();
+          renderPelvicCare();
           return;
         }
         if (event.target.closest("#cancel-rest-timer")) cancelRestTimer();
@@ -1370,10 +1610,29 @@
           data.logs[keyForSession].sessionNote = input.value;
           saveData();
         }
+        if (input.id === "pelvic-care-note") {
+          const week = Number(data.selectedWeek);
+          data.pelvicCareNotes ||= {};
+          data.pelvicCareNotes[week] = input.value;
+          saveData();
+        }
       });
       document.getElementById("workout-content").addEventListener("change", (event) => {
         const input = event.target;
         if (input.matches("[data-log-workout]")) renderWorkout();
+        if (input.matches("[data-pelvic-card]")) {
+          const week = Number(data.selectedWeek);
+          data.pelvicCare ||= {};
+          data.pelvicCare[week] ||= {};
+          const selectedCards = Object.values(data.pelvicCare[week]).filter(Boolean).length;
+          if (input.checked && !data.pelvicCare[week][input.dataset.pelvicCard] && selectedCards >= 2) {
+            alert("Choose up to two pelvic-care cards this week.");
+            renderPelvicCare();
+            return;
+          }
+          data.pelvicCare[week][input.dataset.pelvicCard] = input.checked;
+          saveData();
+        }
         if (input.id === "short-mode") {
           data.shortMode = input.checked;
           saveData();
@@ -1463,6 +1722,7 @@
       });
     }
     initialiseStorage();
+    migrateLegacyPelvicCareSelections();
     if (!data.selectedWeek) data.selectedWeek = currentPlanWeek();
     bindEvents();
     renderAll();
