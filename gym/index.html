@@ -440,7 +440,7 @@
       <div class="hero">
         <p class="eyebrow">27 July to 18 October 2026</p>
         <h1 id="plan-title">12-Week Gym Plan</h1>
-        <p class="subtle">Glute-prioritised strength, athletic definition, core strength and fitness, built around a changing midwife roster.</p>
+        <p class="subtle">Glute-prioritised strength, thigh-minimising lower-body work, core strength and fitness, built around a changing midwife roster.</p>
         <span class="goal-line">Recomposition first, 3 kg is aspirational</span>
       </div>
       <div id="storage-notice" class="notice hidden"></div>
@@ -468,7 +468,7 @@
       </section>
       <section class="card">
         <h2>Optional fifth day</h2>
-        <p class="subtle">A full-body cardio/dumbbell class is optional conditioning, not a strength-session replacement. Use it only when sleep, soreness and motivation are good. Keep it at least 24 hours before a hard lower session if it is leg-heavy. Skip it during Week 8 deload, consecutive night shifts and high-fatigue weeks.</p>
+        <p class="subtle">Choose low-impact cardio or an upper-body-focused class when possible. A leg-heavy cardio/dumbbell class adds thigh-training volume, so skip it or keep squats, lunges and jumps easy. It is optional conditioning, not a strength-session replacement. Skip it during Week 8 deload, consecutive night shifts and high-fatigue weeks.</p>
       </section>
     </section>
 
@@ -511,7 +511,7 @@
     <section id="progress" class="tab-view" aria-labelledby="progress-title">
       <p class="eyebrow">Trends, not single readings</p>
       <h1 id="progress-title">Progress</h1>
-      <p class="subtle">Track consistency, performance and standardized Evolt trends. A gym-only plan cannot guarantee a specific scale change.</p>
+      <p class="subtle">Track consistency, performance, standardised body measurements and Evolt trends. A gym-only plan cannot guarantee a specific scale change.</p>
       <section class="card">
         <h2>Performance markers</h2>
         <p class="subtle">Review every exercise you log. Use the graph to compare your best working weight week by week.</p>
@@ -530,6 +530,18 @@
         </div>
         <div id="weight-chart" class="chart"></div>
         <ul id="weight-list" class="log-list"></ul>
+      </section>
+      <section class="card">
+        <h2>Waist, hip and thigh measurements</h2>
+        <p class="small">Log every 2–4 weeks, at the same time of day and under similar food, fluid and cycle conditions. Measure waist after a normal exhale at one consistent point, hip at the fullest glute point, and mid-thigh at the same marked point on one leg.</p>
+        <div class="progress-form">
+          <label>Plan week<select id="measure-week"></select></label>
+          <label>Waist, cm<input id="measure-waist" type="number" inputmode="decimal" min="30" max="200" step="0.1"></label>
+          <label>Hip, cm<input id="measure-hip" type="number" inputmode="decimal" min="40" max="200" step="0.1"></label>
+          <label>Mid-thigh, cm<input id="measure-thigh" type="number" inputmode="decimal" min="20" max="150" step="0.1"></label>
+          <button id="save-measurements" class="button-primary" type="button">Save measurements</button>
+        </div>
+        <ul id="measurements-list" class="log-list"></ul>
       </section>
       <section class="card">
         <h2>Evolt checkpoints</h2>
@@ -562,6 +574,11 @@
         <p class="small">Most compound lifts use 2–3 minutes rest; unilateral and machine exercises use 90–120 seconds; isolation and core use 60–90 seconds.</p>
       </section>
       <section class="card">
+        <h2>Glutes, thighs and waist</h2>
+        <p class="subtle">Lower-body volume is deliberately biased toward hip extension and hip abduction. The two low-volume lunge sets maintain basic knee strength, but are not a thigh-growth priority. If the optional class has hard squats, lunges or jumps, skip it or treat it as the week’s knee-dominant work.</p>
+        <p class="small">Reducing thigh-training volume reduces the stimulus to add thigh muscle, but does not selectively remove thigh fat. A smaller waist or thigh measurement requires overall body-fat change where appropriate. A modest, sustainable energy deficit supports that goal better than aggressive restriction, which can compromise recovery and glute progress.</p>
+      </section>
+      <section class="card">
         <h2>Cycle context, endometriosis and lower-energy days</h2>
         <p class="subtle">Use cycle stage as context, not a prescription. With irregular cycles, do not rely on calendar dates to identify ovulation. Use symptoms, readiness and personal movement triggers to decide adjustments. On 1–2 lower-energy or painful days, reduce sets or load, choose stable machines and low-impact warm-up cardio, and avoid any bracing, range or impact that aggravates symptoms. Resume normally when symptoms settle.</p>
         <p class="small">Food supports training, but no food pattern treats endometriosis or confirms a cycle stage. A copper IUD can make bleeding heavier for some people. Seek clinical advice for persistent fatigue, breathlessness, dizziness, unusually heavy or prolonged bleeding, and before taking an iron supplement.</p>
@@ -579,7 +596,7 @@
       <details class="card details">
         <summary>Evidence and programme rationale</summary>
         <div class="subtle">
-          <p>Progressive resistance training, sufficient weekly quality volume, sets performed reasonably near failure, and progressive overload are the main evidence-based levers for hypertrophy and strength. Hip thrusts and squats can both grow glutes, so the plan uses multiple hip- and knee-dominant patterns rather than claiming one universally best exercise. No exercise spot-reduces abdominal fat.</p>
+          <p>Progressive resistance training, sufficient weekly quality volume, sets performed reasonably near failure, and progressive overload are the main evidence-based levers for hypertrophy and strength. This plan uses more hip-extension and hip-abduction work to prioritise glutes while keeping knee-dominant volume low. That reduces the thigh-growth stimulus but neither lower-body nor core exercises spot-reduce fat.</p>
           <ol class="source-list">
             <li>Currier BS, et al. <a href="https://pubmed.ncbi.nlm.nih.gov/41843416/">ACSM Position Stand: Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults</a>, 2026.</li>
             <li>Currier BS, et al. <a href="https://doi.org/10.1136/bjsports-2023-106807">Resistance training prescription for muscle strength and hypertrophy in healthy adults</a>, 2023.</li>
@@ -628,13 +645,12 @@
     };
     const workouts = [
       {
-        id: "lower-a", short: "Lower A", title: "Lower A", focus: "Hip thrust + squat",
+        id: "lower-a", short: "Lower A", title: "Lower A", focus: "Hip thrust + glute isolation",
         intro: "Five easy cardio minutes, then 2–4 non-fatiguing hip-thrust ramp sets.",
         exercises: [
           { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
-          { id: "smith-squat", name: "Smith high-bar squat", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Leg press or goblet squat", cue: "Use a stable stance and a comfortable depth with controlled knees and torso.", priority: true },
-          { id: "split-squat", name: "Bulgarian split squat", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Reverse lunge or step-up", cue: "Use a stride that lets you feel both glute and thigh work without losing balance." },
-          { id: "leg-curl-a", name: "Seated leg curl", sets: 3, reps: "10–15", rest: "90 sec", alt: "Lying leg curl", cue: "Control the return, rather than bouncing into the stretch.", priority: true },
+          { id: "long-stride-lunge", name: "Long-stride reverse lunge", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Low step-up with a long stride", cue: "Take a long, stable step back and lean the torso slightly forward. Keep the load modest and stop well before technique changes.", priority: false },
+          { id: "cable-kickback-a", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "60–90 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
           { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range. Superset with Pallof presses." },
           { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "60 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis." }
         ]
@@ -652,14 +668,12 @@
         ]
       },
       {
-        id: "lower-b", short: "Lower B", title: "Lower B", focus: "RDL + unilateral-leg emphasis",
-        intro: "Five easy cardio minutes, then 2–4 controlled RDL ramp sets.",
+        id: "lower-b", short: "Lower B", title: "Lower B", focus: "Glute bridge + hip hinge",
+        intro: "Five easy cardio minutes, then 2–4 non-fatiguing glute-bridge ramp sets.",
         exercises: [
-          { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled.", priority: true },
-          { id: "reverse-lunge", name: "Reverse lunge", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Bulgarian split squat", cue: "Step back softly and use a stable range. Load only after control is reliable." },
-          { id: "leg-press", name: "Leg press", sets: 3, reps: "8–12", rest: "2 min", alt: "Smith squat", cue: "Keep the pelvis stable against the pad and use a controlled depth.", priority: true },
-          { id: "leg-extension", name: "Leg extension", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Heel-elevated split squat", cue: "Control the lowering phase. Superset with leg curls." },
-          { id: "leg-curl-b", name: "Lying or seated leg curl", sets: 3, reps: "10–15", rest: "90 sec", alt: "Slider leg curl", cue: "Keep the tempo controlled instead of using momentum.", priority: true },
+          { id: "glute-bridge", name: "Barbell or Smith glute bridge", sets: 3, reps: "8–12", rest: "2–3 min", alt: "Dumbbell glute bridge", cue: "Keep ribs down and use the most comfortable range. Pause only if you can stay controlled.", priority: true },
+          { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 2, reps: "6–10", rest: "2–3 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled. This is deliberately low volume.", priority: true },
+          { id: "cable-kickback-b", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "60–90 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
           { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rest: "60–90 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range. Superset with dead bugs." },
           { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady." }
         ]
@@ -673,15 +687,28 @@
           { id: "chest-press", name: "Machine chest press", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Flat dumbbell press", cue: "Keep shoulder blades controlled against the pad.", priority: true },
           { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Assisted pull-up", cue: "Keep the path controlled and elbows travelling down.", priority: true },
           { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder. Superset with triceps." },
+          { id: "lateral-raise-b", name: "Cable lateral raise", sets: 3, reps: "12–20", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Build the shoulder-to-waist ratio without adding lower-body volume." },
           { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false },
           { id: "cable-curl", name: "Cable curl", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Dumbbell hammer curl", cue: "Keep the torso still. Superset with cable crunches." },
           { id: "cable-crunch", name: "Cable crunch", sets: 2, reps: "10–15", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Use a comfortable range. Swap if bracing or flexion aggravates symptoms." }
         ]
       }
     ];
-    const performanceExercises = workouts.flatMap((workout) =>
-      workout.exercises.map((exercise) => ({ ...exercise, workoutId: workout.id, workoutName: workout.short }))
-    );
+    const archivedPerformanceExercises = [
+      { id: "smith-squat", name: "Smith high-bar squat", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
+      { id: "split-squat", name: "Bulgarian split squat", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
+      { id: "leg-curl-a", name: "Seated leg curl", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
+      { id: "reverse-lunge", name: "Reverse lunge", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "leg-press", name: "Leg press", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "leg-extension", name: "Leg extension", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "leg-curl-b", name: "Lying or seated leg curl", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true }
+    ];
+    const performanceExercises = [
+      ...workouts.flatMap((workout) =>
+        workout.exercises.map((exercise) => ({ ...exercise, workoutId: workout.id, workoutName: workout.short }))
+      ),
+      ...archivedPerformanceExercises
+    ];
 
     const defaultData = () => ({
       logs: {},
@@ -690,6 +717,7 @@
       cycleContexts: {},
       weeklyBackups: {},
       weights: {},
+      measurements: {},
       evolt: {},
       nightWeeks: { 2: true },
       selectedWeek: 1,
@@ -920,11 +948,12 @@
     }
     function renderWeekOptions() {
       const optionMarkup = weeks.map((week) => `<option value="${week}">${weekLabel(week)}</option>`).join("");
-      ["week-select", "weight-week", "evolt-week"].forEach((id) => {
+      ["week-select", "weight-week", "measure-week", "evolt-week"].forEach((id) => {
         document.getElementById(id).innerHTML = optionMarkup;
       });
       document.getElementById("week-select").value = data.selectedWeek;
       document.getElementById("weight-week").value = data.selectedWeek;
+      document.getElementById("measure-week").value = data.selectedWeek;
       document.getElementById("evolt-week").value = [1, 6, 12].includes(Number(data.selectedWeek)) ? data.selectedWeek : 1;
     }
     function renderReadiness() {
@@ -1122,13 +1151,29 @@
       document.getElementById("weight-list").innerHTML = weightEntries.length
         ? weightEntries.map((entry) => `<li><span>Week ${entry.week}</span><strong>${entry.value.toFixed(1)} kg</strong></li>`).join("")
         : "<li><span>No weekly weight logged yet.</span></li>";
+      const measurementEntries = weeks
+        .filter((week) => ["waist", "hip", "thigh"].some((key) => data.measurements?.[week]?.[key] !== undefined && data.measurements[week][key] !== ""))
+        .map((week) => ({ week, ...data.measurements[week] }));
+      const measurementValue = (value) => value !== undefined && value !== "" ? `${value} cm` : "not logged";
+      document.getElementById("measurements-list").innerHTML = measurementEntries.length
+        ? measurementEntries.map((entry) => `
+          <li>
+            <span><strong>Week ${entry.week}</strong><br><span class="small">Waist ${measurementValue(entry.waist)} · Hip ${measurementValue(entry.hip)} · Mid-thigh ${measurementValue(entry.thigh)}</span></span>
+            <button class="button-quiet" data-delete-measurements="${entry.week}" type="button">Remove</button>
+          </li>
+        `).join("")
+        : "<li><span>No body measurements saved yet.</span></li>";
       const evoltEntries = [1, 6, 12].filter((week) => data.evolt?.[week]).map((week) => data.evolt[week]);
       document.getElementById("evolt-list").innerHTML = evoltEntries.length
         ? evoltEntries.map((entry) => `<li><span><strong>Week ${entry.week}</strong><br><span class="small">Weight ${entry.weight || "—"} kg · Fat ${entry.fat || "—"}% · Muscle ${entry.muscle || "—"} kg</span></span><button class="button-quiet" data-delete-evolt="${entry.week}" type="button">Remove</button></li>`).join("")
         : "<li><span>No Evolt checkpoint saved yet.</span></li>";
-      const selectedExercise = performanceExercises.find((exercise) => exercise.id === selectedPerformanceExercise) || performanceExercises[0];
+      const selectablePerformanceExercises = performanceExercises.filter((exercise) => !exercise.archived || weeks.some((week) => {
+        const sets = data.logs?.[sessionKey(week, exercise.workoutId)]?.[exercise.id] || [];
+        return sets.some((set) => set.weight !== "" || set.reps !== "");
+      }));
+      const selectedExercise = selectablePerformanceExercises.find((exercise) => exercise.id === selectedPerformanceExercise) || selectablePerformanceExercises[0];
       selectedPerformanceExercise = selectedExercise.id;
-      document.getElementById("performance-exercise").innerHTML = performanceExercises.map((exercise) =>
+      document.getElementById("performance-exercise").innerHTML = selectablePerformanceExercises.map((exercise) =>
         `<option value="${exercise.id}">${exercise.workoutName} · ${exercise.name}</option>`
       ).join("");
       document.getElementById("performance-exercise").value = selectedExercise.id;
@@ -1140,7 +1185,7 @@
         return weights.length ? [{ week, value: Math.max(...weights) }] : [];
       });
       document.getElementById("performance-chart").innerHTML = chartMarkup(performanceEntries, `${selectedExercise.name} best weight`);
-      const performance = performanceExercises.map((exercise) => {
+      const performance = selectablePerformanceExercises.map((exercise) => {
         for (let week = 12; week >= 1; week -= 1) {
           const sets = data.logs?.[sessionKey(week, exercise.workoutId)]?.[exercise.id] || [];
           const completed = sets.filter((set) => set.weight !== "" || set.reps !== "");
@@ -1350,6 +1395,20 @@
         renderProgress();
         renderPlan();
       });
+      document.getElementById("save-measurements").addEventListener("click", () => {
+        const week = Number(document.getElementById("measure-week").value);
+        const waist = document.getElementById("measure-waist").value;
+        const hip = document.getElementById("measure-hip").value;
+        const thigh = document.getElementById("measure-thigh").value;
+        if (!waist && !hip && !thigh) return;
+        data.measurements ||= {};
+        data.measurements[week] = { week, waist, hip, thigh };
+        saveData();
+        ["measure-waist", "measure-hip", "measure-thigh"].forEach((id) => {
+          document.getElementById(id).value = "";
+        });
+        renderProgress();
+      });
       document.getElementById("save-evolt").addEventListener("click", () => {
         const week = Number(document.getElementById("evolt-week").value);
         data.evolt[week] = {
@@ -1378,6 +1437,13 @@
         const button = event.target.closest("button[data-delete-evolt]");
         if (!button) return;
         delete data.evolt[Number(button.dataset.deleteEvolt)];
+        saveData();
+        renderProgress();
+      });
+      document.getElementById("measurements-list").addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-delete-measurements]");
+        if (!button) return;
+        delete data.measurements[Number(button.dataset.deleteMeasurements)];
         saveData();
         renderProgress();
       });
