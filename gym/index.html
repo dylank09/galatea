@@ -59,6 +59,7 @@
     .shell { padding: 18px 16px 108px; }
     .home-link {
       display: inline-flex;
+      gap: 7px;
       min-height: 36px;
       margin-bottom: 14px;
       padding: 0 10px;
@@ -70,6 +71,11 @@
       font-size: .84rem;
       font-weight: 800;
       text-decoration: none;
+    }
+    .home-link img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
     }
     .eyebrow {
       margin-bottom: 8px;
@@ -376,7 +382,7 @@
 </head>
 <body>
   <main class="shell">
-    <a class="home-link" href="../">← Galatea</a>
+    <a class="home-link" href="../">← <img src="../icons/favicon.png" alt="" width="22" height="22"> Galatea</a>
     <section id="plan" class="tab-view active" aria-labelledby="plan-title">
       <div class="hero">
         <p class="eyebrow">27 July to 18 October 2026</p>
