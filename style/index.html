@@ -27,6 +27,7 @@
     </nav>
     <nav class="quick-nav style-section-nav" aria-label="Style guide sections">
       <a href="#profile">Profile</a>
+      <a href="#ai-help">AI help</a>
       <a href="#buy">Buy test</a>
       <a href="#palette">Colours</a>
       <a href="#fit">Fit</a>
@@ -67,6 +68,58 @@
           <h3>Relaxed minimal</h3>
           <p class="meta">Feminine ↔ androgynous · casual · comfortable · machine-washable.</p>
         </article>
+      </div>
+    </section>
+
+    <section id="ai-help" class="section" aria-labelledby="ai-help-title">
+      <div class="section-heading">
+        <p class="eyebrow">In-store support</p>
+        <h2 id="ai-help-title">Bring a second opinion into the fitting room.</h2>
+        <p class="lede">Copy this once, paste it into any image-capable AI, then add a photo of the item. It will give a candid verdict and research it when that could change the decision.</p>
+      </div>
+      <div class="content-card shopping-prompt-card">
+        <ol class="shopping-prompt-steps">
+          <li><strong>Copy</strong> the shopping prompt.</li>
+          <li><strong>Paste</strong> it into your preferred AI app.</li>
+          <li><strong>Attach</strong> the item photo, plus the price, product label, or fabric tag if you have it.</li>
+        </ol>
+        <div class="shopping-prompt-actions">
+          <button class="button button-primary" type="button" data-shopping-copy>Copy shopping prompt</button>
+          <p class="copy-status" data-shopping-copy-status role="status" aria-live="polite"></p>
+        </div>
+        <details class="shopping-prompt-details">
+          <summary>Preview prompt</summary>
+          <pre class="shopping-prompt-preview" data-shopping-prompt>You are my candid, evidence-led in-store personal shopper for clothing, shoes, bags, jewellery, and other wearable accessories in Australia. I will attach a photo of an item I am considering. It may be worn by me, on a hanger, or on a shelf.
+
+My profile is:
+- Cool Summer colouring with a deeper, clearer edge and medium-high contrast. Favour cool, softened, medium-clear colours. Use select cool Winter accents when they suit. Avoid warm, muddy, yellow, orange, or overly stark colours near my face.
+- I am 157 cm, with a short torso, longer legs, and subtle hip emphasis. Favour a clear vertical line, mid-rise bottoms, clean hip fit, and hemlines that do not end at the widest hip or calf.
+- My style is relaxed minimal, between feminine and androgynous, casual, comfortable, and machine-washable where practical.
+- Preferred wardrobe direction: cool white, pearl grey, blue-grey, slate, charcoal, ink navy, soft denim, cool teal, raspberry, mulberry, and smoky lavender; low-profile shoes and clean, versatile shapes.
+
+Treat this profile as informed preferences, not rigid rules. Assess the actual item and explain a meaningful exception when it works.
+
+First, inspect the image and determine whether the item is being worn. Identify only what you can genuinely see, and call out uncertainty caused by lighting, framing, or hidden details. If the image shows the item worn, assess visible fit and proportion. Do not make body judgements or infer fit, fabric, construction, or condition that the image cannot support.
+
+Give an immediate provisional verdict: BUY, BUY ONLY IF, or SKIP. Include a confidence level and the single strongest reason. Be concise, candid, and skeptical of impulse purchases. Do not flatter me or give vague reassurance.
+
+Assess, where the evidence allows:
+- Personal suitability: colour, silhouette, visible fit, proportion, comfort clues, versatility, and whether it is likely to duplicate something I already own.
+- Product merit: material and construction clues, durability, care burden, price/value, return risk, and likely cost per wear.
+- Either poor personal suitability or poor quality/value can veto a BUY. Use BUY ONLY IF only for a specific, fixable condition, such as trying a different size or confirming fabric content.
+
+If the exact item or a credible match can be identified and online research could change the decision, browse the web. Check credible review patterns, current Australian price and return information, and at most two better Australian alternatives with a clear quality or value advantage. Cite links for researched claims, state how confident you are that the match is exact, and never invent findings if browsing is unavailable or the item cannot be identified.
+
+After the provisional verdict, ask at most three short, decision-changing questions or photo requests, such as a natural-light try-on, fabric/care label, price, or product name. Do not ask for information that will not affect the verdict.
+
+Use this response format:
+1. Verdict and confidence
+2. Strongest reasons
+3. Fit and style read
+4. Quality, value, and web findings
+5. Unknowns that could change the decision
+6. One next action</pre>
+        </details>
       </div>
     </section>
 
@@ -449,6 +502,54 @@
       });
 
       render();
+    })();
+  </script>
+  <script>
+    (() => {
+      const button = document.querySelector("[data-shopping-copy]");
+      const prompt = document.querySelector("[data-shopping-prompt]")?.textContent.trim();
+      const status = document.querySelector("[data-shopping-copy-status]");
+
+      if (!button || !prompt || !status) return;
+
+      const fallbackCopy = () => {
+        const textarea = document.createElement("textarea");
+        textarea.value = prompt;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.append(textarea);
+        textarea.select();
+        const copied = document.execCommand("copy");
+        textarea.remove();
+        return copied;
+      };
+
+      button.addEventListener("click", async () => {
+        let copied = false;
+
+        try {
+          if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(prompt);
+            copied = true;
+          } else {
+            copied = fallbackCopy();
+          }
+        } catch {
+          copied = fallbackCopy();
+        }
+
+        status.textContent = copied
+          ? "Prompt copied. Paste it into your AI app, then attach the item photo."
+          : "Copy was not available. Select the preview text and copy it manually.";
+        button.textContent = copied ? "Copied" : "Copy shopping prompt";
+
+        if (copied) {
+          window.setTimeout(() => {
+            button.textContent = "Copy shopping prompt";
+          }, 2200);
+        }
+      });
     })();
   </script>
   <script>
