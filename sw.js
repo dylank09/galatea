@@ -1,11 +1,17 @@
-const CACHE_NAME = "gym-plan-shell-v1";
+const CACHE_NAME = "galatea-shell-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./gym/",
+  "./gym/index.html",
+  "./style/",
+  "./style/index.html",
+  "./assets/site.css",
+  "./assets/pwa.js",
   "./manifest.webmanifest",
-  "./icons/icon-192-v1.png",
-  "./icons/icon-512-v1.png",
-  "./icons/apple-touch-icon-v1.png"
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (event) => {
@@ -17,7 +23,7 @@ self.addEventListener("activate", (event) => {
     caches.keys()
       .then((keys) => Promise.all(
         keys
-          .filter((key) => key.startsWith("gym-plan-shell-") && key !== CACHE_NAME)
+          .filter((key) => (key.startsWith("galatea-shell-") || key.startsWith("gym-plan-shell-")) && key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       ))
       .then(() => self.clients.claim())
@@ -30,7 +36,27 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match(event.request);
+          return cached || caches.match("./index.html");
+        })
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
+  );
 });
 
 self.addEventListener("message", (event) => {

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8fa">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Galatea">
+  <meta name="description" content="An anonymous, phone-friendly personal style shopping guide.">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/pwa.js" defer></script>
+  <title>Style Shopping Guide · Galatea</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">G</span>Galatea</a>
+      <div class="nav-links">
+        <a href="../gym/">Gym</a>
+        <a href="./" aria-current="page">Style</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="page-shell">
+    <section class="page-hero page-hero-style" aria-labelledby="style-title">
+      <p class="eyebrow">Personal style system</p>
+      <h1 id="style-title">Style Shopping Guide</h1>
+      <p class="lede">A phone-friendly filter for colour, fit, proportion, and outfit compatibility. Use it before an item comes home.</p>
+      <nav class="quick-nav" aria-label="Style guide sections">
+        <a href="#buy">Buy test</a>
+        <a href="#palette">Palette</a>
+        <a href="#fit">Fit rules</a>
+        <a href="#outfits">Outfits</a>
+        <a href="#capsule">Capsule</a>
+      </nav>
+      <p class="status" data-pwa-status aria-live="polite">Preparing offline support…</p>
+    </section>
+
+    <section class="section" aria-labelledby="profile-title">
+      <div class="section-heading">
+        <p class="eyebrow">Working profile</p>
+        <h2 id="profile-title">The rules this guide is built around.</h2>
+      </div>
+      <div class="info-grid">
+        <article class="info-card">
+          <h3>Colour</h3>
+          <p class="meta">Provisional Cool/True Summer at the deeper, clearer edge. Medium-high value contrast. Borrow select cool Winter accents.</p>
+        </article>
+        <article class="info-card">
+          <h3>Proportion</h3>
+          <p class="meta">157 cm, short torso, longer legs, subtly hip-dominant. Create a clean vertical line and lightly balance the shoulders.</p>
+        </article>
+        <article class="info-card">
+          <h3>Style</h3>
+          <p class="meta">Relaxed casual and clean minimal, with equal feminine and androgynous modes. Machine-washable comfort first.</p>
+        </article>
+      </div>
+      <p class="privacy-note">Anonymous profile: no name or photos are included. These colour and shape conclusions are useful working rules, not a substitute for in-person draping or professional fitting.</p>
+    </section>
+
+    <section id="buy" class="section" aria-labelledby="buy-title">
+      <div class="section-heading">
+        <p class="eyebrow">15-second buy test</p>
+        <h2 id="buy-title">Only buy when every answer is yes.</h2>
+        <p class="lede">The test is intentionally strict. A “maybe” belongs back on the rack until it earns three outfits.</p>
+      </div>
+      <div class="content-card style-panel">
+        <div class="check-layout">
+          <div class="check-list" data-style-group="buy-test">
+            <label class="check-row"><input type="checkbox" data-style-check="buy-colour"><span>Cool and harmonious near the face, without a yellow, orange, or muddy cast.</span></label>
+            <label class="check-row"><input type="checkbox" data-style-check="buy-shoulders"><span>Shoulders, hips, and rise fit now, with no pulling, back gap, or dropped shoulder seam.</span></label>
+            <label class="check-row"><input type="checkbox" data-style-check="buy-line"><span>The length creates a clean vertical line and does not end at the widest hip or calf point.</span></label>
+            <label class="check-row"><input type="checkbox" data-style-check="buy-comfort"><span>Comfortable, machine-washable, and not dependent on constant adjustment.</span></label>
+            <label class="check-row"><input type="checkbox" data-style-check="buy-outfits"><span>Works with at least three existing capsule pieces, shoes, and outerwear.</span></label>
+          </div>
+          <div class="content-card progress-card">
+            <p class="eyebrow">Decision</p>
+            <h3 data-buy-title>Not ready</h3>
+            <p class="meta" data-buy-result>Keep checking. A great item passes every rule.</p>
+            <div class="button-row">
+              <button class="button button-secondary" type="button" data-style-reset="buy-test">Reset test</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="palette" class="section" aria-labelledby="palette-title">
+      <div class="section-heading">
+        <p class="eyebrow">Colour palette</p>
+        <h2 id="palette-title">Cool, softened, medium-clear colour.</h2>
+        <p class="lede">Build around soft cool white, charcoal, and ink navy. Wear black mainly below the face, in shoes, or in a softened outfit.</p>
+      </div>
+      <div class="swatch-grid">
+        <div class="swatch swatch-light swatch-soft-white">Soft cool white<span>#F4F4F1</span></div>
+        <div class="swatch swatch-light swatch-pearl-grey">Pearl grey<span>#D2D5D7</span></div>
+        <div class="swatch swatch-light swatch-blue-grey">Blue-grey<span>#9DAAB2</span></div>
+        <div class="swatch swatch-dark swatch-slate">Slate<span>#607281</span></div>
+        <div class="swatch swatch-dark swatch-charcoal">Charcoal<span>#384149</span></div>
+        <div class="swatch swatch-dark swatch-ink-navy">Ink navy<span>#1D3047</span></div>
+        <div class="swatch swatch-dark swatch-soft-denim">Soft denim<span>#58738A</span></div>
+        <div class="swatch swatch-dark swatch-cornflower">Cornflower<span>#5E82BE</span></div>
+        <div class="swatch swatch-dark swatch-cool-teal">Cool teal<span>#287B83</span></div>
+        <div class="swatch swatch-dark swatch-raspberry">Raspberry<span>#A43864</span></div>
+        <div class="swatch swatch-dark swatch-mulberry">Mulberry<span>#74456E</span></div>
+        <div class="swatch swatch-dark swatch-smoky-lavender">Smoky lavender<span>#9A86B4</span></div>
+      </div>
+      <div class="rules-grid section">
+        <article class="content-card rule-good">
+          <h3>Use often</h3>
+          <ul class="meta">
+            <li>Charcoal, ink navy, dark denim, and mulberry near the face.</li>
+            <li>Soft cool white, pearl, and pale blue-grey as light neutrals.</li>
+            <li>Medium to medium-high contrast, such as soft white with navy.</li>
+            <li>Silver, white gold, cool steel, cool pearls, and medium-scale prints.</li>
+          </ul>
+        </article>
+        <article class="content-card rule-skip">
+          <h3>Keep away from the face</h3>
+          <ul class="meta">
+            <li>Warm cream, camel, tan, golden beige, rust, tomato red, mustard, peach, and warm olive.</li>
+            <li>Optic white and solid black as the default top or turtleneck.</li>
+            <li>Neon brights, muddy earth tones, and very warm small florals.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="fit" class="section" aria-labelledby="fit-title">
+      <div class="section-heading">
+        <p class="eyebrow">Fit and proportion</p>
+        <h2 id="fit-title">Fit the hips first. Keep the torso clear.</h2>
+      </div>
+      <div class="rules-grid">
+        <article class="content-card rule-good">
+          <h3>Tops and knitwear</h3>
+          <ul class="meta">
+            <li>Actual shoulder seam, soft crew, boat, shallow square, or open collar.</li>
+            <li>Heavyweight tees and fine-to-medium knits, ending at the waistband or decisively below the fullest hip.</li>
+            <li>Use cropped layers and neat overshirts to preserve a long leg line without crowding the short torso.</li>
+          </ul>
+        </article>
+        <article class="content-card rule-good">
+          <h3>Trousers and denim</h3>
+          <ul class="meta">
+            <li>Default to mid-rise, near or just below the navel.</li>
+            <li>Choose straight or gently wide legs, a clean hip line, and curvy/contoured waistbands where possible.</li>
+            <li>Start around AU 6–8 for tops and AU 8 for bottoms. Try AU 10 if the hip is tight, then tailor the waist.</li>
+          </ul>
+        </article>
+        <article class="content-card rule-good">
+          <h3>Skirts, dresses, and layers</h3>
+          <ul class="meta">
+            <li>Favour A-line, bias, or gently waist-defined shapes.</li>
+            <li>Use cropped denim jackets, short chore jackets, neat overshirts, or an unstructured navy blazer.</li>
+            <li>Choose deliberate ankle-skimming, knee, or midi hems, never an accidental widest-calf cutoff.</li>
+          </ul>
+        </article>
+        <article class="content-card rule-skip">
+          <h3>Immediate no</h3>
+          <ul class="meta">
+            <li>Ultra-high rises, waist gaps, tight hips/seat, extreme dropped shoulders, or very bulky knits.</li>
+            <li>Huge cargo pockets, very stiff full skirts, empire waists, and oversized blazers.</li>
+            <li>Anything that requires a belt to stay up, has the wrong shoulder fit, or is uncomfortable in the change room.</li>
+          </ul>
+        </article>
+      </div>
+      <div class="callout section">
+        <strong>Tailor only the simple parts.</strong> Hems and a small waist adjustment are worth it. Do not buy hoping to fix the rise, shoulders, hip tension, scratchy fabric, or a colour that is wrong near the face.
+      </div>
+    </section>
+
+    <section id="outfits" class="section" aria-labelledby="outfits-title">
+      <div class="section-heading">
+        <p class="eyebrow">Outfit formulas</p>
+        <h2 id="outfits-title">Two modes, one shared wardrobe.</h2>
+      </div>
+      <div class="formula-grid">
+        <article class="formula-card formula-card-feminine">
+          <h3>Feminine</h3>
+          <ul class="meta">
+            <li>Soft-white tee + dark straight jeans + cropped denim jacket + silver jewellery + grey sneaker.</li>
+            <li>Berry fine knit + charcoal trousers + almond-toe ballet flat.</li>
+            <li>Blue-and-soft-white stripe top + navy A-line skirt + minimal sandal.</li>
+            <li>Cool navy dress + cool-grey cardigan + black or silver ballet flat.</li>
+          </ul>
+        </article>
+        <article class="formula-card">
+          <h3>Androgynous</h3>
+          <ul class="meta">
+            <li>Soft-blue shirt, partial tuck + ink-navy wide trouser + low-profile sneaker.</li>
+            <li>Charcoal tee + navy overshirt + dark straight jeans + Sambas.</li>
+            <li>Navy knit polo + charcoal trouser + neat blazer + loafer or ballet flat.</li>
+            <li>Cool-white tee + slate trousers + short chore jacket + silver accessories.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="capsule" class="section" aria-labelledby="capsule-title">
+      <div class="section-heading">
+        <p class="eyebrow">24-piece rebuild</p>
+        <h2 id="capsule-title">Build slowly, audit what already works.</h2>
+        <p class="lede">Outerwear is included. Shoes and accessories are separate. Tick a piece only once it is owned, fits, and earns three outfits.</p>
+      </div>
+      <div class="check-layout">
+        <div class="content-card style-panel">
+          <div class="capsule-group">
+            <h3>Tops <span>9 pieces</span></h3>
+            <div class="capsule-list" data-style-group="capsule">
+              <label class="check-row"><input type="checkbox" data-style-check="top-soft-white-tee"><span>Soft cool-white heavyweight tee</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-blue-grey-tee"><span>Blue-grey heavyweight tee</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-stripe"><span>Navy and soft-white striped long-sleeve tee</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-pale-shirt"><span>Soft-white or pale-blue cotton shirt</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-cool-blue-shirt"><span>Cool-blue relaxed shirt</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-navy-knit"><span>Ink-navy fine sweater</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-berry-knit"><span>Mulberry or raspberry fine sweater</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-charcoal-knit"><span>Charcoal fine-knit polo or clean crew</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="top-cool-teal"><span>Cool-teal or blue-grey simple jersey top</span></label>
+            </div>
+          </div>
+          <div class="capsule-group">
+            <h3>Bottoms <span>6 pieces</span></h3>
+            <div class="capsule-list" data-style-group="capsule">
+              <label class="check-row"><input type="checkbox" data-style-check="bottom-mid-blue-jeans"><span>Mid-rise medium-blue straight jeans</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="bottom-dark-jeans"><span>Mid-rise dark-indigo straight jeans</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="bottom-charcoal-trouser"><span>Charcoal tailored straight trousers</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="bottom-navy-wide"><span>Ink-navy gently wide trousers</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="bottom-slate-chino"><span>Cool-taupe or slate straight chinos</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="bottom-black"><span>Black straight trousers or jeans</span></label>
+            </div>
+          </div>
+          <div class="capsule-group">
+            <h3>Feminine pieces <span>3 pieces</span></h3>
+            <div class="capsule-list" data-style-group="capsule">
+              <label class="check-row"><input type="checkbox" data-style-check="fem-denim-skirt"><span>Dark denim or ink-navy A-line skirt</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="fem-bias-skirt"><span>Charcoal, slate, or navy bias midi skirt</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="fem-dress"><span>Cool-navy, blue-grey, or berry everyday dress</span></label>
+            </div>
+          </div>
+          <div class="capsule-group">
+            <h3>Layers <span>6 pieces</span></h3>
+            <div class="capsule-list" data-style-group="capsule">
+              <label class="check-row"><input type="checkbox" data-style-check="layer-denim-jacket"><span>Cropped dark or medium-wash denim jacket</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="layer-chore"><span>Charcoal short chore jacket or bomber</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="layer-blazer"><span>Ink-navy unstructured blazer</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="layer-cardigan"><span>Cool-grey cardigan</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="layer-overshirt"><span>Blue-grey or navy overshirt</span></label>
+              <label class="check-row"><input type="checkbox" data-style-check="layer-raincoat"><span>Ink-navy raincoat or narrow long coat</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="content-card progress-card">
+          <p class="eyebrow">Capsule progress</p>
+          <h3><span data-capsule-count>0</span> of 24 ready</h3>
+          <div class="progress-track" aria-hidden="true"><div class="progress-bar" data-capsule-bar></div></div>
+          <p class="meta" data-capsule-copy>Start with the pieces that solve the most outfit gaps.</p>
+          <div class="button-row">
+            <button class="button button-secondary" type="button" data-style-reset="capsule">Reset capsule</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="accessories-title">
+      <div class="section-heading">
+        <p class="eyebrow">Shoes and accessories</p>
+        <h2 id="accessories-title">Keep footwear low-profile and versatile.</h2>
+      </div>
+      <div class="rules-grid">
+        <article class="content-card rule-good">
+          <h3>Four-shoe module</h3>
+          <ul class="meta">
+            <li>Soft-white, cool-grey, or navy low-profile sneaker.</li>
+            <li>Clean charcoal, navy, or cool-grey runner.</li>
+            <li>Minimal black or cool-grey sandal with clean straps.</li>
+            <li>Black, deep navy, or silver almond-toe ballet flat or loafer.</li>
+          </ul>
+        </article>
+        <article class="content-card rule-good">
+          <h3>Bag and jewellery module</h3>
+          <ul class="meta">
+            <li>Charcoal, navy, or black small shoulder/crossbody bag.</li>
+            <li>Cool-grey, navy, or black structured tote.</li>
+            <li>Silver jewellery, cool pearls, and clean medium-scale geometric forms.</li>
+          </ul>
+        </article>
+      </div>
+      <div class="callout section">Avoid warm brown bags, tan sandals, very chunky trainers, and crossbody straps ending at the fullest hip.</div>
+    </section>
+
+    <section class="section" aria-labelledby="audit-title">
+      <div class="section-heading">
+        <p class="eyebrow">Closet audit</p>
+        <h2 id="audit-title">Keep only what can do real work.</h2>
+      </div>
+      <div class="content-card style-panel">
+        <div class="check-layout">
+          <div class="check-list" data-style-group="closet-audit">
+            <label class="check-row"><input type="checkbox" data-style-check="audit-colour"><span>The colour works near the face or is intentionally worn away from it.</span></label>
+            <label class="check-row"><input type="checkbox" data-style-check="audit-fit"><span>The shoulders, hips, rise, and hem work now without adjustment.</span></label>
+            <label class="check-row"><input type="checkbox" data-style-check="audit-comfort"><span>The fabric is comfortable and practical enough to reach for regularly.</span></label>
+            <label class="check-row"><input type="checkbox" data-style-check="audit-outfits"><span>The item creates at least three outfits with the target capsule.</span></label>
+          </div>
+          <div class="content-card progress-card">
+            <p class="eyebrow">Decision</p>
+            <h3 data-audit-title>Review needed</h3>
+            <p class="meta" data-audit-result>Use the test one item at a time.</p>
+            <div class="button-row">
+              <button class="button button-secondary" type="button" data-style-reset="closet-audit">Reset audit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rules-grid section">
+        <article class="content-card rule-good"><h3>Keep</h3><p class="meta">Fits, is a good colour, feels good, and makes three outfits.</p></article>
+        <article class="content-card rule-good"><h3>Tailor</h3><p class="meta">Only needs a hem or a small waist adjustment.</p></article>
+        <article class="content-card rule-skip"><h3>Release</h3><p class="meta">Warm near-face colours, waist-gap pants, bulky sweaters, or one-outfit pieces.</p></article>
+        <article class="content-card rule-skip"><h3>Test strategically</h3><p class="meta">Keep lower-rise jeans if they sit smoothly and work with untucked tees or short knits. Keep high-rise only if they do not crowd the short torso.</p></article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="retailer-title">
+      <div class="section-heading">
+        <p class="eyebrow">Australian starting points</p>
+        <h2 id="retailer-title">Use retailers as a shortcut, never as a fit guarantee.</h2>
+      </div>
+      <div class="retailer-grid">
+        <article class="retailer-card"><h3><a href="https://www.uniqlo.com/au/en/women" target="_blank" rel="noreferrer">Uniqlo AU</a></h3><p class="meta">Strong starting point for tees, knitwear, shirts, trousers, and online trouser alterations.</p></article>
+        <article class="retailer-card"><h3><a href="https://justjeans.jgl.com.au/shop/jj-womens-mid-rise-jeans" target="_blank" rel="noreferrer">Just Jeans</a></h3><p class="meta">Try mid-rise straight fits and petite lengths in person where possible.</p></article>
+        <article class="retailer-card"><h3><a href="https://cottonon.com/AU/co/women/womens-clothing/womens-jeans/womens-curvy-fit-jeans/" target="_blank" rel="noreferrer">Cotton On Curvy Fit</a></h3><p class="meta">A useful place to test gap-resistant waistbands, then judge each fabric and finish on its own merit.</p></article>
+        <article class="retailer-card"><h3><a href="https://www.theiconic.com.au/petite-clothing-jeans/" target="_blank" rel="noreferrer">THE ICONIC</a></h3><p class="meta">Efficient comparison point for petite and curvy denim, including Abrand Petite and Forever New Petite.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="update-banner" data-update-banner hidden role="status">
+    A new version is ready.
+    <button class="button button-primary" type="button" data-update-reload>Reload</button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="page-shell">Galatea · Style guidance is a practical reference, not a rulebook.</div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const storageKey = "galatea-style-checklist-v1";
+      const checks = [...document.querySelectorAll("[data-style-check]")];
+
+      const readState = () => {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey)) || {};
+        } catch {
+          return {};
+        }
+      };
+
+      const saveState = () => {
+        try {
+          const state = Object.fromEntries(checks.map((check) => [check.dataset.styleCheck, check.checked]));
+          localStorage.setItem(storageKey, JSON.stringify(state));
+        } catch {
+          document.querySelector("[data-pwa-status]")?.replaceChildren("Checklist changes could not be saved in this browser.");
+        }
+      };
+
+      const setDecision = (group, titleSelector, resultSelector, passTitle, passCopy, remainingCopy) => {
+        const groupChecks = [...document.querySelectorAll(`[data-style-group="${group}"] [data-style-check]`)];
+        const complete = groupChecks.filter((check) => check.checked).length;
+        const title = document.querySelector(titleSelector);
+        const result = document.querySelector(resultSelector);
+
+        if (!title || !result) return;
+        if (complete === groupChecks.length) {
+          title.textContent = passTitle;
+          result.textContent = passCopy;
+        } else {
+          title.textContent = "Not ready";
+          result.textContent = remainingCopy.replace("{count}", String(groupChecks.length - complete));
+        }
+      };
+
+      const render = () => {
+        const state = readState();
+        checks.forEach((check) => {
+          check.checked = Boolean(state[check.dataset.styleCheck]);
+        });
+
+        const capsuleChecks = [...document.querySelectorAll('[data-style-group="capsule"] [data-style-check]')];
+        const capsuleComplete = capsuleChecks.filter((check) => check.checked).length;
+        const progress = capsuleChecks.length ? (capsuleComplete / capsuleChecks.length) * 100 : 0;
+        document.querySelector("[data-capsule-count]").textContent = String(capsuleComplete);
+        document.querySelector("[data-capsule-bar]").style.width = `${progress}%`;
+        document.querySelector("[data-capsule-copy]").textContent = capsuleComplete === 24
+          ? "Complete. Keep every piece in active rotation."
+          : `${24 - capsuleComplete} pieces still need to earn a place.`;
+
+        setDecision(
+          "buy-test",
+          "[data-buy-title]",
+          "[data-buy-result]",
+          "Buy candidate",
+          "It passes the filter. Check the price and wear it with three real outfits before removing tags.",
+          "{count} rule(s) still need a yes."
+        );
+        setDecision(
+          "closet-audit",
+          "[data-audit-title]",
+          "[data-audit-result]",
+          "Keep",
+          "It earns its space. Wear it, or file it as a simple tailoring job if only a hem or small waist adjustment is needed.",
+          "{count} rule(s) still need a yes."
+        );
+      };
+
+      checks.forEach((check) => check.addEventListener("change", () => {
+        saveState();
+        render();
+      }));
+
+      document.querySelectorAll("[data-style-reset]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const group = button.dataset.styleReset;
+          const state = readState();
+          document.querySelectorAll(`[data-style-group="${group}"] [data-style-check]`).forEach((check) => {
+            state[check.dataset.styleCheck] = false;
+          });
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(state));
+          } catch {
+            return;
+          }
+          render();
+        });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
