@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f7f8fa">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Galatea">
@@ -45,6 +46,7 @@
       <h1 id="style-title">Style Shopping Guide</h1>
       <p class="lede">A pocket guide for quicker yeses, clearer nos, and easier outfits.</p>
       <p class="status" data-pwa-status aria-live="polite">Preparing offline support…</p>
+      <p class="status" data-checklist-status role="status" hidden></p>
     </section>
 
     <section id="profile" class="section" aria-labelledby="profile-title">
@@ -95,7 +97,7 @@ My profile is:
 - Cool Summer colouring with a deeper, clearer edge and medium-high contrast. Favour cool, softened, medium-clear colours. Use select cool Winter accents when they suit. Avoid warm, muddy, yellow, orange, or overly stark colours near my face.
 - I am 157 cm, with a short torso, longer legs, and subtle hip emphasis. Favour a clear vertical line, mid-rise bottoms, clean hip fit, and hemlines that do not end at the widest hip or calf.
 - My style is relaxed minimal, between feminine and androgynous, casual, comfortable, and machine-washable where practical.
-- Preferred wardrobe direction: cool white, pearl grey, blue-grey, slate, charcoal, ink navy, soft denim, cool teal, raspberry, mulberry, and smoky lavender; low-profile shoes and clean, versatile shapes.
+- Preferred wardrobe direction: cool white, pearl grey, blue-grey, slate, charcoal, ink navy, soft denim, cornflower, cool teal, raspberry, mulberry, and smoky lavender; low-profile shoes and clean, versatile shapes.
 
 Treat this profile as informed preferences, not rigid rules. Assess the actual item and explain a meaningful exception when it works.
 
@@ -157,27 +159,27 @@ Use this response format:
         <p class="lede">Build on cool white, charcoal, and ink navy. Keep black away from the face.</p>
       </div>
       <div class="swatch-grid">
-        <div class="swatch swatch-light swatch-soft-white">Soft cool white<span>#F4F4F1</span></div>
-        <div class="swatch swatch-light swatch-pearl-grey">Pearl grey<span>#D2D5D7</span></div>
-        <div class="swatch swatch-light swatch-blue-grey">Blue-grey<span>#9DAAB2</span></div>
-        <div class="swatch swatch-dark swatch-slate">Slate<span>#607281</span></div>
-        <div class="swatch swatch-dark swatch-charcoal">Charcoal<span>#384149</span></div>
-        <div class="swatch swatch-dark swatch-ink-navy">Ink navy<span>#1D3047</span></div>
-        <div class="swatch swatch-dark swatch-soft-denim">Soft denim<span>#58738A</span></div>
-        <div class="swatch swatch-dark swatch-cornflower">Cornflower<span>#5E82BE</span></div>
-        <div class="swatch swatch-dark swatch-cool-teal">Cool teal<span>#287B83</span></div>
-        <div class="swatch swatch-dark swatch-raspberry">Raspberry<span>#A43864</span></div>
-        <div class="swatch swatch-dark swatch-mulberry">Mulberry<span>#74456E</span></div>
-        <div class="swatch swatch-dark swatch-smoky-lavender">Smoky lavender<span>#9A86B4</span></div>
+        <div class="swatch swatch-soft-white"><span class="swatch-label">Soft cool white<span class="swatch-hex">#F1F4F5</span></span></div>
+        <div class="swatch swatch-pearl-grey"><span class="swatch-label">Pearl grey<span class="swatch-hex">#D2D5D7</span></span></div>
+        <div class="swatch swatch-blue-grey"><span class="swatch-label">Blue-grey<span class="swatch-hex">#9DAAB2</span></span></div>
+        <div class="swatch swatch-slate"><span class="swatch-label">Slate<span class="swatch-hex">#607281</span></span></div>
+        <div class="swatch swatch-charcoal"><span class="swatch-label">Charcoal<span class="swatch-hex">#384149</span></span></div>
+        <div class="swatch swatch-ink-navy"><span class="swatch-label">Ink navy<span class="swatch-hex">#1D3047</span></span></div>
+        <div class="swatch swatch-soft-denim"><span class="swatch-label">Soft denim<span class="swatch-hex">#58738A</span></span></div>
+        <div class="swatch swatch-cornflower"><span class="swatch-label">Cornflower<span class="swatch-hex">#5E82BE</span></span></div>
+        <div class="swatch swatch-cool-teal"><span class="swatch-label">Cool teal<span class="swatch-hex">#287B83</span></span></div>
+        <div class="swatch swatch-raspberry"><span class="swatch-label">Raspberry<span class="swatch-hex">#A43864</span></span></div>
+        <div class="swatch swatch-mulberry"><span class="swatch-label">Mulberry<span class="swatch-hex">#74456E</span></span></div>
+        <div class="swatch swatch-smoky-lavender"><span class="swatch-label">Smoky lavender<span class="swatch-hex">#9A86B4</span></span></div>
       </div>
       <div class="rules-grid section">
         <article class="content-card rule-good">
           <h3>Use often</h3>
           <div class="style-tag-list">
-            <span>Charcoal</span><span>Ink navy</span><span>Dark denim</span><span>Mulberry</span>
-            <span>Cool white</span><span>Pearl</span><span>Blue-grey</span>
+            <span>Charcoal</span><span>Ink navy</span><span>Soft denim</span><span>Mulberry</span>
+            <span>Soft cool white</span><span>Pearl grey</span><span>Blue-grey</span>
           </div>
-          <p class="meta">Medium contrast · silver or white gold · cool pearls · medium-scale prints.</p>
+          <p class="meta">Medium-high contrast · silver or white gold · cool pearls · medium-scale prints.</p>
         </article>
         <article class="content-card rule-skip">
           <h3>Keep away from the face</h3>
@@ -228,7 +230,7 @@ Use this response format:
       <div class="fit-skip content-card rule-skip">
         <h3>Immediate no</h3>
         <div class="style-tag-list style-tag-list-skip">
-          <span>Ultra-high rise</span><span>Waist gap</span><span>Tight hips</span><span>Dropped shoulders</span>
+          <span>Ultra-high rise</span><span>Waist gap</span><span>Tight hips</span><span>Dropped shoulders on tops and knits</span>
           <span>Bulky knits</span><span>Huge cargos</span><span>Empire waist</span><span>Oversized blazer</span>
         </div>
       </div>
@@ -319,7 +321,7 @@ Use this response format:
         </div>
         <div class="content-card progress-card">
           <p class="eyebrow">Capsule progress</p>
-          <h3><span data-capsule-count>0</span> of 24 ready</h3>
+          <h3><span data-capsule-count>0</span> of <span data-capsule-total>24</span> ready</h3>
           <div class="progress-track" aria-hidden="true"><div class="progress-bar" data-capsule-bar></div></div>
           <p class="meta" data-capsule-copy>Start with the pieces that solve the most outfit gaps.</p>
           <div class="button-row">
@@ -380,7 +382,7 @@ Use this response format:
         <article class="decision-step decision-keep"><span>1</span><div><h3>Keep</h3><p>Fits · flatters · feels good · makes 3 outfits</p></div></article>
         <article class="decision-step decision-tailor"><span>2</span><div><h3>Tailor</h3><p>Hem or small waist adjustment only</p></div></article>
         <article class="decision-step decision-release"><span>3</span><div><h3>Release</h3><p>Wrong colour · waist gap · bulky · one-outfit piece</p></div></article>
-        <article class="decision-step decision-test"><span>4</span><div><h3>Test</h3><p>Keep rises only when they sit smoothly and leave the torso clear</p></div></article>
+        <article class="decision-step decision-test"><span>4</span><div><h3>Test</h3><p>Still unsure · wear it three ways this fortnight, then keep or release</p></div></article>
       </div>
     </section>
 
@@ -414,24 +416,45 @@ Use this response format:
       const storageKey = "galatea-style-checklist-v1";
       const checks = [...document.querySelectorAll("[data-style-check]")];
 
+      // The checkboxes are the source of truth in memory; storage is a write-through cache.
+      // If storage is unavailable the page still works for this visit instead of reverting
+      // every click.
+      let storageWorks = true;
+
+      // Reported in its own element: assets/pwa.js owns [data-pwa-status] and writes to it on
+      // load, which would overwrite anything this script put there.
+      const markStorageUnavailable = () => {
+        if (!storageWorks) return;
+        storageWorks = false;
+        const note = document.querySelector("[data-checklist-status]");
+        if (!note) return;
+        note.hidden = false;
+        note.textContent = "Ticks are kept for this visit only, because this browser is blocking saved data.";
+      };
+
       const readState = () => {
         try {
-          return JSON.parse(localStorage.getItem(storageKey)) || {};
+          const stored = JSON.parse(localStorage.getItem(storageKey));
+          return stored && typeof stored === "object" ? stored : {};
         } catch {
+          markStorageUnavailable();
           return {};
         }
       };
 
       const saveState = () => {
+        if (!storageWorks) return;
         try {
           const state = Object.fromEntries(checks.map((check) => [check.dataset.styleCheck, check.checked]));
           localStorage.setItem(storageKey, JSON.stringify(state));
         } catch {
-          document.querySelector("[data-pwa-status]")?.replaceChildren("Checklist changes could not be saved in this browser.");
+          markStorageUnavailable();
         }
       };
 
-      const setDecision = (group, titleSelector, resultSelector, passTitle, passCopy, remainingCopy) => {
+      const countCopy = (count, singular, plural) => `${count} ${count === 1 ? singular : plural}`;
+
+      const setDecision = (group, titleSelector, resultSelector, passTitle, passCopy, failTitle) => {
         const groupChecks = [...document.querySelectorAll(`[data-style-group="${group}"] [data-style-check]`)];
         const complete = groupChecks.filter((check) => check.checked).length;
         const title = document.querySelector(titleSelector);
@@ -442,25 +465,23 @@ Use this response format:
           title.textContent = passTitle;
           result.textContent = passCopy;
         } else {
-          title.textContent = "Not ready";
-          result.textContent = remainingCopy.replace("{count}", String(groupChecks.length - complete));
+          const remaining = groupChecks.length - complete;
+          title.textContent = failTitle;
+          result.textContent = `${countCopy(remaining, "rule", "rules")} still ${remaining === 1 ? "needs" : "need"} a yes.`;
         }
       };
 
       const render = () => {
-        const state = readState();
-        checks.forEach((check) => {
-          check.checked = Boolean(state[check.dataset.styleCheck]);
-        });
-
         const capsuleChecks = [...document.querySelectorAll('[data-style-group="capsule"] [data-style-check]')];
+        const capsuleTotal = capsuleChecks.length;
         const capsuleComplete = capsuleChecks.filter((check) => check.checked).length;
-        const progress = capsuleChecks.length ? (capsuleComplete / capsuleChecks.length) * 100 : 0;
+        const progress = capsuleTotal ? (capsuleComplete / capsuleTotal) * 100 : 0;
         document.querySelector("[data-capsule-count]").textContent = String(capsuleComplete);
+        document.querySelector("[data-capsule-total]").textContent = String(capsuleTotal);
         document.querySelector("[data-capsule-bar]").style.width = `${progress}%`;
-        document.querySelector("[data-capsule-copy]").textContent = capsuleComplete === 24
+        document.querySelector("[data-capsule-copy]").textContent = capsuleComplete === capsuleTotal
           ? "Complete. Keep every piece in active rotation."
-          : `${24 - capsuleComplete} pieces still need to earn a place.`;
+          : `${countCopy(capsuleTotal - capsuleComplete, "piece", "pieces")} still ${capsuleTotal - capsuleComplete === 1 ? "needs" : "need"} to earn a place.`;
 
         setDecision(
           "buy-test",
@@ -468,7 +489,7 @@ Use this response format:
           "[data-buy-result]",
           "Buy candidate",
           "It passes the filter. Check the price and wear it with three real outfits before removing tags.",
-          "{count} rule(s) still need a yes."
+          "Not ready"
         );
         setDecision(
           "closet-audit",
@@ -476,8 +497,16 @@ Use this response format:
           "[data-audit-result]",
           "Keep",
           "It earns its space. Wear it, or file it as a simple tailoring job if only a hem or small waist adjustment is needed.",
-          "{count} rule(s) still need a yes."
+          "Review needed"
         );
+      };
+
+      const restore = () => {
+        const state = readState();
+        checks.forEach((check) => {
+          check.checked = Boolean(state[check.dataset.styleCheck]);
+        });
+        render();
       };
 
       checks.forEach((check) => check.addEventListener("change", () => {
@@ -487,21 +516,15 @@ Use this response format:
 
       document.querySelectorAll("[data-style-reset]").forEach((button) => {
         button.addEventListener("click", () => {
-          const group = button.dataset.styleReset;
-          const state = readState();
-          document.querySelectorAll(`[data-style-group="${group}"] [data-style-check]`).forEach((check) => {
-            state[check.dataset.styleCheck] = false;
+          document.querySelectorAll(`[data-style-group="${button.dataset.styleReset}"] [data-style-check]`).forEach((check) => {
+            check.checked = false;
           });
-          try {
-            localStorage.setItem(storageKey, JSON.stringify(state));
-          } catch {
-            return;
-          }
+          saveState();
           render();
         });
       });
 
-      render();
+      restore();
     })();
   </script>
   <script>

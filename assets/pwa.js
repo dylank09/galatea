@@ -26,7 +26,6 @@
       const showUpdate = () => {
         if (!banner) return;
         banner.hidden = false;
-        reloadButton?.focus();
       };
 
       const setReadyStatus = () => {
@@ -45,15 +44,20 @@
         });
       });
 
+      // On a first visit the worker activates and claims this page, which fires
+      // controllerchange. Reloading then would restart the page under the user for no reason,
+      // so only reload when an older worker is being replaced by a new one.
+      const hadController = Boolean(navigator.serviceWorker.controller);
       let reloading = false;
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (reloading) return;
+        if (!hadController || reloading) return;
         reloading = true;
         window.location.reload();
       });
 
       reloadButton?.addEventListener("click", () => {
-        registration.waiting?.postMessage("activate-update");
+        if (registration.waiting) registration.waiting.postMessage("activate-update");
+        else window.location.reload();
       });
     } catch (error) {
       console.warn("Offline support could not be enabled.", error);

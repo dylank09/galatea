@@ -1,4 +1,4 @@
-const CACHE_NAME = "galatea-shell-v16";
+const CACHE_NAME = "galatea-shell-v17";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -12,6 +12,7 @@ const APP_SHELL = [
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/apple-touch-icon.png",
+  "./icons/favicon.png",
   "./icons/portrait.png"
 ];
 

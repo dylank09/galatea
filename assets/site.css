@@ -271,7 +271,6 @@ h3 {
   margin-bottom: 0;
 }
 
-.choice-grid,
 .info-grid,
 .formula-grid,
 .retailer-grid {
@@ -279,11 +278,6 @@ h3 {
   gap: 16px;
 }
 
-.choice-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.choice-card,
 .info-card,
 .formula-card,
 .retailer-card,
@@ -292,71 +286,6 @@ h3 {
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 8px 24px rgba(35, 52, 73, 0.055);
-}
-
-.choice-card {
-  display: flex;
-  min-height: 320px;
-  padding: clamp(20px, 3vw, 32px);
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-  text-decoration: none;
-}
-
-.choice-card h2,
-.choice-card p {
-  position: relative;
-  z-index: 1;
-}
-
-.choice-card p {
-  margin-bottom: 18px;
-  color: var(--muted);
-}
-
-.choice-card .card-link {
-  position: relative;
-  z-index: 1;
-  color: var(--navy);
-  font-weight: 850;
-}
-
-.choice-card-gym {
-  background:
-    radial-gradient(circle at 78% 20%, #f5dfe5 0 0, #f5dfe5 18%, transparent 18.3%),
-    linear-gradient(145deg, #fffafa 0%, #f9eef1 100%);
-}
-
-.choice-card-gym::before {
-  width: 120px;
-  height: 76px;
-  border: 12px solid #c47c8d;
-  border-bottom: 0;
-  border-radius: 60px 60px 0 0;
-  transform: rotate(-12deg);
-}
-
-.choice-card-style {
-  background:
-    radial-gradient(circle at 82% 17%, #dce8ef 0 0, #dce8ef 17%, transparent 17.3%),
-    linear-gradient(145deg, #fbfcfd 0%, #eef3f6 100%);
-}
-
-.choice-card-style::before {
-  width: 102px;
-  height: 116px;
-  border: 11px solid #58738a;
-  border-radius: 50% 50% 38% 38%;
-  transform: rotate(14deg);
-}
-
-.choice-card::before {
-  position: absolute;
-  top: 34px;
-  right: 38px;
-  opacity: 0.72;
-  content: "";
 }
 
 .info-grid {
@@ -862,23 +791,26 @@ h3 {
   font-weight: 800;
 }
 
-.swatch span {
+/* The name sits on its own light panel rather than on the colour itself,
+ so every swatch
+   meets AA contrast no matter how light or saturated the palette colour is. */
+.swatch-label {
   display: block;
-  margin-top: 2px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  opacity: 0.8;
-}
-
-.swatch-light {
+  padding: 6px 8px;
+  border: 1px solid rgba(23, 42, 66, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
   color: var(--navy-deep);
 }
 
-.swatch-dark {
-  color: #fff;
+.swatch-hex {
+  display: block;
+  margin-top: 1px;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
-.swatch-soft-white { background: #f4f4f1; }
+.swatch-soft-white { background: #f1f4f5; }
 .swatch-pearl-grey { background: #d2d5d7; }
 .swatch-blue-grey { background: #9daab2; }
 .swatch-slate { background: #607281; }
@@ -1118,80 +1050,6 @@ h3 {
   transform: rotate(-2deg);
 }
 
-.home-choices {
-  margin-top: clamp(44px, 8vw, 82px);
-}
-
-.home-choice-card {
-  position: relative;
-  min-height: 338px;
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-
-.home-choice-card:hover {
-  box-shadow: 0 20px 38px rgba(35, 52, 73, 0.13);
-  transform: translateY(-5px);
-}
-
-.home-choice-card h2 {
-  max-width: 14ch;
-}
-
-.home-choice-card .eyebrow {
-  color: #80546e;
-}
-
-.home-choice-card .card-link {
-  display: inline-flex;
-  width: max-content;
-  padding: 8px 11px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.68);
-}
-
-.home-reminders {
-  padding: clamp(24px, 4vw, 38px);
-  border: 1px solid #dfe2eb;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.52);
-}
-
-.home-reminders .section-heading {
-  margin-bottom: 22px;
-}
-
-.home-reminder-grid {
-  gap: 12px;
-}
-
-.home-reminder {
-  position: relative;
-  min-height: 178px;
-  overflow: hidden;
-  border-color: #e1e1e9;
-  background: rgba(255, 255, 255, 0.78);
-}
-
-.home-reminder:nth-child(2) {
-  transform: translateY(13px);
-}
-
-.home-reminder:nth-child(3) {
-  transform: translateY(26px);
-}
-
-.reminder-number {
-  margin: 0 0 28px;
-  color: #a58094;
-  font-size: 0.78rem;
-  font-weight: 850;
-  letter-spacing: 0.12em;
-}
-
-.home-reminder h3 {
-  max-width: 14ch;
-}
-
 @keyframes home-portrait-float {
   50% {
     transform: translateY(-7px) rotate(1deg);
@@ -1205,7 +1063,6 @@ h3 {
 }
 
 @media (max-width: 720px) {
-  .choice-grid,
   .info-grid,
   .check-layout,
   .rules-grid,
@@ -1214,14 +1071,6 @@ h3 {
   .fit-grid,
   .decision-flow {
     grid-template-columns: 1fr;
-  }
-
-  .choice-grid {
-    gap: 13px;
-  }
-
-  .choice-card {
-    min-height: 240px;
   }
 
   .shopping-prompt-steps {
@@ -1245,11 +1094,6 @@ h3 {
   .home-portrait {
     width: min(72vw, 265px);
     margin-top: -4px;
-  }
-
-  .home-reminder:nth-child(2),
-  .home-reminder:nth-child(3) {
-    transform: none;
   }
 
   .progress-card {
@@ -1308,10 +1152,6 @@ h3 {
     box-shadow: 126px 173px 0 -9px #b87891;
   }
 
-  .home-reminders {
-    padding: 22px 16px 25px;
-  }
-
   .swatch-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1329,9 +1169,5 @@ h3 {
   .home-portrait img,
   .home-portrait-orbit {
     animation: none;
-  }
-
-  .home-choice-card {
-    transition: none;
   }
 }

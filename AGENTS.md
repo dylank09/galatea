@@ -1,13 +1,13 @@
 # Galatea
 
-Static, dependency-free PWA. No build step, no package manager, no test runner. Each page is a
-single self-contained HTML file with inline CSS and inline JS.
+Static, dependency-free PWA. No build step, no package manager, no test runner.
 
-- `index.html` — home
-- `gym/index.html` — 12-week gym planner (the largest page; all state in `localStorage`)
-- `style/index.html` — style cheatsheet
-- `assets/site.css`, `assets/pwa.js` — shared by the home and style pages only; `gym/` is self-contained
-- `sw.js` — service worker, app-shell cache
+- `index.html` — home. Uses the shared stylesheet and PWA script.
+- `style/index.html` — style cheatsheet. Shared stylesheet; its own inline `<script>` blocks.
+- `gym/index.html` — 12-week gym planner. The largest page and the only fully self-contained
+  one: inline `<style>`, inline `<script>`, all state in `localStorage`.
+- `assets/site.css`, `assets/pwa.js` — shared by the home and style pages only, never by `gym/`.
+- `sw.js` — service worker, app-shell cache.
 
 ## Serving locally
 

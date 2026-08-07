@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#fff8f4">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Galatea">
@@ -611,6 +612,7 @@
           <button id="week-night-toggle" class="button-secondary" type="button">Night block: off</button>
         </div>
         <p id="week-dates" class="small"></p>
+        <p id="readiness-scope" class="small"></p>
         <div class="readiness-grid">
           <label>Sleep<select id="sleep-score"><option value="5">Great</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Poor</option><option value="1">Very poor</option></select></label>
           <label>Energy<select id="energy-score"><option value="5">High</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Low</option><option value="1">Very low</option></select></label>
@@ -794,6 +796,7 @@
     const START_DATE = new Date(2026, 6, 27);
     const STORAGE_KEY = "twelveWeekGymPlanV1";
     const weeks = Array.from({ length: 12 }, (_, index) => index + 1);
+    const EVOLT_WEEKS = [1, 6, 12];
     const phaseForWeek = (week) => {
       if (week <= 3) return { name: "Calibrate", note: "Build consistent technique and baseline loads." };
       if (week <= 7) return { name: "Build", note: "Add reps first, and add priority glute volume only if recovery is good." };
@@ -808,7 +811,7 @@
           { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
           { id: "long-stride-lunge", name: "Long-stride reverse lunge", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Low step-up with a long stride", cue: "Take a long, stable step back and lean the torso slightly forward. Keep the load modest and stop well before technique changes.", priority: false },
           { id: "cable-kickback-a", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "60–90 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
-          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range.", superset: 1 },
+          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range.", priority: true, superset: 1 },
           { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "60 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis.", superset: 1 }
         ]
       },
@@ -923,7 +926,7 @@
       measurements: {},
       evolt: {},
       nightWeeks: { 2: true },
-      selectedWeek: 1,
+      selectedWeek: null,
       selectedWorkout: "lower-a",
       activeSession: "",
       pelvicCare: {},
@@ -1015,10 +1018,17 @@
       end.setDate(start.getDate() + 6);
       return `Week ${week}: ${formatDate(start)}–${formatDate(end)}`;
     }
+    function clampWeek(value) {
+      const week = Math.floor(Number(value));
+      return Number.isFinite(week) ? Math.min(12, Math.max(1, week)) : 1;
+    }
     function currentPlanWeek() {
-      const now = new Date();
-      const difference = Math.floor((now - START_DATE) / 86400000);
-      return Math.min(12, Math.max(1, Math.floor(difference / 7) + 1));
+      // Compare calendar days, not elapsed milliseconds, so daylight saving cannot shift the week.
+      const today = new Date();
+      const startDay = Date.UTC(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
+      const nowDay = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+      const days = Math.floor((nowDay - startDay) / 86400000);
+      return clampWeek(Math.floor(days / 7) + 1);
     }
     function calendarWeekHasEnded(week) {
       const nextWeek = dateForWeek(week);
@@ -1036,6 +1046,11 @@
     }
     function workoutById(id) {
       return workouts.find((workout) => workout.id === id) || workouts[0];
+    }
+    function nextSessionForWeek(week) {
+      // The plan runs Lower A -> Upper A -> Lower B -> Upper B, so the next session is the
+      // first one this week that is not ticked off. A finished week points at the next start.
+      return workouts.find((workout) => !data.completed?.[sessionKey(week, workout.id)]) || workouts[0];
     }
     function activeSessionId() {
       return data.activeSession || data.selectedWorkout;
@@ -1062,6 +1077,32 @@
       data.pelvicCare = {};
       saveData();
     }
+    function repairStoredLogs() {
+      if (!data.logs || typeof data.logs !== "object") {
+        data.logs = {};
+        return true;
+      }
+      let repaired = false;
+      Object.entries(data.logs).forEach(([keyForSession, session]) => {
+        if (!session || typeof session !== "object") {
+          delete data.logs[keyForSession];
+          repaired = true;
+          return;
+        }
+        Object.entries(session).forEach(([exerciseId, sets]) => {
+          if (exerciseId === "sessionNote") return;
+          if (!Array.isArray(sets)) {
+            delete session[exerciseId];
+            repaired = true;
+            return;
+          }
+          // Holes and nulls come from sets logged out of order, which JSON turns into null.
+          if (sets.some((set) => !set || typeof set !== "object")) repaired = true;
+          session[exerciseId] = Array.from(sets, normaliseSet);
+        });
+      });
+      return repaired;
+    }
     function parseRepRange(reps) {
       const values = String(reps).match(/\d+/g);
       if (!values || values.length < 2) return null;
@@ -1073,21 +1114,37 @@
     function cycleContextKey() {
       return sessionKey(Number(data.selectedWeek), data.selectedWorkout);
     }
+    function normaliseSet(set) {
+      return {
+        weight: typeof set?.weight === "string" || typeof set?.weight === "number" ? String(set.weight) : "",
+        reps: typeof set?.reps === "string" || typeof set?.reps === "number" ? String(set.reps) : ""
+      };
+    }
+    function exerciseSets(week, workoutId, exerciseId) {
+      const stored = data.logs?.[sessionKey(week, workoutId)]?.[exerciseId];
+      if (!Array.isArray(stored)) return [];
+      return Array.from(stored, normaliseSet);
+    }
+    function loggedSets(sets) {
+      return sets.filter((set) => set.weight !== "" || set.reps !== "");
+    }
     function setLog(week, workoutId, exerciseId, setIndex, key, value) {
       const keyForSession = sessionKey(week, workoutId);
       data.logs[keyForSession] ||= {};
-      data.logs[keyForSession][exerciseId] ||= [];
-      data.logs[keyForSession][exerciseId][setIndex] ||= { weight: "", reps: "" };
-      data.logs[keyForSession][exerciseId][setIndex][key] = value;
+      const existing = data.logs[keyForSession][exerciseId];
+      const sets = Array.isArray(existing) ? Array.from(existing, normaliseSet) : [];
+      while (sets.length <= setIndex) sets.push({ weight: "", reps: "" });
+      sets[setIndex][key] = value;
+      data.logs[keyForSession][exerciseId] = sets;
       saveData();
     }
     function getSetLog(week, workoutId, exerciseId, setIndex) {
-      return data.logs?.[sessionKey(week, workoutId)]?.[exerciseId]?.[setIndex] || { weight: "", reps: "" };
+      return normaliseSet(data.logs?.[sessionKey(week, workoutId)]?.[exerciseId]?.[setIndex]);
     }
     function latestExerciseLogs(workoutId, exerciseId, week) {
       for (let candidateWeek = week; candidateWeek >= 1; candidateWeek -= 1) {
-        const logs = data.logs?.[sessionKey(candidateWeek, workoutId)]?.[exerciseId];
-        if (logs?.length) return { logs, week: candidateWeek };
+        const logs = exerciseSets(candidateWeek, workoutId, exerciseId);
+        if (logs.length) return { logs, week: candidateWeek };
       }
       return { logs: [], week: null };
     }
@@ -1099,10 +1156,9 @@
     function loadSuggestion(workoutId, exercise, week) {
       const range = parseRepRange(exercise.reps);
       const latest = latestExerciseLogs(workoutId, exercise.id, week);
-      const logs = latest.logs
-        .slice(0, phaseSetCount(exercise, week))
-        .filter((set) => set.reps !== "");
-      if (!range || logs.length < phaseSetCount(exercise, week)) {
+      const expected = phaseSetCount(exercise, latest.week ?? week);
+      const logs = latest.logs.slice(0, expected).filter((set) => set.reps !== "");
+      if (!range || logs.length < expected) {
         return { type: "hold", text: "Log all working sets to receive a next-load suggestion." };
       }
       const reps = logs.map((set) => Number(set.reps));
@@ -1120,9 +1176,16 @@
       }
       return { type: "hold", text: "Hold the load and add reps within the prescribed range before increasing." };
     }
+    function readinessFor(week, workoutId) {
+      // Readiness is recorded per session. Entries saved before that change were keyed by
+      // week alone, so fall back to the week-level value rather than losing it.
+      return data.readiness?.[sessionKey(week, workoutId)]
+        || data.readiness?.[week]
+        || { sleep: 3, energy: 3, soreness: 3, symptoms: 3 };
+    }
     function readinessMessage() {
       const week = Number(data.selectedWeek);
-      const score = data.readiness?.[week] || { sleep: 3, energy: 3, soreness: 3, symptoms: 3 };
+      const score = readinessFor(week, activeSessionId());
       const night = Boolean(data.nightWeeks?.[week]);
       if (score.symptoms >= 5 || score.sleep <= 1 || score.energy <= 1) {
         return { type: "warning", title: "Red: rest or easy movement", text: "Do not force lifting. Resume the rolling sequence after recovery. Seek clinical advice for new, severe or unusual symptoms." };
@@ -1153,16 +1216,16 @@
       ).join("")}</ul>`;
     }
     function renderPlan() {
-      const week = Number(data.selectedWeek || currentPlanWeek());
+      const week = Number(data.selectedWeek);
       const phase = phaseForWeek(week);
       document.getElementById("phase-pill").textContent = `Week ${week}: ${phase.name}`;
-      document.getElementById("sequence-copy").textContent = `Next: ${workoutById(data.selectedWorkout).short}. ${phase.note}`;
+      document.getElementById("sequence-copy").textContent = `Next: ${nextSessionForWeek(week).short}. ${phase.note}`;
       const done = completedWorkoutCount(week);
       const weight = data.weights?.[week]?.value;
       document.getElementById("quick-stats").innerHTML = `
         <span class="pill sage">${done}/${workouts.length} sessions this week</span>
         <span class="pill">${data.nightWeeks?.[week] ? "Night block marked" : "Normal week"}</span>
-        <span class="pill amber">${weight ? `${weight} kg logged` : "Weight not logged"}</span>
+        <span class="pill amber">${weight ? `${escapeHtml(weight)} kg logged` : "Weight not logged"}</span>
       `;
       renderBackupReminders();
     }
@@ -1195,17 +1258,24 @@
     }
     function renderWeekOptions() {
       const optionMarkup = weeks.map((week) => `<option value="${week}">${weekLabel(week)}</option>`).join("");
-      ["week-select", "weight-week", "measure-week", "evolt-week"].forEach((id) => {
+      ["week-select", "weight-week", "measure-week"].forEach((id) => {
         document.getElementById(id).innerHTML = optionMarkup;
       });
       document.getElementById("week-select").value = data.selectedWeek;
       document.getElementById("weight-week").value = data.selectedWeek;
       document.getElementById("measure-week").value = data.selectedWeek;
-      document.getElementById("evolt-week").value = [1, 6, 12].includes(Number(data.selectedWeek)) ? data.selectedWeek : 1;
+      // Only the three scheduled checkpoints are offered, so a scan cannot be saved to a week
+      // the results list would never show.
+      document.getElementById("evolt-week").innerHTML = EVOLT_WEEKS
+        .map((week) => `<option value="${week}">${weekLabel(week)}</option>`).join("");
+      document.getElementById("evolt-week").value = EVOLT_WEEKS.includes(Number(data.selectedWeek))
+        ? data.selectedWeek
+        : EVOLT_WEEKS.reduce((best, week) => Math.abs(week - data.selectedWeek) < Math.abs(best - data.selectedWeek) ? week : best);
     }
     function renderReadiness() {
       const week = Number(data.selectedWeek);
-      const value = data.readiness?.[week] || { sleep: 3, energy: 3, soreness: 3, symptoms: 3 };
+      const value = readinessFor(week, activeSessionId());
+      document.getElementById("readiness-scope").textContent = `Readiness for ${workoutById(activeSessionId()).short}, recorded per session.`;
       document.getElementById("sleep-score").value = value.sleep;
       document.getElementById("energy-score").value = value.energy;
       document.getElementById("soreness-score").value = value.soreness;
@@ -1538,8 +1608,7 @@
     }
     function latestLoggedSet(exercise) {
       for (let week = 12; week >= 1; week -= 1) {
-        const sets = data.logs?.[sessionKey(week, exercise.workoutId)]?.[exercise.id] || [];
-        const completed = sets.filter((set) => set.weight !== "" || set.reps !== "");
+        const completed = loggedSets(exerciseSets(week, exercise.workoutId, exercise.id));
         if (completed.length) return { set: completed[completed.length - 1], week };
       }
       return { set: null, week: null };
@@ -1559,7 +1628,7 @@
     }
     function renderMeasurementSection() {
       const entries = loggedMeasurementEntries();
-      const display = (value) => value !== undefined && value !== "" ? `${value} cm` : "not logged";
+      const display = (value) => value !== undefined && value !== "" ? `${escapeHtml(value)} cm` : "not logged";
       document.getElementById("measurements-list").innerHTML = entries.length
         ? entries.map((entry) => `
           <li>
@@ -1569,10 +1638,16 @@
         `).join("")
         : "<li><span>No body measurements saved yet.</span></li>";
     }
+    function savedEvoltWeeks() {
+      // Show every saved week, not just the scheduled ones, so an entry can never go missing.
+      return [...new Set(Object.keys(data.evolt || {}).map(Number).filter((week) => weeks.includes(week)))]
+        .sort((a, b) => a - b);
+    }
     function renderEvoltSection() {
-      const entries = [1, 6, 12].filter((week) => data.evolt?.[week]).map((week) => data.evolt[week]);
+      const entries = savedEvoltWeeks().map((week) => ({ ...data.evolt[week], week }));
+      const field = (value, suffix) => value === undefined || value === "" ? "—" : `${escapeHtml(value)}${suffix}`;
       document.getElementById("evolt-list").innerHTML = entries.length
-        ? entries.map((entry) => `<li><span><strong>Week ${entry.week}</strong><br><span class="small">Weight ${entry.weight || "—"} kg · Fat ${entry.fat || "—"}% · Muscle ${entry.muscle || "—"} kg</span></span><button class="button-quiet" data-delete-evolt="${entry.week}" type="button">Remove</button></li>`).join("")
+        ? entries.map((entry) => `<li><span><strong>Week ${entry.week}</strong>${EVOLT_WEEKS.includes(entry.week) ? "" : " <span class=\"small\">(unscheduled week)</span>"}<br><span class="small">Weight ${field(entry.weight, " kg")} · Fat ${field(entry.fat, "%")} · Muscle ${field(entry.muscle, " kg")}</span></span><button class="button-quiet" data-delete-evolt="${entry.week}" type="button">Remove</button></li>`).join("")
         : "<li><span>No Evolt checkpoint saved yet.</span></li>";
     }
     function renderPerformancePanel(group) {
@@ -1585,8 +1660,7 @@
       ).join("");
       select.value = selected.id;
       const entries = weeks.flatMap((week) => {
-        const sets = data.logs?.[sessionKey(week, selected.workoutId)]?.[selected.id] || [];
-        const values = sets
+        const values = exerciseSets(week, selected.workoutId, selected.id)
           .filter((set) => set.weight !== "" && Number.isFinite(Number(set.weight)))
           .map((set) => Number(set.weight));
         return values.length ? [{ week, value: Math.max(...values) }] : [];
@@ -1654,7 +1728,7 @@
     }
     function updateReadiness() {
       const week = Number(data.selectedWeek);
-      data.readiness[week] = {
+      data.readiness[sessionKey(week, activeSessionId())] = {
         sleep: Number(document.getElementById("sleep-score").value),
         energy: Number(document.getElementById("energy-score").value),
         soreness: Number(document.getElementById("soreness-score").value),
@@ -1738,9 +1812,13 @@
               if (installing.state === "installed" && navigator.serviceWorker.controller) showUpdateBanner(registration);
             });
           });
+          // A first visit activates and claims this page, firing controllerchange. Reloading
+          // then would restart the page under the user mid-entry, so only reload when an
+          // older worker is actually being replaced.
+          const hadController = Boolean(navigator.serviceWorker.controller);
           let reloading = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
-            if (reloading) return;
+            if (!hadController || reloading) return;
             reloading = true;
             window.location.reload();
           });
@@ -1972,11 +2050,13 @@
       });
       document.getElementById("reload-update").addEventListener("click", () => {
         if (updateRegistration?.waiting) updateRegistration.waiting.postMessage("activate-update");
+        else window.location.reload();
       });
     }
     initialiseStorage();
     migrateLegacyPelvicCareSelections();
-    if (!data.selectedWeek) data.selectedWeek = currentPlanWeek();
+    if (repairStoredLogs()) saveData();
+    data.selectedWeek = data.selectedWeek ? clampWeek(data.selectedWeek) : currentPlanWeek();
     if (!workouts.some((workout) => workout.id === data.selectedWorkout)) data.selectedWorkout = workouts[0].id;
     if (!workouts.some((workout) => workout.id === data.activeSession)) data.activeSession = data.selectedWorkout;
     bindEvents();
