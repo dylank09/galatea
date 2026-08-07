@@ -718,7 +718,8 @@
           <li>When every set reaches the top of the range, add the smallest practical load increment next session.</li>
           <li>If technique deteriorates, reps fall below the range, or readiness is poor, hold or reduce. Do not force progression.</li>
         </ol>
-        <p class="small">Most compound lifts use 2–3 minutes rest; unilateral and machine exercises use 90–120 seconds; isolation and core use 60–90 seconds.</p>
+        <p class="small">Rest is set to the shortest window that still protects your reps: 2 minutes after the main glute and hinge lifts, 90 seconds after the other compounds, 75–90 seconds for machine and unilateral work, and 45–60 seconds for isolation and core.</p>
+        <div class="notice"><strong>Rest is a floor, not a ceiling.</strong> If reps drop below the bottom of the prescribed range, take more rest before you consider reducing the load — use <strong>+30s</strong> on the timer. Breathless, rushed sets cost you more than an extra minute does.</div>
         <p class="small">Keep the main lifts as straight sets. Only the accessory pairs boxed and badged <strong>⇄ Superset</strong> in a session are meant to be alternated: do a set of the first, a set of the second, then take one rest before the next round. Use that pair's shared <strong>Rest after both</strong> timer rather than resting twice. If a machine is busy or you feel rushed, run them as straight sets instead.</p>
       </section>
       <section class="card">
@@ -808,49 +809,49 @@
         id: "lower-a", short: "Lower A", title: "Lower A", focus: "Hip thrust + glute isolation",
         intro: "Five easy cardio minutes, then 2–4 non-fatiguing hip-thrust ramp sets.",
         exercises: [
-          { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
-          { id: "long-stride-lunge", name: "Long-stride reverse lunge", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Low step-up with a long stride", cue: "Take a long, stable step back and lean the torso slightly forward. Keep the load modest and stop well before technique changes.", priority: false },
-          { id: "cable-kickback-a", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "60–90 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
-          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range.", priority: true, superset: 1 },
-          { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "60 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis.", superset: 1 }
+          { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
+          { id: "long-stride-lunge", name: "Long-stride reverse lunge", sets: 2, reps: "8–12 / side", rest: "75–90 sec", alt: "Low step-up with a long stride", cue: "Take a long, stable step back and lean the torso slightly forward. Keep the load modest and stop well before technique changes.", priority: false },
+          { id: "cable-kickback-a", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
+          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "45–60 sec", alt: "Cable hip abduction", cue: "Use a controlled range.", priority: true, superset: 1 },
+          { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "45 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis.", superset: 1 }
         ]
       },
       {
         id: "upper-a", short: "Upper A", title: "Upper A", focus: "Pull, press, shoulders and arms",
         intro: "Five easy cardio minutes, shoulder movement, then 2–3 ramp sets for pulldowns.",
         exercises: [
-          { id: "pulldown-a", name: "Lat pulldown", sets: 3, reps: "8–12", rest: "2 min", alt: "Assisted pull-up", cue: "Drive elbows down without leaning far back.", priority: true },
-          { id: "incline-press", name: "Incline dumbbell press", sets: 3, reps: "8–12", rest: "2 min", alt: "Incline Smith or chest press machine", cue: "Use a stable bench angle and a controlled depth.", priority: true },
-          { id: "chest-row", name: "Chest-supported row", sets: 3, reps: "8–12", rest: "90–120 sec", alt: "Seated cable row", cue: "Pull elbows toward hips while keeping chest supported.", priority: true },
-          { id: "lateral-raise", name: "Cable lateral raise", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug.", superset: 1 },
-          { id: "pressdown", name: "Rope pressdown", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Overhead cable extension", cue: "Keep upper arms still and finish without forcing elbow lockout.", superset: 1 },
-          { id: "incline-curl", name: "Incline dumbbell curl", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Cable curl", cue: "Avoid swinging the torso to complete reps." }
+          { id: "pulldown-a", name: "Lat pulldown", sets: 3, reps: "8–12", rest: "90 sec", alt: "Assisted pull-up", cue: "Drive elbows down without leaning far back.", priority: true },
+          { id: "incline-press", name: "Incline dumbbell press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Incline Smith or chest press machine", cue: "Use a stable bench angle and a controlled depth.", priority: true },
+          { id: "chest-row", name: "Chest-supported row", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Seated cable row", cue: "Pull elbows toward hips while keeping chest supported.", priority: true },
+          { id: "lateral-raise", name: "Cable lateral raise", sets: 2, reps: "12–20", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug.", superset: 1 },
+          { id: "pressdown", name: "Rope pressdown", sets: 2, reps: "10–15", rest: "45–60 sec", alt: "Overhead cable extension", cue: "Keep upper arms still and finish without forcing elbow lockout.", superset: 1 },
+          { id: "incline-curl", name: "Incline dumbbell curl", sets: 2, reps: "10–15", rest: "45–60 sec", alt: "Cable curl", cue: "Avoid swinging the torso to complete reps." }
         ]
       },
       {
         id: "lower-b", short: "Lower B", title: "Lower B", focus: "Glute bridge + hip hinge",
         intro: "Five easy cardio minutes, then 2–4 non-fatiguing glute-bridge ramp sets.",
         exercises: [
-          { id: "glute-bridge", name: "Barbell or Smith glute bridge", sets: 3, reps: "8–12", rest: "2–3 min", alt: "Dumbbell glute bridge", cue: "Keep ribs down and use the most comfortable range. Pause only if you can stay controlled.", priority: true },
-          { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 2, reps: "6–10", rest: "2–3 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled. This is deliberately low volume.", priority: true },
-          { id: "cable-kickback-b", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "60–90 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
-          { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rest: "60–90 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range.", superset: 1 },
-          { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady.", superset: 1 },
-          { id: "calf-raise", name: "Standing calf raise", sets: 3, reps: "10–15", rest: "60–90 sec", alt: "Seated calf raise or leg-press calf press", cue: "Rise onto the balls of the feet with control and lower to a comfortable stretch. Pause briefly at the top rather than bouncing." }
+          { id: "glute-bridge", name: "Barbell or Smith glute bridge", sets: 3, reps: "8–12", rest: "2 min", alt: "Dumbbell glute bridge", cue: "Keep ribs down and use the most comfortable range. Pause only if you can stay controlled.", priority: true },
+          { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 2, reps: "6–10", rest: "2 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled. This is deliberately low volume.", priority: true },
+          { id: "cable-kickback-b", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
+          { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rest: "45–60 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range.", superset: 1 },
+          { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rest: "45 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady.", superset: 1 },
+          { id: "calf-raise", name: "Standing calf raise", sets: 3, reps: "10–15", rest: "45–60 sec", alt: "Seated calf raise or leg-press calf press", cue: "Rise onto the balls of the feet with control and lower to a comfortable stretch. Pause briefly at the top rather than bouncing." }
         ]
       },
       {
         id: "upper-b", short: "Upper B", title: "Upper B", focus: "Shoulders, back, chest and arms",
         intro: "Five easy cardio minutes, shoulder movement, then 2–3 shoulder-press ramp sets.",
         exercises: [
-          { id: "shoulder-press", name: "Dumbbell or Smith shoulder press", sets: 3, reps: "6–10", rest: "2 min", alt: "Machine shoulder press", cue: "Use a comfortable grip and range. Keep ribs stacked rather than leaning back.", priority: true },
-          { id: "cable-row", name: "Seated cable row", sets: 3, reps: "8–12", rest: "90–120 sec", alt: "Chest-supported row", cue: "Control the reach and pull elbows back without shrugging.", priority: true },
-          { id: "chest-press", name: "Machine chest press", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Flat dumbbell press", cue: "Keep shoulder blades controlled against the pad.", priority: true },
-          { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Assisted pull-up", cue: "Keep the path controlled and elbows travelling down.", priority: true },
-          { id: "lateral-raise-b", name: "Cable lateral raise", sets: 3, reps: "12–20", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Build the shoulder-to-waist ratio without adding lower-body volume." },
-          { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder.", superset: 1 },
-          { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false, superset: 1 },
-          { id: "cable-crunch", name: "Cable crunch", sets: 2, reps: "10–15", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Use a comfortable range. Swap if bracing or flexion aggravates symptoms." }
+          { id: "shoulder-press", name: "Dumbbell or Smith shoulder press", sets: 3, reps: "6–10", rest: "90 sec", alt: "Machine shoulder press", cue: "Use a comfortable grip and range. Keep ribs stacked rather than leaning back.", priority: true },
+          { id: "cable-row", name: "Seated cable row", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Chest-supported row", cue: "Control the reach and pull elbows back without shrugging.", priority: true },
+          { id: "chest-press", name: "Machine chest press", sets: 2, reps: "8–12", rest: "75–90 sec", alt: "Flat dumbbell press", cue: "Keep shoulder blades controlled against the pad.", priority: true },
+          { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 2, reps: "8–12", rest: "75–90 sec", alt: "Assisted pull-up", cue: "Keep the path controlled and elbows travelling down.", priority: true },
+          { id: "lateral-raise-b", name: "Cable lateral raise", sets: 3, reps: "12–20", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Build the shoulder-to-waist ratio without adding lower-body volume." },
+          { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rest: "45–60 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder.", superset: 1 },
+          { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rest: "45–60 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false, superset: 1 },
+          { id: "cable-crunch", name: "Cable crunch", sets: 2, reps: "10–15", rest: "45 sec", alt: "Side plank, 20–45 sec", cue: "Use a comfortable range. Swap if bracing or flexion aggravates symptoms." }
         ]
       }
     ];
