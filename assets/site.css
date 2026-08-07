@@ -791,9 +791,8 @@ h3 {
   font-weight: 800;
 }
 
-/* The name sits on its own light panel rather than on the colour itself,
- so every swatch
-   meets AA contrast no matter how light or saturated the palette colour is. */
+/* The name sits on its own light panel rather than on the colour itself, so every
+   swatch meets AA contrast no matter how light or saturated the palette colour is. */
 .swatch-label {
   display: block;
   padding: 6px 8px;
