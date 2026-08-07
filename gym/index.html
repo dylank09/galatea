@@ -87,8 +87,8 @@
     }
     .subtle { color: var(--muted); font-size: .9rem; }
     .card {
-      margin: 14px 0;
-      padding: 16px;
+      margin: 18px 0;
+      padding: 18px;
       border: 1px solid #f0e3e4;
       border-radius: var(--radius);
       background: rgba(255, 253, 251, .91);
@@ -167,6 +167,14 @@
     .notice.warning { border-left-color: #ce9932; background: var(--amber); color: #624b20; }
     .notice.good { border-left-color: #6c9874; background: var(--sage); color: #3e5c46; }
     .hidden { display: none !important; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
     .update-banner {
       position: fixed;
       z-index: 8;
@@ -282,12 +290,15 @@
     }
     .session-tabs button span { display: block; margin-top: 2px; color: var(--muted); font-size: .67rem; font-weight: 600; }
     .session-tabs button.active { border-color: var(--rose); background: var(--blush); }
+    .session-tabs button.done { border-color: #bcd3c1; background: #f2f8f2; color: var(--sage-ink); }
+    .session-tabs button.done.active { border-color: var(--sage-ink); }
     .workout-header {
       display: flex;
       justify-content: space-between;
       gap: 10px;
       align-items: flex-start;
     }
+    .header-pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
     .toggle-row {
       display: flex;
       gap: 8px;
@@ -299,7 +310,7 @@
     }
     .toggle-row input { width: 22px; min-height: 22px; margin: 0; accent-color: var(--rose); }
     .exercise {
-      margin-top: 12px;
+      margin-top: 14px;
       overflow: hidden;
       border: 1px solid #eadde0;
       border-radius: 15px;
@@ -325,35 +336,95 @@
     .exercise-name { display: block; color: var(--ink); font-weight: 850; }
     .exercise-meta { display: block; margin-top: 2px; color: var(--muted); font-size: .77rem; }
     .exercise-body { padding: 0 12px 12px; }
-    .rest-timer {
-      margin: 14px 0;
-      padding: 13px;
-      border: 1px solid var(--blush-strong);
-      border-radius: 14px;
-      background: #fff9f8;
+    .rest-bar {
+      position: fixed;
+      z-index: 6;
+      right: 0;
+      bottom: calc(64px + env(safe-area-inset-bottom));
+      left: 0;
+      display: flex;
+      max-width: 720px;
+      margin: auto;
+      padding: 0 max(12px, env(safe-area-inset-right)) 9px max(12px, env(safe-area-inset-left));
+      pointer-events: none;
     }
-    .rest-timer h3 { margin-bottom: 4px; }
+    .rest-bar-inner {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      align-items: center;
+      padding: 8px 10px 8px 14px;
+      border: 1px solid var(--blush-strong);
+      border-radius: 15px;
+      background: rgba(255, 249, 248, .97);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      pointer-events: auto;
+    }
     .timer-display {
-      margin: 10px 0;
+      flex: 1;
       color: var(--rose-deep);
-      font-size: 2.1rem;
+      font-size: 1.65rem;
       font-variant-numeric: tabular-nums;
       font-weight: 850;
       line-height: 1;
     }
-    .timer-display.complete { color: var(--sage-ink); }
-    .timer-controls {
+    .timer-display.complete { color: var(--sage-ink); font-size: 1.02rem; }
+    .rest-bar button { min-height: 38px; padding: 0 11px; font-size: .82rem; }
+    .superset {
+      margin-top: 14px;
+      padding: 12px;
+      border: 2px solid var(--blush-strong);
+      border-radius: 18px;
+      background: #fcf1f3;
+    }
+    .superset .exercise { margin-top: 8px; }
+    .superset .exercise:first-of-type { margin-top: 0; }
+    .superset-head {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
+      margin: 0 2px 10px;
+      color: var(--rose-deep);
+      font-size: .79rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .superset-head > span:last-child { flex: 1 1 100%; }
+    .superset-badge {
+      padding: 5px 10px;
+      border-radius: 99px;
+      background: var(--rose);
+      color: #fff;
+      font-size: .68rem;
+      font-weight: 850;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .rest-presets, .superset-rest {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .superset-rest { margin: 11px 2px 1px; }
+    .rest-presets-label {
+      color: var(--muted);
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
     }
     .timer-preset {
       min-height: 38px;
-      padding: 0 11px;
+      padding: 0 13px;
       border: 1px solid var(--blush-strong);
       background: #fffefa;
       color: var(--rose-deep);
       font-size: .82rem;
+      font-variant-numeric: tabular-nums;
       font-weight: 800;
     }
     .set-grid {
@@ -431,6 +502,26 @@
     .pelvic-choice input { width: 22px; min-height: 22px; margin: 0; accent-color: var(--rose); }
     .resource-list { margin: 10px 0 0; padding-left: 18px; }
     .resource-list li { margin: 8px 0; font-size: .84rem; }
+    .progress-menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
+    .progress-menu button {
+      min-height: 108px;
+      padding: 14px;
+      border: 1px solid #e8d8db;
+      border-radius: var(--radius);
+      background: rgba(255, 253, 251, .91);
+      box-shadow: var(--shadow);
+      color: var(--rose-deep);
+      text-align: left;
+      font-size: .92rem;
+      font-weight: 850;
+    }
+    .progress-menu button span { display: block; margin-top: 6px; color: var(--muted); font-size: .72rem; font-weight: 650; line-height: 1.35; }
+    .panel-back { margin: 0 0 6px -10px; }
+    .progress-panel h3 { margin-top: 4px; color: var(--rose-deep); }
+    .roadmap { margin: 0; padding: 0; list-style: none; }
+    .roadmap li { padding: 9px 0; border-bottom: 1px solid var(--line); font-size: .86rem; }
+    .roadmap li:last-child { border-bottom: 0; padding-bottom: 0; }
+    .roadmap strong { color: var(--rose-deep); }
     .progress-form { display: grid; gap: 10px; }
     .chart {
       width: 100%;
@@ -509,7 +600,10 @@
     <section id="workout" class="tab-view" aria-labelledby="workout-title">
       <div class="workout-header">
         <div><p class="eyebrow">Workout log</p><h1 id="workout-title">Train with intent</h1></div>
-        <span id="workout-week" class="pill"></span>
+        <div class="header-pills">
+          <span id="workout-week" class="pill"></span>
+          <span id="workout-count" class="pill sage"></span>
+        </div>
       </div>
       <section class="card">
         <div class="week-row">
@@ -545,18 +639,35 @@
     <section id="progress" class="tab-view" aria-labelledby="progress-title">
       <p class="eyebrow">Trends, not single readings</p>
       <h1 id="progress-title">Progress</h1>
-      <p class="subtle">Track consistency, performance, standardised body measurements and Evolt trends. A gym-only plan cannot guarantee a specific scale change.</p>
-      <section class="card">
-        <h2>Performance markers</h2>
-        <p class="subtle">Review every exercise you log. Use the graph to compare your best working weight week by week.</p>
+      <p id="progress-intro" class="subtle">Choose what you want to look at. Read trends rather than single readings, and remember a gym-only plan cannot guarantee a specific scale change.</p>
+      <div id="progress-menu" class="progress-menu" role="group" aria-label="Progress sections"></div>
+
+      <section id="panel-lower" class="card progress-panel hidden" aria-labelledby="panel-lower-title">
+        <button class="button-quiet panel-back" data-progress-back type="button">← All progress</button>
+        <h2 id="panel-lower-title">Lower-body lifts</h2>
+        <p class="subtle">Compare your best working weight week by week.</p>
         <div class="progress-form">
-          <label>Exercise<select id="performance-exercise"></select></label>
+          <label>Exercise<select id="performance-exercise-lower"></select></label>
         </div>
-        <div id="performance-chart" class="chart"></div>
-        <div id="performance-summary"></div>
+        <div id="performance-chart-lower" class="chart"></div>
+        <div id="performance-summary-lower"></div>
       </section>
-      <section class="card">
-        <h2>Weekly body weight</h2>
+
+      <section id="panel-upper" class="card progress-panel hidden" aria-labelledby="panel-upper-title">
+        <button class="button-quiet panel-back" data-progress-back type="button">← All progress</button>
+        <h2 id="panel-upper-title">Upper-body lifts</h2>
+        <p class="subtle">Compare your best working weight week by week.</p>
+        <div class="progress-form">
+          <label>Exercise<select id="performance-exercise-upper"></select></label>
+        </div>
+        <div id="performance-chart-upper" class="chart"></div>
+        <div id="performance-summary-upper"></div>
+      </section>
+
+      <section id="panel-measure" class="card progress-panel hidden" aria-labelledby="panel-measure-title">
+        <button class="button-quiet panel-back" data-progress-back type="button">← All progress</button>
+        <h2 id="panel-measure-title">Measurements</h2>
+        <h3>Weekly body weight</h3>
         <div class="progress-form">
           <label>Plan week<select id="weight-week"></select></label>
           <label>Weight in kg<input id="weight-value" type="number" inputmode="decimal" min="35" max="200" step="0.1" placeholder="e.g. 58.0"></label>
@@ -564,21 +675,21 @@
         </div>
         <div id="weight-chart" class="chart"></div>
         <ul id="weight-list" class="log-list"></ul>
-      </section>
-      <section class="card">
-        <h2>Waist, hip and thigh measurements</h2>
-        <p class="small">Log every 2–4 weeks, at the same time of day and under similar food, fluid and cycle conditions. Measure waist after a normal exhale at one consistent point, hip at the fullest glute point, and mid-thigh at the same marked point on one leg.</p>
+        <div class="divider"></div>
+        <h3>Waist and thigh</h3>
+        <p class="small">Log every 2–4 weeks, at the same time of day and under similar food, fluid and cycle conditions. Measure waist after a normal exhale at one consistent point, and mid-thigh at the same marked point on one leg.</p>
         <div class="progress-form">
           <label>Plan week<select id="measure-week"></select></label>
           <label>Waist, cm<input id="measure-waist" type="number" inputmode="decimal" min="30" max="200" step="0.1"></label>
-          <label>Hip, cm<input id="measure-hip" type="number" inputmode="decimal" min="40" max="200" step="0.1"></label>
           <label>Mid-thigh, cm<input id="measure-thigh" type="number" inputmode="decimal" min="20" max="150" step="0.1"></label>
           <button id="save-measurements" class="button-primary" type="button">Save measurements</button>
         </div>
         <ul id="measurements-list" class="log-list"></ul>
       </section>
-      <section class="card">
-        <h2>Evolt checkpoints</h2>
+
+      <section id="panel-evolt" class="card progress-panel hidden" aria-labelledby="panel-evolt-title">
+        <button class="button-quiet panel-back" data-progress-back type="button">← All progress</button>
+        <h2 id="panel-evolt-title">Evolt scan</h2>
         <p class="small">Weeks 1, 6 and 12 are scheduled. Keep hydration, food, prior exercise, bladder status and menstrual context similar where practical. BIA values vary, so compare trends only.</p>
         <div class="progress-form">
           <label>Plan week<select id="evolt-week"></select></label>
@@ -606,6 +717,7 @@
           <li>If technique deteriorates, reps fall below the range, or readiness is poor, hold or reduce. Do not force progression.</li>
         </ol>
         <p class="small">Most compound lifts use 2–3 minutes rest; unilateral and machine exercises use 90–120 seconds; isolation and core use 60–90 seconds.</p>
+        <p class="small">Keep the main lifts as straight sets. Only the accessory pairs boxed and badged <strong>⇄ Superset</strong> in a session are meant to be alternated: do a set of the first, a set of the second, then take one rest before the next round. Use that pair's shared <strong>Rest after both</strong> timer rather than resting twice. If a machine is busy or you feel rushed, run them as straight sets instead.</p>
       </section>
       <section class="card">
         <h2>Glutes, thighs and waist</h2>
@@ -615,9 +727,10 @@
       <section class="card">
         <h2>Cycle context, endometriosis and lower-energy days</h2>
         <p class="subtle">Use cycle stage as context, not a prescription. With irregular cycles, do not rely on calendar dates to identify ovulation. Use symptoms, readiness and personal movement triggers to decide adjustments. On 1–2 lower-energy or painful days, reduce sets or load, choose stable machines and low-impact warm-up cardio, and avoid any bracing, range or impact that aggravates symptoms. Resume normally when symptoms settle.</p>
-        <p class="small">Pelvic-floor care is not always strengthening. Before the pelvic-health assessment, choose only comfortable relaxation and mobility work from the optional Pelvic care card. Food supports training, but no food pattern treats endometriosis or confirms a cycle stage. A copper IUD can make bleeding heavier for some people. Seek clinical advice for persistent fatigue, breathlessness, dizziness, unusually heavy or prolonged bleeding, and before taking an iron supplement.</p>
+        <p class="small">Pelvic-floor care is not always strengthening. Before the pelvic-health assessment, choose only comfortable relaxation and mobility work from the Pelvic care card below. Food supports training, but no food pattern treats endometriosis or confirms a cycle stage. A copper IUD can make bleeding heavier for some people. Seek clinical advice for persistent fatigue, breathlessness, dizziness, unusually heavy or prolonged bleeding, and before taking an iron supplement.</p>
         <div class="notice warning"><strong>Seek clinical advice</strong> for new or escalating pelvic pain, fainting, unusually heavy bleeding, neurological symptoms or symptoms persisting beyond your usual pattern.</div>
       </section>
+      <div id="pelvic-care-content"></div>
       <section class="card">
         <h2>Backup and restore</h2>
         <p class="subtle">Data stays on this device when browser storage is available. This installed app works offline after its first online load. Save a JSON backup before changing phones, clearing website data or after a major block of training.</p>
@@ -659,6 +772,15 @@
     <button id="reload-update" class="button-primary" type="button">Reload</button>
   </aside>
 
+  <aside id="rest-bar" class="rest-bar hidden" aria-label="Rest timer">
+    <div class="rest-bar-inner">
+      <div id="rest-timer-display" class="timer-display" role="timer" aria-live="off">0:00</div>
+      <button id="add-rest-time" class="button-secondary" type="button">+30s</button>
+      <button id="cancel-rest-timer" class="button-quiet" type="button">Cancel</button>
+    </div>
+  </aside>
+  <p id="rest-timer-status" class="sr-only" role="status" aria-live="polite"></p>
+
   <nav class="nav" aria-label="Main navigation">
     <button class="active" data-tab="plan" type="button"><span class="nav-dot"></span>Plan</button>
     <button data-tab="workout" type="button"><span class="nav-dot"></span>Workout</button>
@@ -686,8 +808,8 @@
           { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2–3 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
           { id: "long-stride-lunge", name: "Long-stride reverse lunge", sets: 2, reps: "8–12 / side", rest: "90–120 sec", alt: "Low step-up with a long stride", cue: "Take a long, stable step back and lean the torso slightly forward. Keep the load modest and stop well before technique changes.", priority: false },
           { id: "cable-kickback-a", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "60–90 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
-          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range. Superset with Pallof presses." },
-          { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "60 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis." }
+          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Cable hip abduction", cue: "Use a controlled range.", superset: 1 },
+          { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "60 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis.", superset: 1 }
         ]
       },
       {
@@ -697,8 +819,8 @@
           { id: "pulldown-a", name: "Lat pulldown", sets: 3, reps: "8–12", rest: "2 min", alt: "Assisted pull-up", cue: "Drive elbows down without leaning far back.", priority: true },
           { id: "incline-press", name: "Incline dumbbell press", sets: 3, reps: "8–12", rest: "2 min", alt: "Incline Smith or chest press machine", cue: "Use a stable bench angle and a controlled depth.", priority: true },
           { id: "chest-row", name: "Chest-supported row", sets: 3, reps: "8–12", rest: "90–120 sec", alt: "Seated cable row", cue: "Pull elbows toward hips while keeping chest supported.", priority: true },
-          { id: "lateral-raise", name: "Cable lateral raise", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Superset with pressdowns." },
-          { id: "pressdown", name: "Rope pressdown", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Overhead cable extension", cue: "Keep upper arms still and finish without forcing elbow lockout." },
+          { id: "lateral-raise", name: "Cable lateral raise", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug.", superset: 1 },
+          { id: "pressdown", name: "Rope pressdown", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Overhead cable extension", cue: "Keep upper arms still and finish without forcing elbow lockout.", superset: 1 },
           { id: "incline-curl", name: "Incline dumbbell curl", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Cable curl", cue: "Avoid swinging the torso to complete reps." }
         ]
       },
@@ -709,8 +831,9 @@
           { id: "glute-bridge", name: "Barbell or Smith glute bridge", sets: 3, reps: "8–12", rest: "2–3 min", alt: "Dumbbell glute bridge", cue: "Keep ribs down and use the most comfortable range. Pause only if you can stay controlled.", priority: true },
           { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 2, reps: "6–10", rest: "2–3 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled. This is deliberately low volume.", priority: true },
           { id: "cable-kickback-b", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "60–90 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
-          { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rest: "60–90 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range. Superset with dead bugs." },
-          { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady." }
+          { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rest: "60–90 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range.", superset: 1 },
+          { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady.", superset: 1 },
+          { id: "calf-raise", name: "Standing calf raise", sets: 3, reps: "10–15", rest: "60–90 sec", alt: "Seated calf raise or leg-press calf press", cue: "Rise onto the balls of the feet with control and lower to a comfortable stretch. Pause briefly at the top rather than bouncing." }
         ]
       },
       {
@@ -721,10 +844,9 @@
           { id: "cable-row", name: "Seated cable row", sets: 3, reps: "8–12", rest: "90–120 sec", alt: "Chest-supported row", cue: "Control the reach and pull elbows back without shrugging.", priority: true },
           { id: "chest-press", name: "Machine chest press", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Flat dumbbell press", cue: "Keep shoulder blades controlled against the pad.", priority: true },
           { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 2, reps: "8–12", rest: "90–120 sec", alt: "Assisted pull-up", cue: "Keep the path controlled and elbows travelling down.", priority: true },
-          { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder. Superset with triceps." },
           { id: "lateral-raise-b", name: "Cable lateral raise", sets: 3, reps: "12–20", rest: "60–90 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Build the shoulder-to-waist ratio without adding lower-body volume." },
-          { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false },
-          { id: "cable-curl", name: "Cable curl", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Dumbbell hammer curl", cue: "Keep the torso still. Superset with cable crunches." },
+          { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rest: "60–90 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder.", superset: 1 },
+          { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rest: "60–90 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false, superset: 1 },
           { id: "cable-crunch", name: "Cable crunch", sets: 2, reps: "10–15", rest: "60 sec", alt: "Side plank, 20–45 sec", cue: "Use a comfortable range. Swap if bracing or flexion aggravates symptoms." }
         ]
       }
@@ -781,7 +903,8 @@
       { id: "reverse-lunge", name: "Reverse lunge", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
       { id: "leg-press", name: "Leg press", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
       { id: "leg-extension", name: "Leg extension", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
-      { id: "leg-curl-b", name: "Lying or seated leg curl", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true }
+      { id: "leg-curl-b", name: "Lying or seated leg curl", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "cable-curl", name: "Cable curl", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true }
     ];
     const performanceExercises = [
       ...workouts.flatMap((workout) =>
@@ -810,7 +933,14 @@
     });
     let data = defaultData();
     let storageAvailable = true;
-    let selectedPerformanceExercise = performanceExercises[0].id;
+    const progressPanels = [
+      { id: "lower", title: "Lower-body lifts", note: "Glutes, hinge, abduction and calves" },
+      { id: "upper", title: "Upper-body lifts", note: "Pull, press, shoulders and arms" },
+      { id: "measure", title: "Measurements", note: "Weekly weight, waist and mid-thigh" },
+      { id: "evolt", title: "Evolt scan", note: "Checkpoint inputs and results" }
+    ];
+    let activeProgressPanel = "";
+    let selectedPerformanceExercise = { lower: "", upper: "" };
     const cycleGuidance = {
       bleeding: {
         title: "Bleeding / period",
@@ -1018,19 +1148,19 @@
         ["Week 8", "Deload", "Use about half the working sets and skip hard conditioning."],
         ["Weeks 9–12", "Perform", "Progress quality reps, finish with rep PRs and compare trends."]
       ];
-      document.getElementById("roadmap").innerHTML = roadmap.map((item) =>
-        `<div class="notice"><strong>${item[0]} · ${item[1]}</strong><br>${item[2]}</div>`
-      ).join("");
+      document.getElementById("roadmap").innerHTML = `<ul class="roadmap">${roadmap.map((item) =>
+        `<li><strong>${item[0]} · ${item[1]}</strong><br><span class="small">${item[2]}</span></li>`
+      ).join("")}</ul>`;
     }
     function renderPlan() {
       const week = Number(data.selectedWeek || currentPlanWeek());
       const phase = phaseForWeek(week);
       document.getElementById("phase-pill").textContent = `Week ${week}: ${phase.name}`;
       document.getElementById("sequence-copy").textContent = `Next: ${workoutById(data.selectedWorkout).short}. ${phase.note}`;
-      const done = Object.values(data.completed).filter(Boolean).length;
+      const done = completedWorkoutCount(week);
       const weight = data.weights?.[week]?.value;
       document.getElementById("quick-stats").innerHTML = `
-        <span class="pill sage">${done} completed session${done === 1 ? "" : "s"}</span>
+        <span class="pill sage">${done}/${workouts.length} sessions this week</span>
         <span class="pill">${data.nightWeeks?.[week] ? "Night block marked" : "Normal week"}</span>
         <span class="pill amber">${weight ? `${weight} kg logged` : "Weight not logged"}</span>
       `;
@@ -1106,39 +1236,46 @@
     }
     function renderSessionTabs() {
       const active = activeSessionId();
-      document.getElementById("session-tabs").innerHTML = [...workouts, pelvicCare].map((session) => `
-        <button class="${session.id === active ? "active" : ""}" data-session="${session.id}" type="button" role="tab" aria-selected="${session.id === active}">
-          ${session.short}<span>${session.focus}</span>
+      const week = Number(data.selectedWeek);
+      document.getElementById("session-tabs").innerHTML = workouts.map((workout) => {
+        const done = Boolean(data.completed?.[sessionKey(week, workout.id)]);
+        return `
+        <button class="${workout.id === active ? "active" : ""}${done ? " done" : ""}" data-session="${workout.id}" type="button" role="tab" aria-selected="${workout.id === active}">
+          ${done ? "✓ " : ""}${workout.short}<span>${workout.focus}</span>
         </button>
-      `).join("");
+      `;
+      }).join("");
     }
     let restTimer = { duration: 0, endsAt: null, intervalId: null, complete: false };
+    const openExercises = new Set();
     function formatTimer(seconds) {
       const minutes = Math.floor(seconds / 60);
       const remainder = seconds % 60;
       return `${minutes}:${String(remainder).padStart(2, "0")}`;
     }
+    function restPresets(rest) {
+      const unit = /min/i.test(rest) ? 60 : 1;
+      const values = (String(rest).match(/\d+/g) || []).map((value) => Number(value) * unit);
+      return [...new Set(values)].filter((seconds) => seconds > 0);
+    }
+    function announceRest(message) {
+      document.getElementById("rest-timer-status").textContent = message;
+    }
     function renderRestTimer() {
+      const idle = !restTimer.endsAt && !restTimer.complete;
+      document.getElementById("rest-bar").classList.toggle("hidden", idle);
+      if (idle) return;
+      const remaining = restTimer.endsAt ? Math.max(0, Math.ceil((restTimer.endsAt - Date.now()) / 1000)) : 0;
       const display = document.getElementById("rest-timer-display");
-      const status = document.getElementById("rest-timer-status");
-      const cancel = document.getElementById("cancel-rest-timer");
-      if (!display || !status || !cancel) return;
-      const remaining = restTimer.endsAt
-        ? Math.max(0, Math.ceil((restTimer.endsAt - Date.now()) / 1000))
-        : restTimer.duration;
       display.classList.toggle("complete", restTimer.complete);
-      display.textContent = restTimer.complete ? "Rest complete" : (remaining ? formatTimer(remaining) : "Choose a time");
-      status.textContent = restTimer.complete
-        ? "Rest complete."
-        : restTimer.endsAt
-          ? "Rest timer running."
-          : "Choose a preset to start your rest timer.";
-      cancel.disabled = !restTimer.endsAt && !restTimer.complete;
-      cancel.textContent = restTimer.complete ? "Dismiss" : "Cancel timer";
+      display.textContent = restTimer.complete ? "Rest complete" : formatTimer(remaining);
+      document.getElementById("add-rest-time").disabled = restTimer.complete;
+      document.getElementById("cancel-rest-timer").textContent = restTimer.complete ? "Dismiss" : "Cancel";
     }
     function cancelRestTimer() {
       if (restTimer.intervalId !== null) window.clearInterval(restTimer.intervalId);
       restTimer = { duration: 0, endsAt: null, intervalId: null, complete: false };
+      announceRest("");
       renderRestTimer();
     }
     function finishRestTimer() {
@@ -1148,6 +1285,7 @@
       restTimer.duration = 0;
       restTimer.complete = true;
       navigator.vibrate?.([180, 90, 180]);
+      announceRest("Rest complete.");
       renderRestTimer();
     }
     function updateRestTimer() {
@@ -1166,28 +1304,73 @@
         intervalId: window.setInterval(updateRestTimer, 1000),
         complete: false
       };
+      announceRest(`Rest timer started for ${formatTimer(seconds)}.`);
       renderRestTimer();
     }
-    function exerciseMarkup(workout, exercise, week) {
+    function addRestTime(seconds) {
+      if (!restTimer.endsAt) return;
+      restTimer.duration += seconds;
+      restTimer.endsAt += seconds * 1000;
+      renderRestTimer();
+    }
+    function restPresetMarkup(seconds, label) {
+      return `
+        <div class="rest-presets" role="group" aria-label="Rest timer for ${label}">
+          <span class="rest-presets-label">${seconds.length ? "Rest" : ""}</span>
+          ${seconds.map((value) =>
+            `<button class="timer-preset" data-rest-seconds="${value}" type="button" aria-label="Start a ${formatTimer(value)} rest timer">${formatTimer(value)}</button>`
+          ).join("")}
+        </div>`;
+    }
+    function groupExercises(exercises) {
+      return exercises.reduce((groups, exercise) => {
+        const previous = groups[groups.length - 1];
+        if (exercise.superset && previous?.superset === exercise.superset) previous.items.push(exercise);
+        else groups.push({ superset: exercise.superset, items: [exercise] });
+        return groups;
+      }, []);
+    }
+    function sessionBlockMarkup(workout, group, week) {
+      if (group.items.length < 2) return exerciseMarkup(workout, group.items[0], week, true);
+      const names = group.items.map((exercise) => exercise.name);
+      const shared = [...new Set(group.items.flatMap((exercise) => restPresets(exercise.rest)))].sort((a, b) => a - b);
+      return `
+        <section class="superset" aria-label="Superset: ${names.join(" with ")}">
+          <p class="superset-head">
+            <span class="superset-badge">⇄ Superset</span>
+            <span>Alternate these two back to back, then rest once before the next round.</span>
+          </p>
+          ${group.items.map((exercise) => exerciseMarkup(workout, exercise, week, false)).join("")}
+          <div class="superset-rest">
+            <span class="rest-presets-label">Rest after both</span>
+            ${shared.map((value) =>
+              `<button class="timer-preset" data-rest-seconds="${value}" type="button" aria-label="Start a ${formatTimer(value)} rest timer after the superset">${formatTimer(value)}</button>`
+            ).join("")}
+          </div>
+        </section>`;
+    }
+    function exerciseMarkup(workout, exercise, week, showRest) {
       const count = phaseSetCount(exercise, week);
       const setInputs = Array.from({ length: count }, (_, index) => {
         const set = getSetLog(week, workout.id, exercise.id, index);
+        const caption = (text) => index === 0 ? text : `<span class="sr-only">${text}, set ${index + 1}</span>`;
         return `
           <div class="set-grid">
             <span class="set-number">${index + 1}</span>
-            <label>kg<input inputmode="decimal" type="number" min="0" step="0.5" data-log-week="${week}" data-log-workout="${workout.id}" data-log-exercise="${exercise.id}" data-log-set="${index}" data-log-key="weight" value="${escapeHtml(set.weight)}"></label>
-            <label>reps<input inputmode="numeric" type="number" min="0" max="99" step="1" data-log-week="${week}" data-log-workout="${workout.id}" data-log-exercise="${exercise.id}" data-log-set="${index}" data-log-key="reps" value="${escapeHtml(set.reps)}"></label>
+            <label>${caption("kg")}<input inputmode="decimal" type="number" min="0" step="0.5" data-log-week="${week}" data-log-workout="${workout.id}" data-log-exercise="${exercise.id}" data-log-set="${index}" data-log-key="weight" value="${escapeHtml(set.weight)}"></label>
+            <label>${caption("reps")}<input inputmode="numeric" type="number" min="0" max="99" step="1" data-log-week="${week}" data-log-workout="${workout.id}" data-log-exercise="${exercise.id}" data-log-set="${index}" data-log-key="reps" value="${escapeHtml(set.reps)}"></label>
           </div>`;
       }).join("");
       const suggestion = loadSuggestion(workout.id, exercise, week);
       return `
-        <details class="exercise">
+        <details class="exercise" data-exercise="${exercise.id}"${openExercises.has(exercise.id) ? " open" : ""}>
           <summary>
             <span class="exercise-name">${exercise.name}</span>
             <span class="exercise-meta">${count} × ${exercise.reps} · ${exercise.rest}</span>
           </summary>
           <div class="exercise-body">
             ${setInputs}
+            ${showRest ? restPresetMarkup(restPresets(exercise.rest), exercise.name) : ""}
             <div class="exercise-notes">
               <p><strong>Alternative:</strong> ${exercise.alt}</p>
               <p>${exercise.cue}</p>
@@ -1195,6 +1378,15 @@
             <div class="suggestion ${suggestion.type}">${suggestion.text}</div>
           </div>
         </details>`;
+    }
+    function refreshExerciseSuggestion(exerciseId) {
+      const workout = workoutById(activeSessionId());
+      const exercise = workout.exercises.find((item) => item.id === exerciseId);
+      const target = document.querySelector(`.exercise[data-exercise="${exerciseId}"] .suggestion`);
+      if (!exercise || !target) return;
+      const suggestion = loadSuggestion(workout.id, exercise, Number(data.selectedWeek));
+      target.className = `suggestion ${suggestion.type}`;
+      target.textContent = suggestion.text;
     }
     function pelvicVisualMarkup(type) {
       if (type === "breathing") {
@@ -1229,13 +1421,14 @@
       const choices = data.pelvicCare?.[week] || {};
       const note = data.pelvicCareNotes?.[week] || "";
       const entries = (data.pelvicCareLogs || []).filter((entry) => entry.week === week);
-      document.getElementById("workout-content").innerHTML = `
+      document.getElementById("pelvic-care-content").innerHTML = `
         <section class="card">
           <div class="workout-header">
             <div><p class="eyebrow">${pelvicCare.focus}</p><h2>${pelvicCare.title}</h2></div>
             <span class="pill sage">5–10 min</span>
           </div>
           <p class="subtle">${pelvicCare.intro}</p>
+          <p class="small">Entries save to <strong>${weekLabel(week)}</strong>. Change the plan week on the Workout tab.</p>
           <div class="notice warning"><strong>Start with relaxation, not strengthening.</strong><br>Pelvic pain can involve muscles that are weak, overactive or both. This app cannot tell which applies. Until the pelvic-health assessment, use only the cards below. They support awareness and comfort, but do not treat endometriosis.</div>
           <div class="notice"><strong>Choose up to two.</strong><br>On a green day, choose one or two if they feel comfortable. On an amber day, use a relaxation card only if it feels soothing. On a red day or during severe symptoms, skip it.</div>
           <div class="pelvic-grid">
@@ -1285,15 +1478,12 @@
       const week = Number(data.selectedWeek);
       const phase = phaseForWeek(week);
       document.getElementById("workout-week").textContent = `Week ${week} · ${phase.name}`;
+      document.getElementById("workout-count").textContent = `${completedWorkoutCount(week)}/${workouts.length} done`;
       document.getElementById("week-dates").textContent = weekLabel(week);
       document.getElementById("week-night-toggle").textContent = `Night block: ${data.nightWeeks?.[week] ? "on" : "off"}`;
       renderReadiness();
       renderBackupReminders();
       renderSessionTabs();
-      if (activeSessionId() === pelvicCare.id) {
-        renderPelvicCare();
-        return;
-      }
       const workout = workoutById(activeSessionId());
       const isShort = Boolean(data.shortMode);
       const exercises = isShort ? workout.exercises.filter((exercise) => exercise.priority).slice(0, 3) : workout.exercises;
@@ -1305,23 +1495,10 @@
           </div>
           <p class="subtle">${workout.intro}</p>
           <label class="toggle-row"><input id="short-mode" type="checkbox" ${isShort ? "checked" : ""}>Use the 35–45 minute priority version</label>
-          <section class="rest-timer" aria-labelledby="rest-timer-title">
-            <h3 id="rest-timer-title">Rest timer</h3>
-            <p id="rest-timer-status" class="small" aria-live="polite">Choose a preset to start your rest timer.</p>
-            <div id="rest-timer-display" class="timer-display" role="timer" aria-live="off">Choose a time</div>
-            <div class="timer-controls">
-              ${[[60, "1 min"], [90, "1.5 min"], [120, "2 min"], [180, "3 min"]].map(([seconds, label]) =>
-                `<button class="timer-preset" data-rest-seconds="${seconds}" type="button">${label}</button>`
-              ).join("")}
-              <button id="cancel-rest-timer" class="button-quiet" type="button" disabled>Cancel timer</button>
-            </div>
-          </section>
-          <div class="notice"><strong>Rest:</strong> 2–3 min after demanding compounds, 90–120 sec after unilateral or machine work, 60–90 sec after isolation and core. Keep main lifts as straight sets; only superset accessories.</div>
-          ${exercises.map((exercise) => exerciseMarkup(workout, exercise, week)).join("")}
+          ${groupExercises(exercises).map((group) => sessionBlockMarkup(workout, group, week)).join("")}
           <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(data.logs?.[sessionKey(week, workout.id)]?.sessionNote || "")}</textarea></label>
           <label class="session-complete"><input id="complete-session" type="checkbox" ${data.completed?.[sessionKey(week, workout.id)] ? "checked" : ""}>Mark ${workout.short} complete</label>
         </section>`;
-      renderRestTimer();
     }
     function chartMarkup(entries, label) {
       if (entries.length < 2) return `<p class="small">Add at least two ${label.toLowerCase()} entries to view a trend.</p>`;
@@ -1349,64 +1526,112 @@
           <text x="${pad}" y="${height - 4}" fill="#7d6c74" font-size="10">${min.toFixed(1)}</text>
         </svg>`;
     }
-    function renderProgress() {
-      const weightEntries = weeks
+    function loggedWeightEntries() {
+      return weeks
         .filter((week) => data.weights?.[week]?.value !== undefined && data.weights[week].value !== "")
         .map((week) => ({ week, value: Number(data.weights[week].value) }));
-      document.getElementById("weight-chart").innerHTML = chartMarkup(weightEntries, "body weight");
-      document.getElementById("weight-list").innerHTML = weightEntries.length
-        ? weightEntries.map((entry) => `<li><span>Week ${entry.week}</span><strong>${entry.value.toFixed(1)} kg</strong></li>`).join("")
-        : "<li><span>No weekly weight logged yet.</span></li>";
-      const measurementEntries = weeks
-        .filter((week) => ["waist", "hip", "thigh"].some((key) => data.measurements?.[week]?.[key] !== undefined && data.measurements[week][key] !== ""))
+    }
+    function loggedMeasurementEntries() {
+      return weeks
+        .filter((week) => ["waist", "thigh"].some((key) => data.measurements?.[week]?.[key] !== undefined && data.measurements[week][key] !== ""))
         .map((week) => ({ week, ...data.measurements[week] }));
-      const measurementValue = (value) => value !== undefined && value !== "" ? `${value} cm` : "not logged";
-      document.getElementById("measurements-list").innerHTML = measurementEntries.length
-        ? measurementEntries.map((entry) => `
+    }
+    function latestLoggedSet(exercise) {
+      for (let week = 12; week >= 1; week -= 1) {
+        const sets = data.logs?.[sessionKey(week, exercise.workoutId)]?.[exercise.id] || [];
+        const completed = sets.filter((set) => set.weight !== "" || set.reps !== "");
+        if (completed.length) return { set: completed[completed.length - 1], week };
+      }
+      return { set: null, week: null };
+    }
+    function selectablePerformance(group) {
+      return performanceExercises.filter((exercise) =>
+        (exercise.workoutId.startsWith("lower") ? "lower" : "upper") === group
+        && (!exercise.archived || Boolean(latestLoggedSet(exercise).set))
+      );
+    }
+    function renderWeightSection() {
+      const entries = loggedWeightEntries();
+      document.getElementById("weight-chart").innerHTML = chartMarkup(entries, "body weight");
+      document.getElementById("weight-list").innerHTML = entries.length
+        ? entries.map((entry) => `<li><span>Week ${entry.week}</span><strong>${entry.value.toFixed(1)} kg</strong></li>`).join("")
+        : "<li><span>No weekly weight logged yet.</span></li>";
+    }
+    function renderMeasurementSection() {
+      const entries = loggedMeasurementEntries();
+      const display = (value) => value !== undefined && value !== "" ? `${value} cm` : "not logged";
+      document.getElementById("measurements-list").innerHTML = entries.length
+        ? entries.map((entry) => `
           <li>
-            <span><strong>Week ${entry.week}</strong><br><span class="small">Waist ${measurementValue(entry.waist)} · Hip ${measurementValue(entry.hip)} · Mid-thigh ${measurementValue(entry.thigh)}</span></span>
+            <span><strong>Week ${entry.week}</strong><br><span class="small">Waist ${display(entry.waist)} · Mid-thigh ${display(entry.thigh)}</span></span>
             <button class="button-quiet" data-delete-measurements="${entry.week}" type="button">Remove</button>
           </li>
         `).join("")
         : "<li><span>No body measurements saved yet.</span></li>";
-      const evoltEntries = [1, 6, 12].filter((week) => data.evolt?.[week]).map((week) => data.evolt[week]);
-      document.getElementById("evolt-list").innerHTML = evoltEntries.length
-        ? evoltEntries.map((entry) => `<li><span><strong>Week ${entry.week}</strong><br><span class="small">Weight ${entry.weight || "—"} kg · Fat ${entry.fat || "—"}% · Muscle ${entry.muscle || "—"} kg</span></span><button class="button-quiet" data-delete-evolt="${entry.week}" type="button">Remove</button></li>`).join("")
+    }
+    function renderEvoltSection() {
+      const entries = [1, 6, 12].filter((week) => data.evolt?.[week]).map((week) => data.evolt[week]);
+      document.getElementById("evolt-list").innerHTML = entries.length
+        ? entries.map((entry) => `<li><span><strong>Week ${entry.week}</strong><br><span class="small">Weight ${entry.weight || "—"} kg · Fat ${entry.fat || "—"}% · Muscle ${entry.muscle || "—"} kg</span></span><button class="button-quiet" data-delete-evolt="${entry.week}" type="button">Remove</button></li>`).join("")
         : "<li><span>No Evolt checkpoint saved yet.</span></li>";
-      const selectablePerformanceExercises = performanceExercises.filter((exercise) => !exercise.archived || weeks.some((week) => {
-        const sets = data.logs?.[sessionKey(week, exercise.workoutId)]?.[exercise.id] || [];
-        return sets.some((set) => set.weight !== "" || set.reps !== "");
-      }));
-      const selectedExercise = selectablePerformanceExercises.find((exercise) => exercise.id === selectedPerformanceExercise) || selectablePerformanceExercises[0];
-      selectedPerformanceExercise = selectedExercise.id;
-      document.getElementById("performance-exercise").innerHTML = selectablePerformanceExercises.map((exercise) =>
+    }
+    function renderPerformancePanel(group) {
+      const options = selectablePerformance(group);
+      const selected = options.find((exercise) => exercise.id === selectedPerformanceExercise[group]) || options[0];
+      selectedPerformanceExercise[group] = selected.id;
+      const select = document.getElementById(`performance-exercise-${group}`);
+      select.innerHTML = options.map((exercise) =>
         `<option value="${exercise.id}">${exercise.workoutName} · ${exercise.name}</option>`
       ).join("");
-      document.getElementById("performance-exercise").value = selectedExercise.id;
-      const performanceEntries = weeks.flatMap((week) => {
-        const sets = data.logs?.[sessionKey(week, selectedExercise.workoutId)]?.[selectedExercise.id] || [];
-        const weights = sets
+      select.value = selected.id;
+      const entries = weeks.flatMap((week) => {
+        const sets = data.logs?.[sessionKey(week, selected.workoutId)]?.[selected.id] || [];
+        const values = sets
           .filter((set) => set.weight !== "" && Number.isFinite(Number(set.weight)))
           .map((set) => Number(set.weight));
-        return weights.length ? [{ week, value: Math.max(...weights) }] : [];
+        return values.length ? [{ week, value: Math.max(...values) }] : [];
       });
-      document.getElementById("performance-chart").innerHTML = chartMarkup(performanceEntries, `${selectedExercise.name} best weight`);
-      const performance = selectablePerformanceExercises.map((exercise) => {
-        for (let week = 12; week >= 1; week -= 1) {
-          const sets = data.logs?.[sessionKey(week, exercise.workoutId)]?.[exercise.id] || [];
-          const completed = sets.filter((set) => set.weight !== "" || set.reps !== "");
-          if (completed.length) return { ...exercise, set: completed[completed.length - 1], week };
-        }
-        return { ...exercise, set: null, week: null };
-      });
-      document.getElementById("performance-summary").innerHTML = `<ul class="log-list">${performance.map((item) => {
-        const result = item.set
-          ? item.set.weight !== ""
-            ? `${escapeHtml(item.set.weight)} kg × ${escapeHtml(item.set.reps || "—")}`
-            : `${escapeHtml(item.set.reps || "—")} reps`
+      document.getElementById(`performance-chart-${group}`).innerHTML = chartMarkup(entries, `${selected.name} best weight`);
+      document.getElementById(`performance-summary-${group}`).innerHTML = `<ul class="log-list">${options.map((exercise) => {
+        const latest = latestLoggedSet(exercise);
+        const result = latest.set
+          ? latest.set.weight !== ""
+            ? `${escapeHtml(latest.set.weight)} kg × ${escapeHtml(latest.set.reps || "—")}`
+            : `${escapeHtml(latest.set.reps || "—")} reps`
           : "Not logged";
-        return `<li><span>${item.name}<br><span class="small">${item.workoutName}${item.week ? ` · Latest: Week ${item.week}` : ""}</span></span><strong>${result}</strong></li>`;
+        return `<li><span>${exercise.name}<br><span class="small">${exercise.workoutName}${latest.week ? ` · Latest: Week ${latest.week}` : ""}</span></span><strong>${result}</strong></li>`;
       }).join("")}</ul>`;
+    }
+    function progressMenuStat(id) {
+      if (id === "lower" || id === "upper") {
+        const options = selectablePerformance(id);
+        return `${options.filter((exercise) => latestLoggedSet(exercise).set).length} of ${options.length} exercises logged`;
+      }
+      if (id === "measure") {
+        return `${loggedWeightEntries().length} weekly weights · ${loggedMeasurementEntries().length} measurements`;
+      }
+      return `${[1, 6, 12].filter((week) => data.evolt?.[week]).length} of 3 checkpoints logged`;
+    }
+    function renderProgressMenu() {
+      document.getElementById("progress-menu").innerHTML = progressPanels.map((panel) => `
+        <button data-progress-panel="${panel.id}" type="button">
+          ${panel.title}<span>${panel.note}<br>${progressMenuStat(panel.id)}</span>
+        </button>
+      `).join("");
+      const inPanel = Boolean(activeProgressPanel);
+      document.getElementById("progress-menu").classList.toggle("hidden", inPanel);
+      document.getElementById("progress-intro").classList.toggle("hidden", inPanel);
+      progressPanels.forEach((panel) => {
+        document.getElementById(`panel-${panel.id}`).classList.toggle("hidden", activeProgressPanel !== panel.id);
+      });
+    }
+    function renderProgress() {
+      renderWeightSection();
+      renderMeasurementSection();
+      renderEvoltSection();
+      renderPerformancePanel("lower");
+      renderPerformancePanel("upper");
+      renderProgressMenu();
     }
     function renderAll() {
       renderStorageNotice();
@@ -1414,12 +1639,17 @@
       renderPlan();
       renderRoadmap();
       renderWorkout();
+      renderPelvicCare();
       renderProgress();
     }
     function setActiveTab(tabId) {
       document.querySelectorAll(".tab-view").forEach((view) => view.classList.toggle("active", view.id === tabId));
       document.querySelectorAll(".nav button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tabId));
-      if (tabId === "progress") renderProgress();
+      if (tabId === "progress") {
+        activeProgressPanel = "";
+        renderProgress();
+      }
+      if (tabId === "more") renderPelvicCare();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
     function updateReadiness() {
@@ -1483,6 +1713,7 @@
       const status = document.getElementById("offline-status");
       status.className = `notice ${type}`;
       status.textContent = message;
+      if (type === "good") window.setTimeout(() => status.classList.add("hidden"), 6000);
     }
     function showUpdateBanner(registration) {
       updateRegistration = registration;
@@ -1552,19 +1783,53 @@
         const button = event.target.closest("button[data-session]");
         if (!button) return;
         data.activeSession = button.dataset.session;
-        if (workouts.some((workout) => workout.id === data.activeSession)) {
-          data.selectedWorkout = data.activeSession;
-        }
+        data.selectedWorkout = data.activeSession;
         data.shortMode = false;
         saveData();
         renderWorkout();
       });
-      document.getElementById("workout-content").addEventListener("click", (event) => {
+      const workoutContent = document.getElementById("workout-content");
+      workoutContent.addEventListener("toggle", (event) => {
+        const details = event.target.closest?.(".exercise[data-exercise]");
+        if (!details) return;
+        if (details.open) openExercises.add(details.dataset.exercise);
+        else openExercises.delete(details.dataset.exercise);
+      }, true);
+      workoutContent.addEventListener("click", (event) => {
         const preset = event.target.closest("button[data-rest-seconds]");
-        if (preset) {
-          startRestTimer(Number(preset.dataset.restSeconds));
+        if (preset) startRestTimer(Number(preset.dataset.restSeconds));
+      });
+      workoutContent.addEventListener("input", (event) => {
+        const input = event.target;
+        if (input.matches("[data-log-workout]")) {
+          setLog(Number(input.dataset.logWeek), input.dataset.logWorkout, input.dataset.logExercise, Number(input.dataset.logSet), input.dataset.logKey, input.value);
           return;
         }
+        if (input.id === "session-note") {
+          const keyForSession = sessionKey(Number(data.selectedWeek), activeSessionId());
+          data.logs[keyForSession] ||= {};
+          data.logs[keyForSession].sessionNote = input.value;
+          saveData();
+        }
+      });
+      workoutContent.addEventListener("change", (event) => {
+        const input = event.target;
+        if (input.matches("[data-log-workout]")) refreshExerciseSuggestion(input.dataset.logExercise);
+        if (input.id === "short-mode") {
+          data.shortMode = input.checked;
+          saveData();
+          renderWorkout();
+        }
+        if (input.id === "complete-session") {
+          data.completed[sessionKey(Number(data.selectedWeek), activeSessionId())] = input.checked;
+          saveData();
+          renderPlan();
+          renderSessionTabs();
+          document.getElementById("workout-count").textContent = `${completedWorkoutCount(Number(data.selectedWeek))}/${workouts.length} done`;
+        }
+      });
+      const pelvicContent = document.getElementById("pelvic-care-content");
+      pelvicContent.addEventListener("click", (event) => {
         if (event.target.closest("#save-pelvic-care")) {
           const week = Number(data.selectedWeek);
           const cards = Object.entries(data.pelvicCare?.[week] || {})
@@ -1590,60 +1855,34 @@
           return;
         }
         const deletePelvicEntry = event.target.closest("button[data-delete-pelvic-entry]");
-        if (deletePelvicEntry) {
-          data.pelvicCareLogs = (data.pelvicCareLogs || []).filter((entry) => entry.id !== deletePelvicEntry.dataset.deletePelvicEntry);
-          saveData();
+        if (!deletePelvicEntry) return;
+        data.pelvicCareLogs = (data.pelvicCareLogs || []).filter((entry) => entry.id !== deletePelvicEntry.dataset.deletePelvicEntry);
+        saveData();
+        renderPelvicCare();
+      });
+      pelvicContent.addEventListener("input", (event) => {
+        if (event.target.id !== "pelvic-care-note") return;
+        data.pelvicCareNotes ||= {};
+        data.pelvicCareNotes[Number(data.selectedWeek)] = event.target.value;
+        saveData();
+      });
+      pelvicContent.addEventListener("change", (event) => {
+        const input = event.target;
+        if (!input.matches("[data-pelvic-card]")) return;
+        const week = Number(data.selectedWeek);
+        data.pelvicCare ||= {};
+        data.pelvicCare[week] ||= {};
+        const selectedCards = Object.values(data.pelvicCare[week]).filter(Boolean).length;
+        if (input.checked && !data.pelvicCare[week][input.dataset.pelvicCard] && selectedCards >= 2) {
+          alert("Choose up to two pelvic-care cards this week.");
           renderPelvicCare();
           return;
         }
-        if (event.target.closest("#cancel-rest-timer")) cancelRestTimer();
+        data.pelvicCare[week][input.dataset.pelvicCard] = input.checked;
+        saveData();
       });
-      document.getElementById("workout-content").addEventListener("input", (event) => {
-        const input = event.target;
-        if (input.matches("[data-log-workout]")) {
-          setLog(Number(input.dataset.logWeek), input.dataset.logWorkout, input.dataset.logExercise, Number(input.dataset.logSet), input.dataset.logKey, input.value);
-          return;
-        }
-        if (input.id === "session-note") {
-          const keyForSession = sessionKey(Number(data.selectedWeek), data.selectedWorkout);
-          data.logs[keyForSession] ||= {};
-          data.logs[keyForSession].sessionNote = input.value;
-          saveData();
-        }
-        if (input.id === "pelvic-care-note") {
-          const week = Number(data.selectedWeek);
-          data.pelvicCareNotes ||= {};
-          data.pelvicCareNotes[week] = input.value;
-          saveData();
-        }
-      });
-      document.getElementById("workout-content").addEventListener("change", (event) => {
-        const input = event.target;
-        if (input.matches("[data-log-workout]")) renderWorkout();
-        if (input.matches("[data-pelvic-card]")) {
-          const week = Number(data.selectedWeek);
-          data.pelvicCare ||= {};
-          data.pelvicCare[week] ||= {};
-          const selectedCards = Object.values(data.pelvicCare[week]).filter(Boolean).length;
-          if (input.checked && !data.pelvicCare[week][input.dataset.pelvicCard] && selectedCards >= 2) {
-            alert("Choose up to two pelvic-care cards this week.");
-            renderPelvicCare();
-            return;
-          }
-          data.pelvicCare[week][input.dataset.pelvicCard] = input.checked;
-          saveData();
-        }
-        if (input.id === "short-mode") {
-          data.shortMode = input.checked;
-          saveData();
-          renderWorkout();
-        }
-        if (input.id === "complete-session") {
-          data.completed[sessionKey(Number(data.selectedWeek), data.selectedWorkout)] = input.checked;
-          saveData();
-          renderAll();
-        }
-      });
+      document.getElementById("cancel-rest-timer").addEventListener("click", cancelRestTimer);
+      document.getElementById("add-rest-time").addEventListener("click", () => addRestTime(30));
       document.getElementById("save-weight").addEventListener("click", () => {
         const week = Number(document.getElementById("weight-week").value);
         const value = document.getElementById("weight-value").value;
@@ -1657,13 +1896,12 @@
       document.getElementById("save-measurements").addEventListener("click", () => {
         const week = Number(document.getElementById("measure-week").value);
         const waist = document.getElementById("measure-waist").value;
-        const hip = document.getElementById("measure-hip").value;
         const thigh = document.getElementById("measure-thigh").value;
-        if (!waist && !hip && !thigh) return;
+        if (!waist && !thigh) return;
         data.measurements ||= {};
-        data.measurements[week] = { week, waist, hip, thigh };
+        data.measurements[week] = { week, waist, thigh };
         saveData();
-        ["measure-waist", "measure-hip", "measure-thigh"].forEach((id) => {
+        ["measure-waist", "measure-thigh"].forEach((id) => {
           document.getElementById(id).value = "";
         });
         renderProgress();
@@ -1682,9 +1920,24 @@
         saveData();
         renderProgress();
       });
-      document.getElementById("performance-exercise").addEventListener("change", (event) => {
-        selectedPerformanceExercise = event.target.value;
+      ["lower", "upper"].forEach((group) => {
+        document.getElementById(`performance-exercise-${group}`).addEventListener("change", (event) => {
+          selectedPerformanceExercise[group] = event.target.value;
+          renderPerformancePanel(group);
+        });
+      });
+      document.getElementById("progress-menu").addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-progress-panel]");
+        if (!button) return;
+        activeProgressPanel = button.dataset.progressPanel;
         renderProgress();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      document.getElementById("progress").addEventListener("click", (event) => {
+        if (!event.target.closest("button[data-progress-back]")) return;
+        activeProgressPanel = "";
+        renderProgress();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
       ["plan-backup-reminder", "workout-backup-reminder"].forEach((id) => {
         document.getElementById(id).addEventListener("click", (event) => {
@@ -1724,6 +1977,8 @@
     initialiseStorage();
     migrateLegacyPelvicCareSelections();
     if (!data.selectedWeek) data.selectedWeek = currentPlanWeek();
+    if (!workouts.some((workout) => workout.id === data.selectedWorkout)) data.selectedWorkout = workouts[0].id;
+    if (!workouts.some((workout) => workout.id === data.activeSession)) data.activeSession = data.selectedWorkout;
     bindEvents();
     renderAll();
     registerServiceWorker();

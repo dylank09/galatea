@@ -1,4 +1,4 @@
-const CACHE_NAME = "galatea-shell-v13";
+const CACHE_NAME = "galatea-shell-v16";
 const APP_SHELL = [
   "./",
   "./index.html",
