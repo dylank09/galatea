@@ -668,25 +668,15 @@
 
       <section id="panel-measure" class="card progress-panel hidden" aria-labelledby="panel-measure-title">
         <button class="button-quiet panel-back" data-progress-back type="button">← All progress</button>
-        <h2 id="panel-measure-title">Measurements</h2>
-        <h3>Weekly body weight</h3>
+        <h2 id="panel-measure-title">Body weight</h2>
+        <p class="small">Log as often as you like during a week. Each entry is saved with its date and time.</p>
         <div class="progress-form">
           <label>Plan week<select id="weight-week"></select></label>
           <label>Weight in kg<input id="weight-value" type="number" inputmode="decimal" min="35" max="200" step="0.1" placeholder="e.g. 58.0"></label>
-          <button id="save-weight" class="button-primary" type="button">Save weekly weight</button>
+          <button id="save-weight" class="button-primary" type="button">Save weight</button>
         </div>
         <div id="weight-chart" class="chart"></div>
         <ul id="weight-list" class="log-list"></ul>
-        <div class="divider"></div>
-        <h3>Waist and thigh</h3>
-        <p class="small">Log every 2–4 weeks, at the same time of day and under similar food, fluid and cycle conditions. Measure waist after a normal exhale at one consistent point, and mid-thigh at the same marked point on one leg.</p>
-        <div class="progress-form">
-          <label>Plan week<select id="measure-week"></select></label>
-          <label>Waist, cm<input id="measure-waist" type="number" inputmode="decimal" min="30" max="200" step="0.1"></label>
-          <label>Mid-thigh, cm<input id="measure-thigh" type="number" inputmode="decimal" min="20" max="150" step="0.1"></label>
-          <button id="save-measurements" class="button-primary" type="button">Save measurements</button>
-        </div>
-        <ul id="measurements-list" class="log-list"></ul>
       </section>
 
       <section id="panel-evolt" class="card progress-panel hidden" aria-labelledby="panel-evolt-title">
@@ -940,7 +930,7 @@
     const progressPanels = [
       { id: "lower", title: "Lower-body lifts", note: "Glutes, hinge, abduction and calves" },
       { id: "upper", title: "Upper-body lifts", note: "Pull, press, shoulders and arms" },
-      { id: "measure", title: "Measurements", note: "Weekly weight, waist and mid-thigh" },
+      { id: "measure", title: "Body weight", note: "Weigh-ins, each with date and time" },
       { id: "evolt", title: "Evolt scan", note: "Checkpoint inputs and results" }
     ];
     let activeProgressPanel = "";
@@ -1222,11 +1212,12 @@
       document.getElementById("phase-pill").textContent = `Week ${week}: ${phase.name}`;
       document.getElementById("sequence-copy").textContent = `Next: ${nextSessionForWeek(week).short}. ${phase.note}`;
       const done = completedWorkoutCount(week);
-      const weight = data.weights?.[week]?.value;
+      const weekWeights = weightEntriesFor(week);
+      const latestWeight = weekWeights[weekWeights.length - 1];
       document.getElementById("quick-stats").innerHTML = `
         <span class="pill sage">${done}/${workouts.length} sessions this week</span>
         <span class="pill">${data.nightWeeks?.[week] ? "Night block marked" : "Normal week"}</span>
-        <span class="pill amber">${weight ? `${escapeHtml(weight)} kg logged` : "Weight not logged"}</span>
+        <span class="pill amber">${latestWeight ? `${escapeHtml(latestWeight.value)} kg logged` : "Weight not logged"}</span>
       `;
       renderBackupReminders();
     }
@@ -1259,12 +1250,11 @@
     }
     function renderWeekOptions() {
       const optionMarkup = weeks.map((week) => `<option value="${week}">${weekLabel(week)}</option>`).join("");
-      ["week-select", "weight-week", "measure-week"].forEach((id) => {
+      ["week-select", "weight-week"].forEach((id) => {
         document.getElementById(id).innerHTML = optionMarkup;
       });
       document.getElementById("week-select").value = data.selectedWeek;
       document.getElementById("weight-week").value = data.selectedWeek;
-      document.getElementById("measure-week").value = data.selectedWeek;
       // Only the three scheduled checkpoints are offered, so a scan cannot be saved to a week
       // the results list would never show.
       document.getElementById("evolt-week").innerHTML = EVOLT_WEEKS
@@ -1597,15 +1587,20 @@
           <text x="${pad}" y="${height - 4}" fill="#7d6c74" font-size="10">${min.toFixed(1)}</text>
         </svg>`;
     }
-    function loggedWeightEntries() {
-      return weeks
-        .filter((week) => data.weights?.[week]?.value !== undefined && data.weights[week].value !== "")
-        .map((week) => ({ week, value: Number(data.weights[week].value) }));
+    function weightEntriesFor(week) {
+      // Weights are stored as a list of { value, at } entries per week. Entries saved before
+      // that change were a single { value } object, so normalise those rather than losing them.
+      const stored = data.weights?.[week];
+      if (Array.isArray(stored)) {
+        return stored.filter((entry) => entry?.value !== undefined && entry.value !== "");
+      }
+      if (stored?.value !== undefined && stored.value !== "") return [{ value: stored.value, at: stored.at || null }];
+      return [];
     }
-    function loggedMeasurementEntries() {
-      return weeks
-        .filter((week) => ["waist", "thigh"].some((key) => data.measurements?.[week]?.[key] !== undefined && data.measurements[week][key] !== ""))
-        .map((week) => ({ week, ...data.measurements[week] }));
+    function loggedWeightEntries() {
+      return weeks.flatMap((week) =>
+        weightEntriesFor(week).map((entry, index) => ({ week, index, value: Number(entry.value), at: entry.at || null }))
+      );
     }
     function latestLoggedSet(exercise) {
       for (let week = 12; week >= 1; week -= 1) {
@@ -1624,20 +1619,14 @@
       const entries = loggedWeightEntries();
       document.getElementById("weight-chart").innerHTML = chartMarkup(entries, "body weight");
       document.getElementById("weight-list").innerHTML = entries.length
-        ? entries.map((entry) => `<li><span>Week ${entry.week}</span><strong>${entry.value.toFixed(1)} kg</strong></li>`).join("")
-        : "<li><span>No weekly weight logged yet.</span></li>";
-    }
-    function renderMeasurementSection() {
-      const entries = loggedMeasurementEntries();
-      const display = (value) => value !== undefined && value !== "" ? `${escapeHtml(value)} cm` : "not logged";
-      document.getElementById("measurements-list").innerHTML = entries.length
         ? entries.map((entry) => `
           <li>
-            <span><strong>Week ${entry.week}</strong><br><span class="small">Waist ${display(entry.waist)} · Mid-thigh ${display(entry.thigh)}</span></span>
-            <button class="button-quiet" data-delete-measurements="${entry.week}" type="button">Remove</button>
+            <span><strong>Week ${entry.week}</strong>${entry.at ? `<br><span class="small">${formatDateTime(entry.at)}</span>` : ""}</span>
+            <strong>${entry.value.toFixed(1)} kg</strong>
+            <button class="button-quiet" data-delete-weight="${entry.week}:${entry.index}" type="button">Remove</button>
           </li>
         `).join("")
-        : "<li><span>No body measurements saved yet.</span></li>";
+        : "<li><span>No weight logged yet.</span></li>";
     }
     function savedEvoltWeeks() {
       // Show every saved week, not just the scheduled ones, so an entry can never go missing.
@@ -1683,7 +1672,8 @@
         return `${options.filter((exercise) => latestLoggedSet(exercise).set).length} of ${options.length} exercises logged`;
       }
       if (id === "measure") {
-        return `${loggedWeightEntries().length} weekly weights · ${loggedMeasurementEntries().length} measurements`;
+        const count = loggedWeightEntries().length;
+        return `${count} weigh-in${count === 1 ? "" : "s"} logged`;
       }
       return `${[1, 6, 12].filter((week) => data.evolt?.[week]).length} of 3 checkpoints logged`;
     }
@@ -1702,7 +1692,6 @@
     }
     function renderProgress() {
       renderWeightSection();
-      renderMeasurementSection();
       renderEvoltSection();
       renderPerformancePanel("lower");
       renderPerformancePanel("upper");
@@ -1966,24 +1955,11 @@
         const week = Number(document.getElementById("weight-week").value);
         const value = document.getElementById("weight-value").value;
         if (!value) return;
-        data.weights[week] = { value };
+        data.weights[week] = [...weightEntriesFor(week), { value, at: new Date().toISOString() }];
         saveData();
         document.getElementById("weight-value").value = "";
         renderProgress();
         renderPlan();
-      });
-      document.getElementById("save-measurements").addEventListener("click", () => {
-        const week = Number(document.getElementById("measure-week").value);
-        const waist = document.getElementById("measure-waist").value;
-        const thigh = document.getElementById("measure-thigh").value;
-        if (!waist && !thigh) return;
-        data.measurements ||= {};
-        data.measurements[week] = { week, waist, thigh };
-        saveData();
-        ["measure-waist", "measure-thigh"].forEach((id) => {
-          document.getElementById(id).value = "";
-        });
-        renderProgress();
       });
       document.getElementById("save-evolt").addEventListener("click", () => {
         const week = Number(document.getElementById("evolt-week").value);
@@ -2031,12 +2007,17 @@
         saveData();
         renderProgress();
       });
-      document.getElementById("measurements-list").addEventListener("click", (event) => {
-        const button = event.target.closest("button[data-delete-measurements]");
+      document.getElementById("weight-list").addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-delete-weight]");
         if (!button) return;
-        delete data.measurements[Number(button.dataset.deleteMeasurements)];
+        const [week, index] = button.dataset.deleteWeight.split(":").map(Number);
+        const entries = weightEntriesFor(week);
+        entries.splice(index, 1);
+        if (entries.length) data.weights[week] = entries;
+        else delete data.weights[week];
         saveData();
         renderProgress();
+        renderPlan();
       });
       document.getElementById("export-data").addEventListener("click", exportData);
       document.getElementById("import-data").addEventListener("change", (event) => {
