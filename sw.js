@@ -1,4 +1,4 @@
-const CACHE_NAME = "galatea-shell-v20";
+const CACHE_NAME = "galatea-shell-v21";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,7 +8,17 @@ const APP_SHELL = [
   "./style/index.html",
   "./ibclc/",
   "./ibclc/index.html",
+  "./ibclc/how-questions-work/",
+  "./ibclc/how-questions-work/index.html",
+  "./ibclc/study-plan/",
+  "./ibclc/study-plan/index.html",
+  "./ibclc/blueprint/",
+  "./ibclc/blueprint/index.html",
+  "./ibclc/sources/",
+  "./ibclc/sources/index.html",
+  "./ibclc/reference/2023-IBCLC-Detailed-Content-Outline.pdf",
   "./assets/site.css",
+  "./assets/ibclc.css",
   "./assets/pwa.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",

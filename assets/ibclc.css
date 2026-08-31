@@ -1,0 +1,224 @@
+.ibclc-doc-page {
+  --ibclc-teal: #087f8c;
+  --ibclc-teal-deep: #075f6b;
+  --ibclc-soft: #eef8f8;
+  --ibclc-gold: #c88619;
+}
+
+.ibclc-doc-page .page-shell {
+  max-width: 900px;
+}
+
+.ibclc-doc-page .page-hero {
+  background:
+    radial-gradient(circle at 91% 17%, #dceff0 0 0, #dceff0 11%, transparent 11.3%),
+    radial-gradient(circle at 79% 12%, #f2e5ce 0 0, #f2e5ce 16%, transparent 16.3%),
+    rgba(255, 255, 255, .78);
+}
+
+.ibclc-doc-page h1,
+.ibclc-doc-page h2,
+.ibclc-doc-page h3 {
+  color: var(--ibclc-teal-deep);
+}
+
+.ibclc-doc-page .eyebrow {
+  color: var(--ibclc-teal);
+}
+
+.ibclc-doc-page .doc-back {
+  display: inline-flex;
+  margin-bottom: 18px;
+  padding: 8px 11px;
+  border: 1px solid #c7dfe1;
+  border-radius: 10px;
+  color: var(--ibclc-teal-deep);
+  background: #f7fcfc;
+  font-size: .86rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.ibclc-doc-page .doc-nav {
+  display: flex;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding-bottom: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ibclc-doc-page .doc-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.ibclc-doc-page .doc-nav a {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border: 1px solid #c7dfe1;
+  border-radius: 999px;
+  color: var(--ibclc-teal-deep);
+  background: #fff;
+  font-size: .82rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.ibclc-doc-page .doc-nav a:hover,
+.ibclc-doc-page .doc-nav a[aria-current="page"] {
+  color: #fff;
+  background: var(--ibclc-teal);
+}
+
+.ibclc-doc-page .doc-section {
+  margin-top: 28px;
+}
+
+.ibclc-doc-page .doc-card {
+  padding: 21px;
+  border: 1px solid #dce7e8;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 8px 24px rgba(35, 70, 73, .06);
+}
+
+.ibclc-doc-page .doc-card + .doc-card {
+  margin-top: 14px;
+}
+
+.ibclc-doc-page .doc-card > :last-child {
+  margin-bottom: 0;
+}
+
+.ibclc-doc-page .doc-card ul,
+.ibclc-doc-page .doc-card ol {
+  padding-left: 21px;
+}
+
+.ibclc-doc-page .doc-card li + li {
+  margin-top: 8px;
+}
+
+.ibclc-doc-page .plan-list {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ibclc-doc-page .plan-list li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.ibclc-doc-page .plan-list li + li {
+  margin-top: 0;
+}
+
+.ibclc-doc-page .doc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ibclc-doc-page .doc-callout {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-left: 4px solid var(--ibclc-teal);
+  border-radius: 0 12px 12px 0;
+  background: var(--ibclc-soft);
+  color: #31545a;
+}
+
+.ibclc-doc-page .doc-callout.warning {
+  border-left-color: var(--ibclc-gold);
+  background: #fff8e9;
+  color: #654d21;
+}
+
+.ibclc-doc-page .doc-table-wrap {
+  overflow-x: auto;
+}
+
+.ibclc-doc-page .doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+
+.ibclc-doc-page .doc-table th,
+.ibclc-doc-page .doc-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid #dce7e8;
+  text-align: left;
+  vertical-align: top;
+}
+
+.ibclc-doc-page .doc-table th {
+  color: var(--ibclc-teal-deep);
+  background: #f2f8f8;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.ibclc-doc-page .doc-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.ibclc-doc-page .doc-number {
+  display: inline-grid;
+  width: 27px;
+  height: 27px;
+  margin-right: 7px;
+  border-radius: 50%;
+  place-items: center;
+  color: #fff;
+  background: var(--ibclc-teal);
+  font-size: .78rem;
+  font-weight: 850;
+}
+
+.ibclc-doc-page .source-list {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ibclc-doc-page .source-list li {
+  padding: 13px 14px;
+  border: 1px solid #dce7e8;
+  border-radius: 13px;
+  background: #fbfdfd;
+}
+
+.ibclc-doc-page .source-list a {
+  color: var(--ibclc-teal-deep);
+  font-weight: 800;
+}
+
+.ibclc-doc-page .download-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.ibclc-doc-page .small-note {
+  color: #627080;
+  font-size: .86rem;
+}
+
+@media (max-width: 700px) {
+  .ibclc-doc-page .doc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ibclc-doc-page .doc-card {
+    padding: 17px;
+  }
+}
