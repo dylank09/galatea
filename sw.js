@@ -1,4 +1,4 @@
-const CACHE_NAME = "galatea-shell-v19";
+const CACHE_NAME = "galatea-shell-v20";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -6,6 +6,8 @@ const APP_SHELL = [
   "./gym/index.html",
   "./style/",
   "./style/index.html",
+  "./ibclc/",
+  "./ibclc/index.html",
   "./assets/site.css",
   "./assets/pwa.js",
   "./manifest.webmanifest",
