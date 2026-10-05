@@ -2528,6 +2528,9 @@
           data = { ...defaultData(), ...restored };
           migrateLegacyPelvicCareSelections();
           repairStoredLogs();
+          data.selectedWeek = (data.selectedWeek !== null && data.selectedWeek !== undefined) ? clampWeek(data.selectedWeek) : currentPlanWeek();
+          if (!workouts.some((workout) => workout.id === data.selectedWorkout) && data.selectedWorkout !== "day-4" && data.selectedWorkout !== "full-body") data.selectedWorkout = workouts[0].id;
+          if (!workouts.some((workout) => workout.id === data.activeSession) && data.activeSession !== "day-4" && data.activeSession !== "full-body") data.activeSession = data.selectedWorkout;
           saveData();
           renderAll();
           alert("Backup restored.");
