@@ -346,6 +346,276 @@
     .session-tabs button.active { border-color: var(--rose); background: var(--blush); }
     .session-tabs button.done { border-color: #bcd3c1; background: #f2f8f2; color: var(--sage-ink); }
     .session-tabs button.done.active { border-color: var(--sage-ink); }
+    .session-tab-header-row {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      width: 100%;
+      margin: 0 !important;
+    }
+    .session-tab-name {
+      display: inline-block !important;
+      margin: 0 !important;
+      color: inherit !important;
+      font-weight: 800 !important;
+      font-size: .78rem !important;
+    }
+    .session-tab-plus-badge {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      margin: 0 0 0 4px !important;
+      border-radius: 99px;
+      background: var(--rose);
+      color: #fff !important;
+      font-size: .84rem !important;
+      font-weight: 900 !important;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease;
+      box-shadow: 0 1px 3px rgba(184, 95, 118, .25);
+    }
+    .session-tab-plus-badge:hover {
+      transform: scale(1.15);
+      background: var(--rose-deep);
+    }
+    .activity-dropdown-wrap {
+      position: relative;
+      margin: 10px 0 14px;
+      z-index: 25;
+    }
+    .activity-dropdown-menu {
+      padding: 10px;
+      border: 2px solid var(--blush-strong);
+      border-radius: 18px;
+      background: #fffdfb;
+      box-shadow: 0 14px 34px rgba(86, 55, 65, .14);
+      animation: dropdownSlideIn .18s ease-out;
+    }
+    @keyframes dropdownSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .activity-dropdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 4px 8px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 8px;
+      font-size: .74rem;
+      font-weight: 800;
+      color: var(--rose-deep);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .activity-dropdown-close {
+      min-height: 26px;
+      padding: 0 8px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: .95rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .activity-dropdown-close:hover { color: var(--rose); }
+    .activity-dropdown-list { display: flex; flex-direction: column; gap: 4px; }
+    .activity-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: #fffafa;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: all .14s ease;
+    }
+    .activity-dropdown-item:hover, .activity-dropdown-item:focus {
+      background: #fdf0f3;
+      border-color: var(--blush-strong);
+      outline: none;
+    }
+    .activity-dropdown-item.active {
+      background: #fdf0f3;
+      border-color: var(--rose);
+    }
+    .activity-opt-icon { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+    .activity-opt-text { flex: 1; min-width: 0; }
+    .activity-opt-title-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .activity-opt-title-row strong { font-size: .88rem; color: var(--ink); }
+    .activity-opt-tag {
+      padding: 2px 6px;
+      border-radius: 99px;
+      font-size: .64rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .activity-opt-tag.structured { background: var(--sage); color: var(--sage-ink); }
+    .activity-opt-tag.freeform { background: var(--blush); color: var(--rose-deep); }
+    .activity-opt-desc { display: block; margin-top: 2px; font-size: .74rem; color: var(--muted); line-height: 1.3; }
+    .activity-opt-check { font-weight: 900; color: var(--rose); font-size: 1.05rem; }
+    .activity-switch-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 13px;
+      margin-bottom: 15px;
+      border: 1px solid var(--blush-strong);
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fff7f9, #fffdfc);
+    }
+    .activity-current-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .activity-icon-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--blush);
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .activity-badge-label {
+      display: block;
+      font-size: .66rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--rose-deep);
+    }
+    .activity-badge-name {
+      display: block;
+      font-size: .92rem;
+      font-weight: 850;
+      color: var(--ink);
+    }
+    .activity-trigger-btn {
+      min-height: 36px;
+      padding: 0 12px;
+      font-size: .8rem;
+      font-weight: 800;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .activity-trigger-btn .plus-sign {
+      display: inline-block;
+      margin-right: 3px;
+      font-weight: 900;
+      color: var(--rose);
+    }
+    .metric-chip-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+    @media (min-width: 560px) {
+      .metric-chip-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .metric-chip {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-chip span.label {
+      font-size: .76rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .metric-chip input, .metric-chip select {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid #dfd1d4;
+      border-radius: 11px;
+      background: #fffefa;
+      color: var(--ink);
+      font-size: .88rem;
+    }
+    .metric-chip input:focus, .metric-chip select:focus {
+      border-color: var(--rose);
+      outline: 3px solid #b7788a44;
+    }
+    .class-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 12px;
+    }
+    .class-tag-btn {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffafa;
+      color: var(--muted);
+      font-size: .77rem;
+      font-weight: 750;
+      cursor: pointer;
+      transition: all .12s ease;
+    }
+    .class-tag-btn:hover {
+      border-color: var(--blush-strong);
+      background: #fff2f5;
+      color: var(--rose-deep);
+    }
+    .class-tag-btn.active {
+      border-color: var(--rose);
+      background: var(--rose);
+      color: #fff;
+    }
+    .freeform-box {
+      margin: 14px 0;
+    }
+    .freeform-box label {
+      display: block;
+      margin-bottom: 3px;
+      font-size: .84rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+    .freeform-box .hint {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .75rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .freeform-textarea {
+      width: 100%;
+      min-height: 90px;
+      padding: 10px 12px;
+      border: 1px solid #dfd1d4;
+      border-radius: 12px;
+      background: #fffefa;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: .88rem;
+      line-height: 1.4;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .freeform-textarea:focus {
+      border-color: var(--rose);
+      outline: 3px solid #b7788a44;
+    }
     .workout-header {
       display: flex;
       justify-content: space-between;
@@ -648,7 +918,7 @@
       </section>
       <section class="card">
         <h2>Flexible weekly rule</h2>
-        <p class="subtle">Follow <strong>Lower A → Upper A → Lower B</strong> as your 3 core sessions covering the full grounds of the plan, with <strong>Upper B</strong> as an optional 4th extra session. Aim for about 48 hours between the two lower sessions.</p>
+        <p class="subtle">Follow <strong>Lower A → Upper A → Lower B</strong> as your 3 core sessions covering the full grounds of the plan, with <strong>Day 4</strong> as an optional flexible session: choose from a preloaded Full Body plan, Running, Gym Class, Upper B, or custom activity. Aim for about 48 hours between the two lower sessions.</p>
         <div class="notice warning"><strong>Shift-work & holiday priority:</strong> Place your lower sessions after your best sleep. During travel or night shifts, aim for your 3 core sessions and rest when needed without guilt.</div>
       </section>
       <section class="card">
@@ -698,6 +968,9 @@
         <div id="workout-backup-reminder" class="notice warning backup-reminder hidden"></div>
       </section>
       <div id="session-tabs" class="session-tabs" role="tablist" aria-label="Workout selection"></div>
+      <div id="activity-dropdown-wrap" class="activity-dropdown-wrap hidden">
+        <div id="activity-dropdown-menu" class="activity-dropdown-menu" role="menu" aria-label="Choose Day 4 activity"></div>
+      </div>
       <section id="workout-content"></section>
     </section>
 
@@ -849,10 +1122,13 @@
 
     const START_DATE = new Date(2026, 9, 12);
     const STORAGE_KEY = "twelveWeekGymPlanV1";
-    const weeks = Array.from({ length: 10 }, (_, index) => index + 1);
+    const weeks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const EVOLT_WEEKS = [1, 5, 10];
     const isHolidayWeek = (week) => week >= 3 && week <= 6;
     const phaseForWeek = (week) => {
+      if (week === 0) {
+        return { name: "Week 0: Test Drive & Setup", note: "Test new machines (hack squat, glute leg press, pull-ups/dips) and find starting weights." };
+      }
       if (isHolidayWeek(week)) {
         return { name: "Holiday block (29 Oct – 22 Nov)", note: "Travel & holiday · Aim for 3 core sessions with full gym routines open." };
       }
@@ -913,6 +1189,26 @@
           { id: "pallof-b", name: "Pallof press or cable woodchopper", sets: 3, reps: "10–12 / side", rest: "45 sec", alt: "Suitcase carry or side plank", cue: "Brace core tight, resist rotational torque. Build 360° abdominal wall stability." }
         ]
       }
+    ];
+    const fullBodyWorkout = {
+      id: "full-body", short: "Day 4: Full Body", title: "Full Body (Optional Extra)", focus: "RDL, press, pull, glutes & core balance", optional: true,
+      intro: "Five easy cardio minutes, glute and hip mobility, then 2 non-fatiguing ramp sets before Romanian deadlifts.",
+      exercises: [
+        { id: "full-rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 3, reps: "8–12", rest: "2 min", alt: "45° Glute back extension or dumbbell RDL", cue: "Soft knees, hinge hips back until deep hamstring/glute stretch. Drive through mid-foot to stand, squeezing glutes without hyperextending.", priority: true, group: "lower" },
+        { id: "full-lat-pulldown", name: "Lat pulldown or assisted pull-up", sets: 3, reps: "8–12", rest: "90 sec", alt: "Neutral-grip pulldown or band-assisted pull-up", cue: "Chest tall, pull elbows down into your ribs. Control the ascent into a full overhead lat stretch.", priority: true, group: "upper" },
+        { id: "full-incline-press", name: "Dumbbell or machine incline press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Flat machine chest press or push-ups", cue: "Set bench to 30°. Keep shoulder blades pinned to pad. Press smoothly without banging weights together.", priority: true, group: "upper" },
+        { id: "full-hip-abduction", name: "Hip-abduction machine", sets: 3, reps: "12–15", rest: "60 sec", alt: "Cable hip abduction or lateral band walk", cue: "Lean slightly forward from the hip. Hold a 1–2 second peak contraction at full abduction on every rep.", priority: true, group: "lower" },
+        { id: "full-cable-row", name: "Seated cable row or chest-supported row", sets: 3, reps: "10–12", rest: "75–90 sec", alt: "Single-arm dumbbell row", cue: "Pull handle to lower ribs, squeezing shoulder blades together. Controlled 2-second return.", group: "upper" },
+        { id: "full-lateral-raise", name: "Cable or dumbbell lateral raise", sets: 3, reps: "12–15", rest: "45–60 sec", alt: "Machine lateral raise", cue: "Slight forward torso lean. Lead with elbows in the scapular plane, pause at shoulder height, slow lowering.", group: "upper" },
+        { id: "full-pallof-press", name: "Pallof press or dead bug", sets: 3, reps: "10–12 / side", rest: "45–60 sec", alt: "Cable woodchopper or side plank", cue: "Brace abs tight. Press straight out and resist rotation. Keep hips and shoulders squarely forward.", group: "upper" }
+      ]
+    };
+    const ACTIVITY_OPTIONS = [
+      { id: "full-body", name: "Full Body Plan", icon: "🏋️", tag: "Structured", desc: "Preloaded 7-exercise workout (RDL, press, pull, glute abduction, core)" },
+      { id: "run", name: "Running / Cardio", icon: "🏃", tag: "Cardio Log", desc: "Track distance, duration, pace, splits & free-form metrics" },
+      { id: "class", name: "Gym Class / Studio", icon: "🧘", tag: "Class Log", desc: "Pilates, Reformer, HIIT, Spin, Yoga, exercises & time" },
+      { id: "upper-b", name: "Upper B (Optional)", icon: "💪", tag: "Structured", desc: "Chin-ups, delts, arms & core polish" },
+      { id: "other", name: "Custom Activity", icon: "⚡", tag: "Custom", desc: "Swimming, cycling, sports or any custom movement" }
     ];
     const pelvicCare = {
       id: "pelvic-care",
@@ -984,6 +1280,11 @@
       ...workouts.flatMap((workout) =>
         workout.exercises.map((exercise) => ({ ...exercise, workoutId: workout.id, workoutName: workout.short }))
       ),
+      ...fullBodyWorkout.exercises.map((exercise) => ({
+        ...exercise,
+        workoutId: "full-body",
+        workoutName: "Full Body"
+      })),
       ...archivedPerformanceExercises
     ];
 
@@ -1003,7 +1304,8 @@
       pelvicCare: {},
       pelvicCareNotes: {},
       pelvicCareLogs: [],
-      shortMode: false
+      shortMode: false,
+      fourthActivities: {}
     });
     let data = defaultData();
     let storageAvailable = true;
@@ -1087,12 +1389,15 @@
       const start = dateForWeek(week);
       const end = new Date(start);
       end.setDate(start.getDate() + 6);
+      if (week === 0) {
+        return `Week 0: ${formatDate(start)}–${formatDate(end)} · 🛠️ Test Drive`;
+      }
       const holidayTag = isHolidayWeek(week) ? " · ✈️ Holiday" : "";
       return `Week ${week}: ${formatDate(start)}–${formatDate(end)}${holidayTag}`;
     }
     function clampWeek(value) {
       const week = Math.floor(Number(value));
-      return Number.isFinite(week) ? Math.min(10, Math.max(1, week)) : 1;
+      return Number.isFinite(week) ? Math.min(10, Math.max(0, week)) : 0;
     }
     function currentPlanWeek() {
       // Compare calendar days, not elapsed milliseconds, so daylight saving cannot shift the week.
@@ -1107,8 +1412,37 @@
       nextWeek.setDate(nextWeek.getDate() + 7);
       return Date.now() >= nextWeek.getTime();
     }
+    function getFourthActivity(week) {
+      const stored = data.fourthActivities?.[week];
+      if (stored?.type) {
+        return {
+          type: stored.type,
+          customTitle: stored.customTitle || "",
+          run: { distance: "", duration: "", pace: "", hr: "", route: "", details: "", ...(stored.run || {}) },
+          gymClass: { className: "", duration: "", studio: "", rpe: "Moderate (RPE 5–6)", exercises: "", details: "", ...(stored.gymClass || {}) },
+          other: { title: "", duration: "", metrics: "", details: "", ...(stored.other || {}) }
+        };
+      }
+      const hasUpperBLogs = Object.keys(data.logs?.[sessionKey(week, "upper-b")] || {}).some((key) => key !== "sessionNote");
+      return {
+        type: hasUpperBLogs ? "upper-b" : "full-body",
+        customTitle: "",
+        run: { distance: "", duration: "", pace: "", hr: "", route: "", details: "" },
+        gymClass: { className: "", duration: "", studio: "", rpe: "Moderate (RPE 5–6)", exercises: "", details: "" },
+        other: { title: "", duration: "", metrics: "", details: "" }
+      };
+    }
+    function isFourthWorkoutCompleted(week) {
+      const act = getFourthActivity(week);
+      return Boolean(
+        data.completed?.[sessionKey(week, "day-4")] ||
+        data.completed?.[sessionKey(week, act.type)] ||
+        (act.type === "upper-b" && data.completed?.[sessionKey(week, "upper-b")]) ||
+        (act.type === "full-body" && data.completed?.[sessionKey(week, "full-body")])
+      );
+    }
     function completedWorkoutCount(week) {
-      return workouts.filter((workout) => data.completed?.[sessionKey(week, workout.id)]).length;
+      return completedCoreWorkoutCount(week) + (isFourthWorkoutCompleted(week) ? 1 : 0);
     }
     function coreWorkoutCount() {
       return workouts.filter((workout) => !workout.optional).length;
@@ -1123,15 +1457,36 @@
       return pending[pending.length - 1];
     }
     function workoutById(id) {
+      if (id === "day-4") {
+        const week = Number(data.selectedWeek);
+        const act = getFourthActivity(week);
+        if (act.type === "full-body") return fullBodyWorkout;
+        if (act.type === "upper-b") return workouts.find((workout) => workout.id === "upper-b") || fullBodyWorkout;
+        return {
+          id: "day-4",
+          short: act.type === "run" ? "Day 4: Run" : act.type === "class" ? "Day 4: Class" : "Day 4: Custom",
+          title: act.type === "run" ? "Running & Cardio" : act.type === "class" ? "Gym Class & Studio" : (act.other?.title || "Custom Activity"),
+          focus: act.type === "run" ? "Cardio, pace & free-form metrics" : act.type === "class" ? "Studio class & exercises logged" : "Custom movement details",
+          optional: true,
+          exercises: []
+        };
+      }
+      if (id === "full-body") return fullBodyWorkout;
       return workouts.find((workout) => workout.id === id) || workouts[0];
     }
     function nextSessionForWeek(week) {
-      // The plan runs Lower A -> Upper A -> Lower B -> Upper B, so the next session is the
-      // first one this week that is not ticked off. A finished week points at the next start.
-      return workouts.find((workout) => !data.completed?.[sessionKey(week, workout.id)]) || workouts[0];
+      const core = workouts.filter((w) => !w.optional);
+      const nextCore = core.find((w) => !data.completed?.[sessionKey(week, w.id)]);
+      if (nextCore) return nextCore;
+      if (!isFourthWorkoutCompleted(week)) {
+        return workoutById("day-4");
+      }
+      return workouts[0];
     }
     function activeSessionId() {
-      return data.activeSession || data.selectedWorkout;
+      const active = data.activeSession || data.selectedWorkout;
+      if (active === "day-4" || active === "upper-b" || active === "full-body") return "day-4";
+      return active;
     }
     function pelvicCardById(id) {
       return pelvicCare.cards.find((card) => card.id === id);
@@ -1220,7 +1575,7 @@
       return normaliseSet(data.logs?.[sessionKey(week, workoutId)]?.[exerciseId]?.[setIndex]);
     }
     function latestExerciseLogs(workoutId, exerciseId, week) {
-      for (let candidateWeek = week; candidateWeek >= 1; candidateWeek -= 1) {
+      for (let candidateWeek = week; candidateWeek >= 0; candidateWeek -= 1) {
         const logs = exerciseSets(candidateWeek, workoutId, exerciseId);
         if (logs.length) return { logs, week: candidateWeek };
       }
@@ -1256,6 +1611,8 @@
       // Readiness is recorded per session. Entries saved before that change were keyed by
       // week alone, so fall back to the week-level value rather than losing it.
       return data.readiness?.[sessionKey(week, workoutId)]
+        || (workoutId === "day-4" && data.readiness?.[sessionKey(week, "upper-b")])
+        || (workoutId === "day-4" && data.readiness?.[sessionKey(week, "full-body")])
         || data.readiness?.[week]
         || { sleep: 3, energy: 3, soreness: 3, symptoms: 3 };
     }
@@ -1282,9 +1639,10 @@
     }
     function renderRoadmap() {
       const roadmap = [
-        ["Weeks 1–2", "Home Base", "Groove the new 3-day split, establish baseline weights, and build form."],
+        ["Week 0", "Test Drive (5–11 Oct)", "Test machine setups (hack squat, glute leg press, pull-ups/dips) and establish baseline weights."],
+        ["Weeks 1–2", "Home Base (12–25 Oct)", "Launch official 10-week plan with your 3 core sessions + 1 optional session."],
         ["Weeks 3–6", "Holiday Block (29 Oct – 22 Nov)", "Travel & holiday: aim for your 3 core sessions with full workouts open."],
-        ["Weeks 7–10", "Home Peak & PRs", "Progressive overload, peak definition, and finish out the 10 weeks strong before Christmas."]
+        ["Weeks 7–10", "Home Peak & PRs", "Progressive overload, peak definition, and finish out strong before Christmas."]
       ];
       document.getElementById("roadmap").innerHTML = `<ul class="roadmap">${roadmap.map((item) =>
         `<li><strong>${item[0]} · ${item[1]}</strong><br><span class="small">${item[2]}</span></li>`
@@ -1303,9 +1661,12 @@
       const sessionText = optionalDone
         ? `${coreDone}/3 core + 1 optional done`
         : `${coreDone}/3 core sessions done`;
+      const statusPill = week === 0
+        ? "🛠️ Calibration week"
+        : (isHolidayWeek(week) ? "✈️ Holiday block" : (data.nightWeeks?.[week] ? "Night block marked" : "Normal week"));
       document.getElementById("quick-stats").innerHTML = `
         <span class="pill sage">${sessionText}</span>
-        <span class="pill">${isHolidayWeek(week) ? "✈️ Holiday block" : (data.nightWeeks?.[week] ? "Night block marked" : "Normal week")}</span>
+        <span class="pill">${statusPill}</span>
         <span class="pill amber">${latestWeight ? `${escapeHtml(latestWeight.value)} kg logged` : "Weight not logged"}</span>
       `;
       renderBackupReminders();
@@ -1313,7 +1674,7 @@
     function renderBackupReminders() {
       const week = pendingWeeklyBackupWeek();
       const targets = ["plan-backup-reminder", "workout-backup-reminder"].map((id) => document.getElementById(id));
-      if (!week) {
+      if (week === undefined || week === null) {
         targets.forEach((target) => {
           target.classList.add("hidden");
           target.innerHTML = "";
@@ -1387,14 +1748,102 @@
     function renderSessionTabs() {
       const active = activeSessionId();
       const week = Number(data.selectedWeek);
-      document.getElementById("session-tabs").innerHTML = workouts.map((workout) => {
+      const fourthActivity = getFourthActivity(week);
+      const fourthDone = isFourthWorkoutCompleted(week);
+      const fourthOption = ACTIVITY_OPTIONS.find((opt) => opt.id === fourthActivity.type) || ACTIVITY_OPTIONS[0];
+
+      let fourthShort = "Day 4: " + (
+        fourthActivity.type === "full-body" ? "Full Body" :
+        fourthActivity.type === "run" ? "Run" :
+        fourthActivity.type === "class" ? "Class" :
+        fourthActivity.type === "upper-b" ? "Upper B" :
+        (fourthActivity.other?.title || "Custom")
+      );
+      let fourthFocus = fourthOption.desc;
+      if (fourthActivity.type === "full-body") fourthFocus = "Hinge, press, pull & glutes";
+      else if (fourthActivity.type === "run") fourthFocus = "Cardio, pace & metrics";
+      else if (fourthActivity.type === "class") fourthFocus = "Studio class & exercises";
+      else if (fourthActivity.type === "upper-b") fourthFocus = "Chin-ups, delts & arms";
+      else fourthFocus = "Custom activity details";
+
+      const coreTabs = workouts.filter((w) => !w.optional).map((workout) => {
         const done = Boolean(data.completed?.[sessionKey(week, workout.id)]);
         return `
-        <button class="${workout.id === active ? "active" : ""}${done ? " done" : ""}" data-session="${workout.id}" type="button" role="tab" aria-selected="${workout.id === active}">
-          ${done ? "✓ " : ""}${workout.short}<span>${workout.focus}</span>
+          <button class="${workout.id === active ? "active" : ""}${done ? " done" : ""}" data-session="${workout.id}" type="button" role="tab" aria-selected="${workout.id === active}">
+            ${done ? "✓ " : ""}${workout.short}<span>${workout.focus}</span>
+          </button>
+        `;
+      });
+
+      const fourthTab = `
+        <button class="${active === "day-4" ? "active" : ""}${fourthDone ? " done" : ""} session-tab-fourth" data-session="day-4" type="button" role="tab" aria-selected="${active === "day-4"}">
+          <span class="session-tab-header-row">
+            <span class="session-tab-name">${fourthDone ? "✓ " : ""}${escapeHtml(fourthShort)}</span>
+            <span class="session-tab-plus-badge" data-action="toggle-activity-menu" title="Change or add Day 4 activity" aria-label="Change Day 4 activity">+</span>
+          </span>
+          <span class="session-tab-desc">${escapeHtml(fourthFocus)}</span>
         </button>
       `;
-      }).join("");
+
+      document.getElementById("session-tabs").innerHTML = [...coreTabs, fourthTab].join("");
+    }
+
+    function renderActivityDropdown() {
+      const menu = document.getElementById("activity-dropdown-menu");
+      if (!menu) return;
+      const week = Number(data.selectedWeek);
+      const activity = getFourthActivity(week);
+      menu.innerHTML = `
+        <div class="activity-dropdown-header">
+          <span>Choose Day 4 Activity · Week ${week}</span>
+          <button class="activity-dropdown-close" data-action="close-activity-menu" type="button" aria-label="Close menu">✕</button>
+        </div>
+        <div class="activity-dropdown-list">
+          ${ACTIVITY_OPTIONS.map((opt) => {
+            const isSelected = activity.type === opt.id;
+            return `
+              <button class="activity-dropdown-item${isSelected ? " active" : ""}" data-select-activity="${opt.id}" type="button" role="menuitem">
+                <span class="activity-opt-icon">${opt.icon}</span>
+                <div class="activity-opt-text">
+                  <div class="activity-opt-title-row">
+                    <strong>${opt.name}</strong>
+                    <span class="activity-opt-tag ${opt.id === "full-body" || opt.id === "upper-b" ? "structured" : "freeform"}">${opt.tag}</span>
+                  </div>
+                  <span class="activity-opt-desc">${opt.desc}</span>
+                </div>
+                ${isSelected ? '<span class="activity-opt-check">✓</span>' : ""}
+              </button>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function toggleActivityDropdown(force) {
+      const wrap = document.getElementById("activity-dropdown-wrap");
+      if (!wrap) return;
+      const willOpen = typeof force === "boolean" ? force : wrap.classList.contains("hidden");
+      if (willOpen) {
+        renderActivityDropdown();
+        wrap.classList.remove("hidden");
+        wrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else {
+        wrap.classList.add("hidden");
+      }
+    }
+
+    function selectFourthActivity(type) {
+      const week = Number(data.selectedWeek);
+      data.fourthActivities ||= {};
+      data.fourthActivities[week] = getFourthActivity(week);
+      data.fourthActivities[week].type = type;
+      data.activeSession = "day-4";
+      data.selectedWorkout = "day-4";
+      saveData();
+      toggleActivityDropdown(false);
+      renderWorkout();
+      renderPlan();
+      renderSessionTabs();
     }
     let restTimer = { duration: 0, endsAt: null, intervalId: null, complete: false };
     const openExercises = new Set();
@@ -1531,7 +1980,7 @@
     }
     function refreshExerciseSuggestion(exerciseId) {
       const workout = workoutById(activeSessionId());
-      const exercise = workout.exercises.find((item) => item.id === exerciseId);
+      const exercise = workout.exercises?.find((item) => item.id === exerciseId);
       const target = document.querySelector(`.exercise[data-exercise="${exerciseId}"] .suggestion`);
       if (!exercise || !target) return;
       const suggestion = loadSuggestion(workout.id, exercise, Number(data.selectedWeek));
@@ -1624,6 +2073,188 @@
           </ul>
         </section>`;
     }
+    function activitySwitcherMarkup(activity) {
+      const opt = ACTIVITY_OPTIONS.find((o) => o.id === activity.type) || ACTIVITY_OPTIONS[0];
+      return `
+        <div class="activity-switch-bar">
+          <div class="activity-current-info">
+            <span class="activity-icon-badge">${opt.icon}</span>
+            <div>
+              <span class="activity-badge-label">Optional 4th Activity</span>
+              <span class="activity-badge-name">${opt.name}</span>
+            </div>
+          </div>
+          <button class="button-secondary activity-trigger-btn" data-action="toggle-activity-menu" type="button" aria-haspopup="menu">
+            <span class="plus-sign">+</span> Choose Activity ▾
+          </button>
+        </div>
+      `;
+    }
+    function renderFourthSessionMarkup(week) {
+      const activity = getFourthActivity(week);
+      const isDone = isFourthWorkoutCompleted(week);
+      const switcher = activitySwitcherMarkup(activity);
+      const sessionNoteValue = data.logs?.[sessionKey(week, "day-4")]?.sessionNote
+        || data.logs?.[sessionKey(week, activity.type)]?.sessionNote
+        || (activity.type === "upper-b" ? data.logs?.[sessionKey(week, "upper-b")]?.sessionNote : "")
+        || "";
+
+      if (activity.type === "full-body") {
+        return `
+          <section class="card">
+            ${switcher}
+            <div class="workout-header">
+              <div><p class="eyebrow">${fullBodyWorkout.focus}</p><h2>${fullBodyWorkout.title}</h2></div>
+              <span class="pill">55–65 min</span>
+            </div>
+            <p class="subtle">${fullBodyWorkout.intro}</p>
+            ${groupExercises(fullBodyWorkout.exercises).map((group) => sessionBlockMarkup(fullBodyWorkout, group, week)).join("")}
+            <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(sessionNoteValue)}</textarea></label>
+            <label class="session-complete"><input id="complete-session" type="checkbox" ${isDone ? "checked" : ""}>Mark Full Body complete</label>
+          </section>`;
+      }
+
+      if (activity.type === "upper-b") {
+        const upperB = workouts.find((w) => w.id === "upper-b");
+        return `
+          <section class="card">
+            ${switcher}
+            <div class="workout-header">
+              <div><p class="eyebrow">${upperB.focus}</p><h2>${upperB.title}</h2></div>
+              <span class="pill">50–65 min</span>
+            </div>
+            <p class="subtle">${upperB.intro}</p>
+            ${groupExercises(upperB.exercises).map((group) => sessionBlockMarkup(upperB, group, week)).join("")}
+            <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(sessionNoteValue)}</textarea></label>
+            <label class="session-complete"><input id="complete-session" type="checkbox" ${isDone ? "checked" : ""}>Mark Upper B complete</label>
+          </section>`;
+      }
+
+      if (activity.type === "run") {
+        return `
+          <section class="card">
+            ${switcher}
+            <div class="workout-header">
+              <div><p class="eyebrow">Cardio & conditioning · Optional 4th session</p><h2>Running & Cardio</h2></div>
+              <span class="pill sage">Cardio</span>
+            </div>
+            <p class="subtle">Track your outdoor run, treadmill intervals, or cardio session with custom metrics and free-form notes.</p>
+            <div class="metric-chip-grid">
+              <label class="metric-chip">
+                <span class="label">Distance (km)</span>
+                <input type="number" step="0.01" min="0" placeholder="e.g. 5.0" data-activity-field="run.distance" value="${escapeHtml(activity.run.distance)}">
+              </label>
+              <label class="metric-chip">
+                <span class="label">Duration (min)</span>
+                <input type="number" step="1" min="0" placeholder="e.g. 30" data-activity-field="run.duration" value="${escapeHtml(activity.run.duration)}">
+              </label>
+              <label class="metric-chip">
+                <span class="label">Avg Pace</span>
+                <input type="text" placeholder="e.g. 5:45 /km" data-activity-field="run.pace" value="${escapeHtml(activity.run.pace)}">
+              </label>
+              <label class="metric-chip">
+                <span class="label">Heart Rate / Effort</span>
+                <input type="text" placeholder="e.g. 152 bpm / Zone 2" data-activity-field="run.hr" value="${escapeHtml(activity.run.hr)}">
+              </label>
+              <label class="metric-chip" style="grid-column: span 2;">
+                <span class="label">Route / Terrain</span>
+                <input type="text" placeholder="e.g. River trail, pavement, park loop, treadmill" data-activity-field="run.route" value="${escapeHtml(activity.run.route)}">
+              </label>
+            </div>
+            <div class="freeform-box">
+              <label for="run-details">Free-form run metrics & details</label>
+              <span class="hint">Log splits, interval sets (e.g. 6 × 400m), cadence, elevation, weather, or how your legs and breathing felt.</span>
+              <textarea id="run-details" class="freeform-textarea" data-activity-field="run.details" placeholder="e.g. 1 km easy warm-up, 4 × 800m repeats at ~4:50 pace with 90s walk recovery, 1 km cool-down jog. Hamstrings felt loose, good breathing rhythm.">${escapeHtml(activity.run.details)}</textarea>
+            </div>
+            <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, recovery and energy affect today?">${escapeHtml(sessionNoteValue)}</textarea></label>
+            <label class="session-complete"><input id="complete-session" type="checkbox" ${isDone ? "checked" : ""}>Mark Run complete</label>
+          </section>`;
+      }
+
+      if (activity.type === "class") {
+        return `
+          <section class="card">
+            ${switcher}
+            <div class="workout-header">
+              <div><p class="eyebrow">Studio & group fitness · Optional 4th session</p><h2>Gym Class & Studio</h2></div>
+              <span class="pill sage">Class</span>
+            </div>
+            <p class="subtle">Log your Pilates, Reformer, HIIT, Spin, Yoga, or studio class with movements and free-form notes.</p>
+            <div class="class-tag-row" role="group" aria-label="Class type suggestions">
+              ${["Reformer", "Mat Pilates", "HIIT / Circuit", "Spin / Cycle", "BodyPump", "Yoga / Stretch", "Barre", "Boxing"].map((tag) => {
+                const isActive = activity.gymClass.className?.toLowerCase().includes(tag.toLowerCase().split(" ")[0]);
+                return `<button class="class-tag-btn${isActive ? " active" : ""}" data-class-tag="${tag}" type="button">${tag}</button>`;
+              }).join("")}
+            </div>
+            <div class="metric-chip-grid">
+              <label class="metric-chip">
+                <span class="label">Class Name</span>
+                <input id="class-name-input" type="text" placeholder="e.g. Reformer Sculpt" data-activity-field="gymClass.className" value="${escapeHtml(activity.gymClass.className)}">
+              </label>
+              <label class="metric-chip">
+                <span class="label">Duration (min)</span>
+                <input type="number" step="1" min="0" placeholder="e.g. 45" data-activity-field="gymClass.duration" value="${escapeHtml(activity.gymClass.duration)}">
+              </label>
+              <label class="metric-chip">
+                <span class="label">Studio / Instructor</span>
+                <input type="text" placeholder="e.g. KX Pilates / Chloe" data-activity-field="gymClass.studio" value="${escapeHtml(activity.gymClass.studio)}">
+              </label>
+              <label class="metric-chip">
+                <span class="label">Perceived Exertion (RPE)</span>
+                <select data-activity-field="gymClass.rpe">
+                  ${["Light (RPE 3–4)", "Moderate (RPE 5–6)", "Challenging (RPE 7–8)", "All-out (RPE 9–10)"].map((rpe) => `
+                    <option value="${rpe}" ${activity.gymClass.rpe === rpe ? "selected" : ""}>${rpe}</option>
+                  `).join("")}
+                </select>
+              </label>
+            </div>
+            <div class="freeform-box">
+              <label for="class-exercises">Class exercises & movements performed</label>
+              <span class="hint">Free-form list of exercises, circuits, springs, weights, or sequences performed in class.</span>
+              <textarea id="class-exercises" class="freeform-textarea" data-activity-field="gymClass.exercises" placeholder="e.g. Footwork series (red + blue spring), carriage lunges with arm straps, short-box abdominal series, side-lying glute kickbacks, standing side splits...">${escapeHtml(activity.gymClass.exercises)}</textarea>
+            </div>
+            <div class="freeform-box">
+              <label for="class-details">Class notes & feeling</label>
+              <span class="hint">How your muscles/joints felt, core engagement, modifications taken, or recovery notes.</span>
+              <textarea id="class-details" class="freeform-textarea" data-activity-field="gymClass.details" placeholder="e.g. Focused on slow eccentric control on lunges. Avoided excessive lower back arching. Great glute medius burn!">${escapeHtml(activity.gymClass.details)}</textarea>
+            </div>
+            <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, recovery and energy affect today?">${escapeHtml(sessionNoteValue)}</textarea></label>
+            <label class="session-complete"><input id="complete-session" type="checkbox" ${isDone ? "checked" : ""}>Mark Class complete</label>
+          </section>`;
+      }
+
+      const customTitle = activity.other.title || "Custom Activity";
+      return `
+        <section class="card">
+          ${switcher}
+          <div class="workout-header">
+            <div><p class="eyebrow">Custom session · Optional 4th session</p><h2>${escapeHtml(customTitle)}</h2></div>
+            <span class="pill sage">Custom</span>
+          </div>
+          <p class="subtle">Log swimming, cycling, sports, hiking, or any other extra workout.</p>
+          <div class="metric-chip-grid">
+            <label class="metric-chip">
+              <span class="label">Activity Title</span>
+              <input type="text" placeholder="e.g. Lap Swimming, Road Ride, Bouldering" data-activity-field="other.title" value="${escapeHtml(activity.other.title)}">
+            </label>
+            <label class="metric-chip">
+              <span class="label">Duration (min)</span>
+              <input type="number" step="1" min="0" placeholder="e.g. 45" data-activity-field="other.duration" value="${escapeHtml(activity.other.duration)}">
+            </label>
+            <label class="metric-chip" style="grid-column: span 2;">
+              <span class="label">Metrics / Intensity</span>
+              <input type="text" placeholder="e.g. 1,600m total, 32 laps, moderate pace" data-activity-field="other.metrics" value="${escapeHtml(activity.other.metrics)}">
+            </label>
+          </div>
+          <div class="freeform-box">
+            <label for="other-details">Session details & what you did</label>
+            <span class="hint">Free-form notes on exercises, drills, intervals, route, or how your body felt.</span>
+            <textarea id="other-details" class="freeform-textarea" data-activity-field="other.details" placeholder="e.g. 200m warm-up, 10 × 100m freestyle on 2:00, 4 × 50m kickboard, 200m easy cool-down. Shoulders felt strong...">${escapeHtml(activity.other.details)}</textarea>
+          </div>
+          <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, recovery and energy affect today?">${escapeHtml(sessionNoteValue)}</textarea></label>
+          <label class="session-complete"><input id="complete-session" type="checkbox" ${isDone ? "checked" : ""}>Mark ${escapeHtml(customTitle)} complete</label>
+        </section>`;
+    }
     function renderWorkout() {
       const week = Number(data.selectedWeek);
       const phase = phaseForWeek(week);
@@ -1639,7 +2270,13 @@
       renderReadiness();
       renderBackupReminders();
       renderSessionTabs();
-      const workout = workoutById(activeSessionId());
+      renderActivityDropdown();
+      const activeId = activeSessionId();
+      if (activeId === "day-4") {
+        document.getElementById("workout-content").innerHTML = renderFourthSessionMarkup(week);
+        return;
+      }
+      const workout = workoutById(activeId);
       const exercises = workout.exercises;
       document.getElementById("workout-content").innerHTML = `
         <section class="card">
@@ -1695,17 +2332,17 @@
       );
     }
     function latestLoggedSet(exercise) {
-      for (let week = 12; week >= 1; week -= 1) {
+      for (let week = 12; week >= 0; week -= 1) {
         const completed = loggedSets(exerciseSets(week, exercise.workoutId, exercise.id));
         if (completed.length) return { set: completed[completed.length - 1], week };
       }
       return { set: null, week: null };
     }
     function selectablePerformance(group) {
-      return performanceExercises.filter((exercise) =>
-        (exercise.workoutId.startsWith("lower") ? "lower" : "upper") === group
-        && (!exercise.archived || Boolean(latestLoggedSet(exercise).set))
-      );
+      return performanceExercises.filter((exercise) => {
+        const exerciseGroup = exercise.group || (exercise.workoutId.startsWith("lower") ? "lower" : "upper");
+        return exerciseGroup === group && (!exercise.archived || Boolean(latestLoggedSet(exercise).set));
+      });
     }
     function renderWeightSection() {
       const entries = loggedWeightEntries();
@@ -1755,7 +2392,7 @@
             ? `${escapeHtml(latest.set.weight)} kg × ${escapeHtml(latest.set.reps || "—")}`
             : `${escapeHtml(latest.set.reps || "—")} reps`
           : "Not logged";
-        return `<li><span>${exercise.name}<br><span class="small">${exercise.workoutName}${latest.week ? ` · Latest: Week ${latest.week}` : ""}</span></span><strong>${result}</strong></li>`;
+        return `<li><span>${exercise.name}<br><span class="small">${exercise.workoutName}${(latest.week !== null && latest.week !== undefined) ? ` · Latest: Week ${latest.week}` : ""}</span></span><strong>${result}</strong></li>`;
       }).join("")}</ul>`;
     }
     function progressMenuStat(id) {
@@ -1810,12 +2447,19 @@
     }
     function updateReadiness() {
       const week = Number(data.selectedWeek);
-      data.readiness[sessionKey(week, activeSessionId())] = {
+      const activeId = activeSessionId();
+      const readObj = {
         sleep: Number(document.getElementById("sleep-score").value),
         energy: Number(document.getElementById("energy-score").value),
         soreness: Number(document.getElementById("soreness-score").value),
         symptoms: Number(document.getElementById("symptom-score").value)
       };
+      data.readiness[sessionKey(week, activeId)] = readObj;
+      if (activeId === "day-4") {
+        const act = getFourthActivity(week);
+        data.readiness[sessionKey(week, act.type)] = readObj;
+        if (act.type === "upper-b") data.readiness[sessionKey(week, "upper-b")] = readObj;
+      }
       saveData();
       renderReadiness();
     }
@@ -1828,7 +2472,8 @@
       renderCycleContext();
     }
     function exportData(week) {
-      if (week) {
+      const isWeekly = week !== undefined && week !== null;
+      if (isWeekly) {
         data.weeklyBackups ||= {};
         weeks.filter((item) => item <= week).forEach((item) => {
           data.weeklyBackups[item] = new Date().toISOString();
@@ -1839,11 +2484,11 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = week ? `10-week-gym-plan-week-${week}-backup.json` : "10-week-gym-plan-backup.json";
+      link.download = isWeekly ? `10-week-gym-plan-week-${week}-backup.json` : "10-week-gym-plan-backup.json";
       document.body.appendChild(link);
       link.click();
       link.remove();
-      if (week) {
+      if (isWeekly) {
         renderBackupReminders();
       }
       setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -1940,12 +2585,30 @@
         updateCycleContext(event.target.value);
       });
       document.getElementById("session-tabs").addEventListener("click", (event) => {
+        const toggleBtn = event.target.closest("[data-action='toggle-activity-menu']");
+        if (toggleBtn) {
+          event.stopPropagation();
+          toggleActivityDropdown();
+          return;
+        }
         const button = event.target.closest("button[data-session]");
         if (!button) return;
         data.activeSession = button.dataset.session;
         data.selectedWorkout = data.activeSession;
         saveData();
+        toggleActivityDropdown(false);
         renderWorkout();
+      });
+      document.getElementById("activity-dropdown-wrap").addEventListener("click", (event) => {
+        const selectBtn = event.target.closest("[data-select-activity]");
+        if (selectBtn) {
+          selectFourthActivity(selectBtn.dataset.selectActivity);
+          return;
+        }
+        const closeBtn = event.target.closest("[data-action='close-activity-menu']");
+        if (closeBtn) {
+          toggleActivityDropdown(false);
+        }
       });
       const workoutContent = document.getElementById("workout-content");
       workoutContent.addEventListener("toggle", (event) => {
@@ -1955,6 +2618,24 @@
         else openExercises.delete(details.dataset.exercise);
       }, true);
       workoutContent.addEventListener("click", (event) => {
+        const toggleBtn = event.target.closest("[data-action='toggle-activity-menu']");
+        if (toggleBtn) {
+          toggleActivityDropdown();
+          return;
+        }
+        const classTag = event.target.closest("[data-class-tag]");
+        if (classTag) {
+          const tag = classTag.dataset.classTag;
+          const week = Number(data.selectedWeek);
+          data.fourthActivities ||= {};
+          data.fourthActivities[week] = getFourthActivity(week);
+          data.fourthActivities[week].gymClass.className = tag;
+          saveData();
+          const nameInput = document.getElementById("class-name-input");
+          if (nameInput) nameInput.value = tag;
+          document.querySelectorAll("[data-class-tag]").forEach((btn) => btn.classList.toggle("active", btn.dataset.classTag === tag));
+          return;
+        }
         const preset = event.target.closest("button[data-rest-seconds]");
         if (preset) startRestTimer(Number(preset.dataset.restSeconds));
       });
@@ -1964,18 +2645,62 @@
           setLog(Number(input.dataset.logWeek), input.dataset.logWorkout, input.dataset.logExercise, Number(input.dataset.logSet), input.dataset.logKey, input.value);
           return;
         }
+        if (input.dataset.activityField) {
+          const week = Number(data.selectedWeek);
+          data.fourthActivities ||= {};
+          data.fourthActivities[week] = getFourthActivity(week);
+          const [sec, prop] = input.dataset.activityField.split(".");
+          if (sec && prop) {
+            data.fourthActivities[week][sec] ||= {};
+            data.fourthActivities[week][sec][prop] = input.value;
+            saveData();
+          }
+          if (input.dataset.activityField === "other.title") {
+            renderSessionTabs();
+          }
+          return;
+        }
         if (input.id === "session-note") {
-          const keyForSession = sessionKey(Number(data.selectedWeek), activeSessionId());
+          const week = Number(data.selectedWeek);
+          const activeId = activeSessionId();
+          const keyForSession = sessionKey(week, activeId);
           data.logs[keyForSession] ||= {};
           data.logs[keyForSession].sessionNote = input.value;
+          if (activeId === "day-4") {
+            const act = getFourthActivity(week);
+            const specificKey = sessionKey(week, act.type);
+            data.logs[specificKey] ||= {};
+            data.logs[specificKey].sessionNote = input.value;
+          }
           saveData();
         }
       });
       workoutContent.addEventListener("change", (event) => {
         const input = event.target;
         if (input.matches("[data-log-workout]")) refreshExerciseSuggestion(input.dataset.logExercise);
+        if (input.dataset.activityField) {
+          const week = Number(data.selectedWeek);
+          data.fourthActivities ||= {};
+          data.fourthActivities[week] = getFourthActivity(week);
+          const [sec, prop] = input.dataset.activityField.split(".");
+          if (sec && prop) {
+            data.fourthActivities[week][sec] ||= {};
+            data.fourthActivities[week][sec][prop] = input.value;
+            saveData();
+          }
+        }
         if (input.id === "complete-session") {
-          data.completed[sessionKey(Number(data.selectedWeek), activeSessionId())] = input.checked;
+          const week = Number(data.selectedWeek);
+          const activeId = activeSessionId();
+          if (activeId === "day-4") {
+            const act = getFourthActivity(week);
+            data.completed[sessionKey(week, "day-4")] = input.checked;
+            data.completed[sessionKey(week, act.type)] = input.checked;
+            if (act.type === "upper-b") data.completed[sessionKey(week, "upper-b")] = input.checked;
+            if (act.type === "full-body") data.completed[sessionKey(week, "full-body")] = input.checked;
+          } else {
+            data.completed[sessionKey(week, activeId)] = input.checked;
+          }
           saveData();
           renderPlan();
           renderSessionTabs();
@@ -2129,21 +2854,30 @@
         document.querySelectorAll("details.gym-archive-dropdown[open]").forEach((dropdown) => {
           if (!dropdown.contains(event.target)) dropdown.removeAttribute("open");
         });
+        const wrap = document.getElementById("activity-dropdown-wrap");
+        if (wrap && !wrap.classList.contains("hidden")) {
+          const isTrigger = event.target.closest("[data-action='toggle-activity-menu']");
+          const isInside = wrap.contains(event.target);
+          if (!isTrigger && !isInside) {
+            toggleActivityDropdown(false);
+          }
+        }
       });
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           document.querySelectorAll("details.gym-archive-dropdown[open]").forEach((dropdown) => {
             dropdown.removeAttribute("open");
           });
+          toggleActivityDropdown(false);
         }
       });
     }
     initialiseStorage();
     migrateLegacyPelvicCareSelections();
     if (repairStoredLogs()) saveData();
-    data.selectedWeek = data.selectedWeek ? clampWeek(data.selectedWeek) : currentPlanWeek();
-    if (!workouts.some((workout) => workout.id === data.selectedWorkout)) data.selectedWorkout = workouts[0].id;
-    if (!workouts.some((workout) => workout.id === data.activeSession)) data.activeSession = data.selectedWorkout;
+    data.selectedWeek = (data.selectedWeek !== null && data.selectedWeek !== undefined) ? clampWeek(data.selectedWeek) : currentPlanWeek();
+    if (!workouts.some((workout) => workout.id === data.selectedWorkout) && data.selectedWorkout !== "day-4" && data.selectedWorkout !== "full-body") data.selectedWorkout = workouts[0].id;
+    if (!workouts.some((workout) => workout.id === data.activeSession) && data.activeSession !== "day-4" && data.activeSession !== "full-body") data.activeSession = data.selectedWorkout;
     bindEvents();
     renderAll();
     registerServiceWorker();
