@@ -17,7 +17,17 @@
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
       <a class="brand" href="../../"><img class="brand-icon" src="../../icons/favicon.png" alt="" width="30" height="30">Galatea</a>
-      <div class="nav-links"><a href="../../gym/">Gym</a><a href="../../style/">Style</a><a href="../" aria-current="page">IBCLC</a></div>
+      <div class="nav-links">
+        <a href="../../gym/">Gym</a>
+        <a href="../../style/">Style</a>
+        <details class="nav-dropdown">
+          <summary class="nav-dropdown-toggle" aria-haspopup="menu" aria-current="page">Archive <span class="nav-dropdown-caret" aria-hidden="true">▾</span></summary>
+          <div class="nav-dropdown-menu" role="menu">
+            <a href="../" role="menuitem" aria-current="page">IBCLC Practice Lab</a>
+            <a href="../../gym/progress/" role="menuitem">12-Week Gym Progress</a>
+          </div>
+        </details>
+      </div>
     </nav>
   </header>
   <main id="main" class="page-shell">

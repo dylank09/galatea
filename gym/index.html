@@ -11,7 +11,7 @@
   <link rel="manifest" href="../manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="64x64" href="../icons/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png">
-  <title>12-Week Gym Plan · Galatea</title>
+  <title>10-Week Gym Plan · Galatea</title>
   <style>
     :root {
       --ink: #392f35;
@@ -77,6 +77,59 @@
       width: 22px;
       height: 22px;
       object-fit: contain;
+    }
+    .gym-archive-dropdown {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+    .gym-archive-dropdown summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 0;
+    }
+    .gym-archive-dropdown summary::-webkit-details-marker {
+      display: none;
+    }
+    .gym-archive-caret {
+      display: inline-block;
+      font-size: .68rem;
+      line-height: 1;
+      transition: transform .15s ease;
+    }
+    .gym-archive-dropdown[open] .gym-archive-caret {
+      transform: rotate(180deg);
+    }
+    .gym-archive-menu {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      min-width: 190px;
+      padding: 6px;
+      border: 1px solid var(--blush-strong);
+      border-radius: 12px;
+      background: #fffafa;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 20;
+    }
+    .gym-archive-menu a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--rose-deep);
+      font-size: .84rem;
+      font-weight: 750;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .gym-archive-menu a:hover,
+    .gym-archive-menu a:focus {
+      background: #fdf2f4;
+      outline: none;
     }
     .eyebrow {
       margin-bottom: 8px;
@@ -564,7 +617,13 @@
     <div class="top-actions">
       <a class="home-link" href="../">← <img src="../icons/favicon.png" alt="" width="22" height="22"> Galatea</a>
       <a class="home-link" href="../style/">Style</a>
-      <a class="home-link" href="../ibclc/">IBCLC</a>
+      <details class="gym-archive-dropdown">
+        <summary class="home-link" aria-haspopup="menu">Archive <span class="gym-archive-caret" aria-hidden="true">▾</span></summary>
+        <div class="gym-archive-menu" role="menu">
+          <a href="../ibclc/" role="menuitem">IBCLC Practice Lab</a>
+          <a href="./progress/" role="menuitem">12-Week Gym Progress</a>
+        </div>
+      </details>
     </div>
     <section id="plan" class="tab-view active" aria-labelledby="plan-title">
       <div class="hero">
@@ -589,16 +648,16 @@
       </section>
       <section class="card">
         <h2>Flexible weekly rule</h2>
-        <p class="subtle">Follow <strong>Lower A → Upper A → Lower B → Upper B</strong>. Do not cram missed sessions together. Aim for no more than two lifting days in a row and about 48 hours between the two lower sessions.</p>
-        <div class="notice warning"><strong>Shift-work priority:</strong> Place Lower A or Lower B after your best sleep. On an exhausting 12-hour shift or after a poor night, use the shortened session, reduce load 5–10%, or rest. Do not chase a missed workout.</div>
+        <p class="subtle">Follow <strong>Lower A → Upper A → Lower B</strong> as your 3 core sessions covering the full grounds of the plan, with <strong>Upper B</strong> as an optional 4th extra session. Aim for about 48 hours between the two lower sessions.</p>
+        <div class="notice warning"><strong>Shift-work & holiday priority:</strong> Place your lower sessions after your best sleep. During travel or night shifts, aim for your 3 core sessions and rest when needed without guilt.</div>
       </section>
       <section class="card">
-        <h2>12-week roadmap</h2>
+        <h2>10-week roadmap</h2>
         <div id="roadmap"></div>
       </section>
       <section class="card">
-        <h2>Optional fifth day</h2>
-        <p class="subtle">Choose low-impact cardio or an upper-body-focused class when possible. A leg-heavy cardio/dumbbell class adds thigh-training volume, so skip it or keep squats, lunges and jumps easy. It is optional conditioning, not a strength-session replacement. Skip it during Week 8 deload, consecutive night shifts and high-fatigue weeks.</p>
+        <h2>Optional fifth day cardio</h2>
+        <p class="subtle">Choose low-impact cardio or an upper-body-focused class when possible. A leg-heavy cardio/dumbbell class adds thigh-training volume, so skip it or keep squats, lunges and jumps easy. It is optional conditioning, not a strength-session replacement.</p>
       </section>
     </section>
 
@@ -788,64 +847,70 @@
   <script>
     "use strict";
 
-    const START_DATE = new Date(2026, 6, 27);
+    const START_DATE = new Date(2026, 9, 12);
     const STORAGE_KEY = "twelveWeekGymPlanV1";
-    const weeks = Array.from({ length: 12 }, (_, index) => index + 1);
-    const EVOLT_WEEKS = [1, 6, 12];
+    const weeks = Array.from({ length: 10 }, (_, index) => index + 1);
+    const EVOLT_WEEKS = [1, 5, 10];
+    const isHolidayWeek = (week) => week >= 3 && week <= 6;
     const phaseForWeek = (week) => {
-      if (week <= 3) return { name: "Calibrate", note: "Build consistent technique and baseline loads." };
-      if (week <= 7) return { name: "Build", note: "Add reps first, and add priority glute volume only if recovery is good." };
-      if (week === 8) return { name: "Deload", note: "Use about half the working sets and skip hard conditioning." };
-      return { name: "Perform", note: "Progress quality reps and finish with rep PRs, not 1RM tests." };
+      if (isHolidayWeek(week)) {
+        return { name: "Holiday block (29 Oct – 22 Nov)", note: "Travel & holiday · Aim for 3 core sessions with full gym routines open." };
+      }
+      return { name: "10-Week Plan (3+1 Split)", note: "3 core sessions covering full body + optional 4th accessory session." };
     };
     const workouts = [
       {
-        id: "lower-a", short: "Lower A", title: "Lower A", focus: "Hip thrust + glute isolation",
-        intro: "Five easy cardio minutes, then 2–4 non-fatiguing hip-thrust ramp sets.",
+        id: "lower-a", short: "Day 1: Lower A", title: "Lower A", focus: "Hip thrust, glute power & core",
+        intro: "Five easy cardio minutes, hip mobility, then 2–4 non-fatiguing hip-thrust ramp sets.",
         exercises: [
-          { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down and use the most comfortable range.", priority: true, addSet: true },
-          { id: "long-stride-lunge", name: "Long-stride reverse lunge", sets: 2, reps: "8–12 / side", rest: "75–90 sec", alt: "Low step-up with a long stride", cue: "Take a long, stable step back and lean the torso slightly forward. Keep the load modest and stop well before technique changes.", priority: false },
-          { id: "cable-kickback-a", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
-          { id: "abduction-a", name: "Hip-abduction machine", sets: 2, reps: "12–20", rest: "45–60 sec", alt: "Cable hip abduction", cue: "Use a controlled range.", priority: true, superset: 1 },
-          { id: "pallof", name: "Pallof press", sets: 2, reps: "10–15 / side", rest: "45 sec", alt: "Suitcase carry", cue: "Resist rotation. Keep breathing and ribs stacked over pelvis.", superset: 1 }
+          { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down, chin tucked, and drive through mid-foot and heels.", priority: true },
+          { id: "leg-press-a", name: "Glute-focused leg press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Smith squat (feet forward) or hack squat", cue: "Place feet high and wide on platform with toes angled out ~30°. Lower deep until knees approach armpits without rounding lower back.", priority: true },
+          { id: "split-squat", name: "Bulgarian split squat or reverse lunge", sets: 3, reps: "8–12 / side", rest: "75 sec", alt: "Long-stride reverse lunge or step-up", cue: "Take a stable stance with slight forward torso lean to load the working glute. Lower with control and drive through front heel.", priority: true },
+          { id: "cable-kickback-a", name: "Cable glute kickback", sets: 3, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Squeeze upper glute without arching your lower back.", priority: true },
+          { id: "abduction-a", name: "Hip-abduction machine", sets: 3, reps: "12–15", rest: "60 sec", alt: "Cable hip abduction", cue: "Lean slightly forward from the hip. Hold a 1–2 second isometric squeeze at full abduction.", priority: true },
+          { id: "calf-raise-a", name: "Standing calf raise", sets: 3, reps: "10–15", rest: "45–60 sec", alt: "Seated calf raise or leg-press calf press", cue: "Rise high onto the balls of feet with control, pause 1 second at top, lower into deep stretch without bouncing." },
+          { id: "ab-leg-raise-a", name: "Hanging or captain's chair ab leg raise", sets: 3, reps: "10–15", rest: "60 sec", alt: "Incline bench leg raise or reverse crunch", cue: "Roll pelvis upward toward ribs at top of each rep rather than just swinging hip flexors. Lower with control." }
         ]
       },
       {
-        id: "upper-a", short: "Upper A", title: "Upper A", focus: "Pull, press, shoulders and arms",
-        intro: "Five easy cardio minutes, shoulder movement, then 2–3 ramp sets for pulldowns.",
+        id: "upper-a", short: "Day 2: Upper A", title: "Upper A", focus: "Pull-ups, press, row, dips & arms",
+        intro: "Five easy cardio minutes, shoulder movement, then 2–3 warm-up sets for pull-ups.",
         exercises: [
-          { id: "pulldown-a", name: "Lat pulldown", sets: 3, reps: "8–12", rest: "90 sec", alt: "Assisted pull-up", cue: "Drive elbows down without leaning far back.", priority: true },
-          { id: "incline-press", name: "Incline dumbbell press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Incline Smith or chest press machine", cue: "Use a stable bench angle and a controlled depth.", priority: true },
-          { id: "chest-row", name: "Chest-supported row", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Seated cable row", cue: "Pull elbows toward hips while keeping chest supported.", priority: true },
-          { id: "lateral-raise", name: "Cable lateral raise", sets: 2, reps: "12–20", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug.", superset: 1 },
-          { id: "pressdown", name: "Rope pressdown", sets: 2, reps: "10–15", rest: "45–60 sec", alt: "Overhead cable extension", cue: "Keep upper arms still and finish without forcing elbow lockout.", superset: 1 },
-          { id: "incline-curl", name: "Incline dumbbell curl", sets: 2, reps: "10–15", rest: "45–60 sec", alt: "Cable curl", cue: "Avoid swinging the torso to complete reps." }
+          { id: "pull-up", name: "Assisted pull-up", sets: 3, reps: "6–10", rest: "90 sec", alt: "Lat pulldown or band-assisted pull-up", cue: "Overhand grip. Drive elbows straight down toward ribs. Chest up to bar, control lowering all the way down.", priority: true },
+          { id: "chest-press-a", name: "Machine chest press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Incline dumbbell press or push-ups", cue: "Keep shoulder blades pinned to pad. Press smoothly, avoiding harsh elbow lockout.", priority: true },
+          { id: "cable-row-a", name: "Seated cable row", sets: 3, reps: "8–12", rest: "90 sec", alt: "Chest-supported row", cue: "Chest tall, row handle into lower abdomen. Squeeze shoulder blades together with controlled reach.", priority: true },
+          { id: "shoulder-press", name: "Dumbbell or machine shoulder press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Smith machine shoulder press", cue: "Press smoothly overhead with ribs stacked over pelvis. Control the eccentric to ear level.", priority: true },
+          { id: "dips", name: "Assisted tricep dips", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Bench dips or close-grip push-ups", cue: "Torso slightly upright to bias triceps (or slight lean for chest/tricep balance). Lower to 90° elbow bend and press through palms.", priority: true },
+          { id: "lateral-raise", name: "Cable lateral raise", sets: 3, reps: "12–15", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Lead with elbows, keeping hands slightly below elbow height. Squeeze side delts at top." },
+          { id: "bicep-curl", name: "Dumbbell or cable bicep curl", sets: 3, reps: "10–12", rest: "60 sec", alt: "Incline dumbbell curl or EZ-bar curl", cue: "Elbows glued to sides. Supinate wrists at top for full bicep peak contraction." },
+          { id: "cable-crunch-a", name: "Kneeling cable crunch", sets: 3, reps: "10–15", rest: "60 sec", alt: "Hanging knee raise or floor crunch", cue: "Hips stationary; curl your ribcage down into your pelvis like rolling up a poster. Squeeze abs hard at bottom." }
         ]
       },
       {
-        id: "lower-b", short: "Lower B", title: "Lower B", focus: "Glute bridge + hip hinge",
-        intro: "Five easy cardio minutes, then 2–4 non-fatiguing glute-bridge ramp sets.",
+        id: "lower-b", short: "Day 3: Lower B", title: "Lower B", focus: "Glute leg press, hack squat & glute stretch",
+        intro: "Five easy cardio minutes, hip mobility, then 2–4 non-fatiguing ramp sets on the leg press.",
         exercises: [
-          { id: "glute-bridge", name: "Barbell or Smith glute bridge", sets: 3, reps: "8–12", rest: "2 min", alt: "Dumbbell glute bridge", cue: "Keep ribs down and use the most comfortable range. Pause only if you can stay controlled.", priority: true },
-          { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", sets: 2, reps: "6–10", rest: "2 min", alt: "Cable pull-through", cue: "Lower only as far as you can keep the spine and pelvis controlled. This is deliberately low volume.", priority: true },
-          { id: "cable-kickback-b", name: "Cable glute kickback", sets: 2, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Use only the range you can control without arching your lower back.", priority: true },
-          { id: "abduction-b", name: "Cable hip abduction", sets: 2, reps: "12–20 / side", rest: "45–60 sec", alt: "Hip-abduction machine", cue: "Use a small, controlled range.", superset: 1 },
-          { id: "dead-bug", name: "Dead bug", sets: 2, reps: "8–12 / side", rest: "45 sec", alt: "Side plank, 20–45 sec", cue: "Move slowly while keeping ribs down and breath steady.", superset: 1 },
-          { id: "calf-raise", name: "Standing calf raise", sets: 3, reps: "10–15", rest: "45–60 sec", alt: "Seated calf raise or leg-press calf press", cue: "Rise onto the balls of the feet with control and lower to a comfortable stretch. Pause briefly at the top rather than bouncing." }
+          { id: "leg-press", name: "Glute-focused leg press", sets: 4, reps: "8–12", rest: "2 min", alt: "Smith squat (feet forward) or reverse hack squat", cue: "Feet high and wide on platform, toes 30° out. Lower deep until knees track outside ribs. Drive through mid-foot and heels.", priority: true },
+          { id: "hack-squat", name: "Hack squat (glute-focused)", sets: 3, reps: "8–10", rest: "90 sec", alt: "Reverse hack squat or dumbbell RDL", cue: "Feet placed high and moderately wide on sled, toes flared out ~30°. Lower deep to feel glute stretch; push through heels without rounding lower back.", priority: true },
+          { id: "glute-extension", name: "45° Glute back extension", sets: 3, reps: "10–15", rest: "60 sec", alt: "Dumbbell Romanian deadlift or lying leg curl", cue: "Round upper back slightly and flare toes out 45°. Squeeze glutes hard to raise torso; do not hyperextend lower back.", priority: true },
+          { id: "cable-kickback-b", name: "Cable glute kickback", sets: 3, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep torso steady. Arc heel back and slightly outwards to target gluteus maximus and medius.", priority: true },
+          { id: "abduction-b", name: "Hip-abduction machine", sets: 3, reps: "12–15", rest: "60 sec", alt: "Cable hip abduction", cue: "Hold a 2-second pause at full abduction on every rep. Push against the pads with knees, not feet.", priority: true },
+          { id: "calf-raise", name: "Standing calf raise", sets: 3, reps: "10–15", rest: "45–60 sec", alt: "Seated calf raise or leg-press calf press", cue: "Pause 1 second at full ankle elevation. Lower under control to stretch the calves." },
+          { id: "ab-leg-raise-b", name: "Hanging or captain's chair ab leg raise", sets: 3, reps: "10–15", rest: "60 sec", alt: "Incline bench leg raise or reverse crunch", cue: "Curl pelvis upward at top of rep. Slow 2-second eccentric on the way down." }
         ]
       },
       {
-        id: "upper-b", short: "Upper B", title: "Upper B", focus: "Shoulders, back, chest and arms",
-        intro: "Five easy cardio minutes, shoulder movement, then 2–3 shoulder-press ramp sets.",
+        id: "upper-b", short: "Day 4: Optional", title: "Upper B (Optional Extra)", focus: "Chin-ups, delts, arms & core polish", optional: true,
+        intro: "Five easy cardio minutes, shoulder movement, then 2 ramp sets for chin-ups or pulldowns.",
         exercises: [
-          { id: "shoulder-press", name: "Dumbbell or Smith shoulder press", sets: 3, reps: "6–10", rest: "90 sec", alt: "Machine shoulder press", cue: "Use a comfortable grip and range. Keep ribs stacked rather than leaning back.", priority: true },
-          { id: "cable-row", name: "Seated cable row", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Chest-supported row", cue: "Control the reach and pull elbows back without shrugging.", priority: true },
-          { id: "chest-press", name: "Machine chest press", sets: 2, reps: "8–12", rest: "75–90 sec", alt: "Flat dumbbell press", cue: "Keep shoulder blades controlled against the pad.", priority: true },
-          { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 2, reps: "8–12", rest: "75–90 sec", alt: "Assisted pull-up", cue: "Keep the path controlled and elbows travelling down.", priority: true },
-          { id: "lateral-raise-b", name: "Cable lateral raise", sets: 3, reps: "12–20", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Raise with control, stopping before shoulders shrug. Build the shoulder-to-waist ratio without adding lower-body volume." },
-          { id: "reverse-pec", name: "Reverse pec deck", sets: 2, reps: "12–20", rest: "45–60 sec", alt: "Face pull", cue: "Move from the upper back and rear shoulder.", superset: 1 },
-          { id: "overhead-triceps", name: "Overhead cable triceps extension", sets: 2, reps: "10–15", rest: "45–60 sec", alt: "Rope pressdown", cue: "Use a comfortable elbow position and avoid arching.", priority: false, superset: 1 },
-          { id: "cable-crunch", name: "Cable crunch", sets: 2, reps: "10–15", rest: "45 sec", alt: "Side plank, 20–45 sec", cue: "Use a comfortable range. Swap if bracing or flexion aggravates symptoms." }
+          { id: "chin-up", name: "Assisted chin-up", sets: 3, reps: "6–10", rest: "90 sec", alt: "Neutral-grip pulldown or lat pulldown", cue: "Underhand (supinated) grip. Pull chest up to bar, engaging lats and biceps. Control lowering completely.", priority: true },
+          { id: "pulldown-b", name: "Neutral-grip pulldown", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Assisted pull-up", cue: "Drive elbows straight down, squeezing the mid-back and outer lats.", priority: true },
+          { id: "chest-press", name: "Machine chest press", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Incline dumbbell press or push-ups", cue: "Smooth, controlled pressing. Keep shoulders pinned against pad.", priority: true },
+          { id: "cable-row", name: "Seated cable row", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Chest-supported row", cue: "Row to navel, squeezing shoulder blades together.", priority: true },
+          { id: "lateral-raise-b", name: "Cable lateral raise", sets: 3, reps: "12–15", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Strict form, 2-second lowering phase for maximum lateral delt cap definition." },
+          { id: "pressdown-b", name: "Rope pressdown", sets: 3, reps: "10–15", rest: "45–60 sec", alt: "Overhead cable extension", cue: "Pin elbows at sides, spread rope at bottom to contract lateral tricep head." },
+          { id: "hammer-curl", name: "Dumbbell or cable hammer curl", sets: 3, reps: "10–12", rest: "45–60 sec", alt: "Cable rope curl", cue: "Palms facing each other. Great for brachialis and forearm definition, giving arms a fuller, toned shape." },
+          { id: "pallof-b", name: "Pallof press or cable woodchopper", sets: 3, reps: "10–12 / side", rest: "45 sec", alt: "Suitcase carry or side plank", cue: "Brace core tight, resist rotational torque. Build 360° abdominal wall stability." }
         ]
       }
     ];
@@ -896,13 +961,24 @@
     };
     const archivedPerformanceExercises = [
       { id: "smith-squat", name: "Smith high-bar squat", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
-      { id: "split-squat", name: "Bulgarian split squat", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
       { id: "leg-curl-a", name: "Seated leg curl", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
       { id: "reverse-lunge", name: "Reverse lunge", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
-      { id: "leg-press", name: "Leg press", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
       { id: "leg-extension", name: "Leg extension", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
       { id: "leg-curl-b", name: "Lying or seated leg curl", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
-      { id: "cable-curl", name: "Cable curl", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true }
+      { id: "cable-curl", name: "Cable curl", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true },
+      { id: "long-stride-lunge", name: "Long-stride reverse lunge", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
+      { id: "incline-press", name: "Incline dumbbell press", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true },
+      { id: "chest-row", name: "Chest-supported row", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true },
+      { id: "incline-curl", name: "Incline dumbbell curl", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true },
+      { id: "glute-bridge", name: "Barbell or Smith glute bridge", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "rdl", name: "Barbell or dumbbell Romanian deadlift", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "dead-bug", name: "Dead bug", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "pallof", name: "Pallof press", workoutId: "lower-a", workoutName: "Lower A, archived", archived: true },
+      { id: "reverse-pec", name: "Reverse pec deck", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true },
+      { id: "overhead-triceps", name: "Overhead cable triceps extension", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true },
+      { id: "cable-crunch", name: "Cable crunch", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true },
+      { id: "pulldown-a", name: "Lat pulldown", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true },
+      { id: "pressdown", name: "Rope pressdown", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true }
     ];
     const performanceExercises = [
       ...workouts.flatMap((workout) =>
@@ -1011,11 +1087,12 @@
       const start = dateForWeek(week);
       const end = new Date(start);
       end.setDate(start.getDate() + 6);
-      return `Week ${week}: ${formatDate(start)}–${formatDate(end)}`;
+      const holidayTag = isHolidayWeek(week) ? " · ✈️ Holiday" : "";
+      return `Week ${week}: ${formatDate(start)}–${formatDate(end)}${holidayTag}`;
     }
     function clampWeek(value) {
       const week = Math.floor(Number(value));
-      return Number.isFinite(week) ? Math.min(12, Math.max(1, week)) : 1;
+      return Number.isFinite(week) ? Math.min(10, Math.max(1, week)) : 1;
     }
     function currentPlanWeek() {
       // Compare calendar days, not elapsed milliseconds, so daylight saving cannot shift the week.
@@ -1033,9 +1110,15 @@
     function completedWorkoutCount(week) {
       return workouts.filter((workout) => data.completed?.[sessionKey(week, workout.id)]).length;
     }
+    function coreWorkoutCount() {
+      return workouts.filter((workout) => !workout.optional).length;
+    }
+    function completedCoreWorkoutCount(week) {
+      return workouts.filter((workout) => !workout.optional && data.completed?.[sessionKey(week, workout.id)]).length;
+    }
     function pendingWeeklyBackupWeek() {
       const pending = weeks.filter((week) => !data.weeklyBackups?.[week] && (
-        completedWorkoutCount(week) === workouts.length || calendarWeekHasEnded(week)
+        completedCoreWorkoutCount(week) === coreWorkoutCount() || calendarWeekHasEnded(week)
       ));
       return pending[pending.length - 1];
     }
@@ -1143,9 +1226,7 @@
       }
       return { logs: [], week: null };
     }
-    function phaseSetCount(exercise, week) {
-      if (week === 8) return Math.max(1, Math.ceil(exercise.sets / 2));
-      if (exercise.addSet && ((week >= 4 && week <= 7) || week >= 9)) return exercise.sets + 1;
+    function phaseSetCount(exercise) {
       return exercise.sets;
     }
     function loadSuggestion(workoutId, exercise, week) {
@@ -1201,10 +1282,9 @@
     }
     function renderRoadmap() {
       const roadmap = [
-        ["Weeks 1–3", "Calibrate", "Build technique and baseline loads."],
-        ["Weeks 4–7", "Build", "Add reps first, and add priority glute volume only when recovery is good."],
-        ["Week 8", "Deload", "Use about half the working sets and skip hard conditioning."],
-        ["Weeks 9–12", "Perform", "Progress quality reps, finish with rep PRs and compare trends."]
+        ["Weeks 1–2", "Home Base", "Groove the new 3-day split, establish baseline weights, and build form."],
+        ["Weeks 3–6", "Holiday Block (29 Oct – 22 Nov)", "Travel & holiday: aim for your 3 core sessions with full workouts open."],
+        ["Weeks 7–10", "Home Peak & PRs", "Progressive overload, peak definition, and finish out the 10 weeks strong before Christmas."]
       ];
       document.getElementById("roadmap").innerHTML = `<ul class="roadmap">${roadmap.map((item) =>
         `<li><strong>${item[0]} · ${item[1]}</strong><br><span class="small">${item[2]}</span></li>`
@@ -1215,12 +1295,17 @@
       const phase = phaseForWeek(week);
       document.getElementById("phase-pill").textContent = `Week ${week}: ${phase.name}`;
       document.getElementById("sequence-copy").textContent = `Next: ${nextSessionForWeek(week).short}. ${phase.note}`;
-      const done = completedWorkoutCount(week);
+      const coreDone = completedCoreWorkoutCount(week);
+      const totalDone = completedWorkoutCount(week);
+      const optionalDone = totalDone > coreDone;
       const weekWeights = weightEntriesFor(week);
       const latestWeight = weekWeights[weekWeights.length - 1];
+      const sessionText = optionalDone
+        ? `${coreDone}/3 core + 1 optional done`
+        : `${coreDone}/3 core sessions done`;
       document.getElementById("quick-stats").innerHTML = `
-        <span class="pill sage">${done}/${workouts.length} sessions this week</span>
-        <span class="pill">${data.nightWeeks?.[week] ? "Night block marked" : "Normal week"}</span>
+        <span class="pill sage">${sessionText}</span>
+        <span class="pill">${isHolidayWeek(week) ? "✈️ Holiday block" : (data.nightWeeks?.[week] ? "Night block marked" : "Normal week")}</span>
         <span class="pill amber">${latestWeight ? `${escapeHtml(latestWeight.value)} kg logged` : "Weight not logged"}</span>
       `;
       renderBackupReminders();
@@ -1543,23 +1628,26 @@
       const week = Number(data.selectedWeek);
       const phase = phaseForWeek(week);
       document.getElementById("workout-week").textContent = `Week ${week} · ${phase.name}`;
-      document.getElementById("workout-count").textContent = `${completedWorkoutCount(week)}/${workouts.length} done`;
+      const coreDone = completedCoreWorkoutCount(week);
+      const totalDone = completedWorkoutCount(week);
+      const doneLabel = totalDone > coreDone
+        ? `${coreDone}/3 core + 1 optional done`
+        : `${coreDone}/3 core done`;
+      document.getElementById("workout-count").textContent = doneLabel;
       document.getElementById("week-dates").textContent = weekLabel(week);
       document.getElementById("week-night-toggle").textContent = `Night block: ${data.nightWeeks?.[week] ? "on" : "off"}`;
       renderReadiness();
       renderBackupReminders();
       renderSessionTabs();
       const workout = workoutById(activeSessionId());
-      const isShort = Boolean(data.shortMode);
-      const exercises = isShort ? workout.exercises.filter((exercise) => exercise.priority).slice(0, 3) : workout.exercises;
+      const exercises = workout.exercises;
       document.getElementById("workout-content").innerHTML = `
         <section class="card">
           <div class="workout-header">
             <div><p class="eyebrow">${workout.focus}</p><h2>${workout.title}</h2></div>
-            <span class="pill">${isShort ? "35–45 min" : "60–75 min"}</span>
+            <span class="pill">50–65 min</span>
           </div>
           <p class="subtle">${workout.intro}</p>
-          <label class="toggle-row"><input id="short-mode" type="checkbox" ${isShort ? "checked" : ""}>Use the 35–45 minute priority version</label>
           ${groupExercises(exercises).map((group) => sessionBlockMarkup(workout, group, week)).join("")}
           <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(data.logs?.[sessionKey(week, workout.id)]?.sessionNote || "")}</textarea></label>
           <label class="session-complete"><input id="complete-session" type="checkbox" ${data.completed?.[sessionKey(week, workout.id)] ? "checked" : ""}>Mark ${workout.short} complete</label>
@@ -1679,7 +1767,7 @@
         const count = loggedWeightEntries().length;
         return `${count} weigh-in${count === 1 ? "" : "s"} logged`;
       }
-      return `${[1, 6, 12].filter((week) => data.evolt?.[week]).length} of 3 checkpoints logged`;
+      return `${EVOLT_WEEKS.filter((week) => data.evolt?.[week]).length} of ${EVOLT_WEEKS.length} checkpoints logged`;
     }
     function renderProgressMenu() {
       document.getElementById("progress-menu").innerHTML = progressPanels.map((panel) => `
@@ -1751,7 +1839,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = week ? `12-week-gym-plan-week-${week}-backup.json` : "12-week-gym-plan-backup.json";
+      link.download = week ? `10-week-gym-plan-week-${week}-backup.json` : "10-week-gym-plan-backup.json";
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -1856,7 +1944,6 @@
         if (!button) return;
         data.activeSession = button.dataset.session;
         data.selectedWorkout = data.activeSession;
-        data.shortMode = false;
         saveData();
         renderWorkout();
       });
@@ -1887,17 +1974,17 @@
       workoutContent.addEventListener("change", (event) => {
         const input = event.target;
         if (input.matches("[data-log-workout]")) refreshExerciseSuggestion(input.dataset.logExercise);
-        if (input.id === "short-mode") {
-          data.shortMode = input.checked;
-          saveData();
-          renderWorkout();
-        }
         if (input.id === "complete-session") {
           data.completed[sessionKey(Number(data.selectedWeek), activeSessionId())] = input.checked;
           saveData();
           renderPlan();
           renderSessionTabs();
-          document.getElementById("workout-count").textContent = `${completedWorkoutCount(Number(data.selectedWeek))}/${workouts.length} done`;
+          const coreDone = completedCoreWorkoutCount(Number(data.selectedWeek));
+          const totalDone = completedWorkoutCount(Number(data.selectedWeek));
+          const doneLabel = totalDone > coreDone
+            ? `${coreDone}/3 core + 1 optional done`
+            : `${coreDone}/3 core done`;
+          document.getElementById("workout-count").textContent = doneLabel;
         }
       });
       const pelvicContent = document.getElementById("pelvic-care-content");
@@ -2037,6 +2124,18 @@
       document.getElementById("reload-update").addEventListener("click", () => {
         if (updateRegistration?.waiting) updateRegistration.waiting.postMessage("activate-update");
         else window.location.reload();
+      });
+      document.addEventListener("click", (event) => {
+        document.querySelectorAll("details.gym-archive-dropdown[open]").forEach((dropdown) => {
+          if (!dropdown.contains(event.target)) dropdown.removeAttribute("open");
+        });
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          document.querySelectorAll("details.gym-archive-dropdown[open]").forEach((dropdown) => {
+            dropdown.removeAttribute("open");
+          });
+        }
       });
     }
     initialiseStorage();

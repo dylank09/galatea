@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff8f4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Galatea">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="64x64" href="../../icons/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../icons/apple-touch-icon.png">
+  <title>Gym Progress & Analytics · Galatea</title>
+  <!-- Local offline Chart.js with CDN fallback -->
+  <script src="../../assets/chart.umd.min.js"></script>
+  <script>
+    if (typeof Chart === "undefined") {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>');
+    }
+  </script>
+  <style>
+    :root {
+      --ink: #392f35;
+      --muted: #7d6c74;
+      --paper: #fffdfb;
+      --card-bg: rgba(255, 253, 251, 0.94);
+      --blush: #fbf0f2;
+      --blush-strong: #ebd2d7;
+      --rose: #b85f76;
+      --rose-deep: #824457;
+      --rose-light: #f5e4e8;
+      --sage: #e4eee4;
+      --sage-ink: #37533f;
+      --amber: #fdf3dc;
+      --amber-ink: #795419;
+      --line: #ecdfe2;
+      --shadow: 0 10px 30px rgba(86, 55, 65, 0.08);
+      --shadow-sm: 0 4px 14px rgba(86, 55, 65, 0.05);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+    * { box-sizing: border-box; }
+    html { background: #f6eff0; scroll-behavior: smooth; }
+    body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top) 20px calc(80px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, #fff8f4 0%, #f7eff0 40%, #f9f7f4 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+    }
+    a { color: var(--rose-deep); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header & Navigation matching Galatea */
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      display: inline-flex;
+      gap: 7px;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--blush-strong);
+      border-radius: 10px;
+      align-items: center;
+      color: var(--rose-deep);
+      background: #fffafa;
+      font-size: .84rem;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+    }
+    .home-link:hover {
+      background: #fdf2f4;
+      text-decoration: none;
+    }
+    .home-link img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+    .gym-archive-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .gym-archive-dropdown summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    .gym-archive-dropdown summary::-webkit-details-marker {
+      display: none;
+    }
+    .gym-archive-caret {
+      display: inline-block;
+      font-size: .68rem;
+      line-height: 1;
+      transition: transform .15s ease;
+    }
+    .gym-archive-dropdown[open] .gym-archive-caret {
+      transform: rotate(180deg);
+    }
+    .gym-archive-menu {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      min-width: 210px;
+      padding: 6px;
+      border: 1px solid var(--blush-strong);
+      border-radius: 12px;
+      background: #fffafa;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 100;
+    }
+    .gym-archive-menu a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--rose-deep);
+      font-size: .84rem;
+      font-weight: 750;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .gym-archive-menu a:hover,
+    .gym-archive-menu a:focus {
+      background: #fdf2f4;
+      outline: none;
+    }
+    .gym-archive-menu a[aria-current="page"] {
+      background: var(--blush);
+      color: var(--rose-deep);
+      font-weight: 850;
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--rose-deep);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 850;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 720px;
+    }
+
+    /* KPI Highlights */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      padding: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--rose);
+    }
+    .kpi-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .kpi-val {
+      font-size: 1.9rem;
+      font-weight: 850;
+      color: var(--ink);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+    .kpi-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Podium Section */
+    .podium-section {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 36px;
+    }
+    .section-title {
+      margin: 0 0 4px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+    .section-desc {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .podium-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .podium-item {
+      padding: 16px;
+      background: #fff;
+      border: 1px solid #f0e3e5;
+      border-radius: var(--radius-sm);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .podium-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+    .podium-rank {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--rose-deep);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .podium-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .podium-gain {
+      font-size: 1.6rem;
+      font-weight: 850;
+      color: var(--sage-ink);
+      margin-bottom: 4px;
+    }
+    .podium-meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* Dual Companion Section */
+    .dual-panel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+    @media (min-width: 820px) {
+      .dual-panel {
+        grid-template-columns: 1.2fr 1fr;
+      }
+    }
+    .panel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Filters */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .filter-btn {
+      background: #fff;
+      border: 1px solid var(--blush-strong);
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn:hover {
+      border-color: var(--rose);
+      color: var(--rose-deep);
+    }
+    .filter-btn.active {
+      background: var(--rose-deep);
+      border-color: var(--rose-deep);
+      color: #fff;
+    }
+    .search-box {
+      flex: 1;
+      min-width: 180px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 0.88rem;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+    .search-box:focus {
+      border-color: var(--rose);
+    }
+
+    /* Exercise Grid */
+    .exercises-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+    .exercise-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .exercise-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: var(--blush-strong);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+    .badge-workout {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--blush);
+      color: var(--rose-deep);
+      border: 1px solid var(--blush-strong);
+    }
+    .badge-gain {
+      font-size: 0.88rem;
+      font-weight: 850;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--sage);
+      color: var(--sage-ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .badge-gain.neutral {
+      background: #eee;
+      color: #666;
+    }
+    .badge-gain.negative {
+      background: #fde8e8;
+      color: #9b2c2c;
+    }
+    .exercise-name {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+    .stats-table {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 14px;
+      font-size: 0.82rem;
+    }
+    .stat-col {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .stat-val {
+      font-weight: 800;
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+    .stat-detail {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .sparkline-wrapper {
+      height: 90px;
+      position: relative;
+      margin-top: auto;
+    }
+    .card-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--rose-deep);
+      font-weight: 700;
+    }
+
+    /* Modal / Drawer */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 30, 35, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-content {
+      background: #fffdfc;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 50px rgba(60, 30, 40, 0.2);
+      width: 100%;
+      max-width: 820px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.96);
+      transition: transform 0.2s ease;
+    }
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      background: #fff;
+    }
+    .modal-title {
+      margin: 0 0 4px;
+      font-size: 1.45rem;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+    }
+    .modal-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .close-btn {
+      background: var(--blush);
+      border: 1px solid var(--blush-strong);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--rose-deep);
+      line-height: 1;
+      padding: 0;
+      transition: background 0.15s ease;
+    }
+    .close-btn:hover {
+      background: var(--blush-strong);
+    }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .chart-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .metric-toggle {
+      background: #f7f1f2;
+      border: 1px solid #ebdada;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 750;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .metric-toggle:hover {
+      color: var(--rose-deep);
+    }
+    .metric-toggle.active {
+      background: var(--rose-deep);
+      border-color: var(--rose-deep);
+      color: #fff;
+    }
+    .modal-chart-wrapper {
+      height: 280px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .sets-table-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin: 0 0 12px;
+      color: var(--ink);
+    }
+    .table-container {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      background: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: left;
+    }
+    th {
+      background: var(--blush);
+      color: var(--rose-deep);
+      font-weight: 800;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f6eff0;
+      color: var(--ink);
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .set-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .set-chip {
+      background: #fbf5f6;
+      border: 1px solid #eddfe2;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .set-chip.pr {
+      background: var(--sage);
+      border-color: #b7ceb7;
+      color: var(--sage-ink);
+      font-weight: 800;
+    }
+
+    /* Weekly Journal Panel */
+    .journal-section {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-sm);
+      margin-top: 36px;
+    }
+    .week-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+    .week-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f7eff0;
+      padding-bottom: 10px;
+    }
+    .week-title {
+      font-size: 1.1rem;
+      font-weight: 850;
+      color: var(--ink);
+      margin: 0;
+    }
+    .week-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 750;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .tag-night {
+      background: #e9e4f0;
+      color: #4a3474;
+      border: 1px solid #d4c8e3;
+    }
+    .tag-cycle {
+      background: #fbe6eb;
+      color: #92344f;
+      border: 1px solid #edd0d8;
+    }
+    .tag-readiness {
+      background: #eef2eb;
+      color: #3e5e48;
+      border: 1px solid #d6e2d1;
+    }
+    .tag-weight {
+      background: #fdf3dc;
+      color: #795419;
+      border: 1px solid #fae4b2;
+    }
+    .bullet-list {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--ink);
+      font-size: 0.92rem;
+    }
+    .bullet-list li {
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+    .bullet-list li:last-child {
+      margin-bottom: 0;
+    }
+    .workout-label-chip {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--rose-deep);
+      text-transform: uppercase;
+      background: var(--blush);
+      border: 1px solid var(--blush-strong);
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+
+    footer {
+      margin-top: 48px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation matching Galatea -->
+  <div class="top-actions">
+    <a class="home-link" href="../../">← <img src="../../icons/favicon.png" alt="" width="20" height="20"> Galatea</a>
+    <a class="home-link" href="../">Gym Plan</a>
+    <a class="home-link" href="../../style/">Style</a>
+    <details class="gym-archive-dropdown">
+      <summary class="home-link" aria-haspopup="menu" aria-current="page">Archive <span class="gym-archive-caret" aria-hidden="true">▾</span></summary>
+      <div class="gym-archive-menu" role="menu">
+        <a href="../../ibclc/" role="menuitem">IBCLC Practice Lab</a>
+        <a href="./" role="menuitem" aria-current="page">12-Week Gym Progress</a>
+      </div>
+    </details>
+  </div>
+
+  <!-- Hero -->
+  <header class="hero">
+    <p class="eyebrow">Archived Progress · 12-Week Gym Plan</p>
+    <h1>Progress & Strength Analytics</h1>
+    <p class="subtitle">Complete visual trajectory of loads, rep capacities, body recomposition, and weekly context across 11 weeks of consistent training.</p>
+  </header>
+
+  <!-- Top KPI Grid -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Top Strength Jump</div>
+      <div class="kpi-val" style="color: var(--sage-ink);">+166.7%</div>
+      <div class="kpi-sub">Chest-Supported Row (15kg → 40kg)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Hip Thrust Peak</div>
+      <div class="kpi-val" style="color: var(--rose-deep);">140.4 kg</div>
+      <div class="kpi-sub">+39.8% PR over 100.4 kg baseline</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Body Recomposition</div>
+      <div class="kpi-val">58.0 → 57.3</div>
+      <div class="kpi-sub">kg · Lean recomposition with huge load gains</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Workouts Completed</div>
+      <div class="kpi-val">32 Sessions</div>
+      <div class="kpi-sub">Zero missed weeks · 4-day sequence</div>
+    </div>
+  </section>
+
+  <!-- Top Gainers Podium -->
+  <section class="podium-section">
+    <h2 class="section-title">🏆 Top % Increase Hall of Fame</h2>
+    <p class="section-desc">The biggest personal record progressions across all 20+ movements from initial baseline to all-time peak load.</p>
+    <div class="podium-grid" id="podium-grid">
+      <!-- Injected via JavaScript -->
+    </div>
+  </section>
+
+  <!-- Dual Companion Section: Weight & Quick Summary -->
+  <section class="dual-panel">
+    <div class="panel-card">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+        <h2 class="section-title" style="margin-bottom: 0;">Body Weight Trend</h2>
+        <span style="font-size: 0.85rem; font-weight: 750; color: var(--rose-deep);">58.0 kg → 57.3 kg</span>
+      </div>
+      <p class="section-desc">Logged weigh-ins across Weeks 1–11. Notice body weight stabilized while overall strength surged.</p>
+      <div style="height: 220px; position: relative;">
+        <canvas id="weight-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h2 class="section-title">Training Highlights</h2>
+      <p class="section-desc">Key takeaways distilled from your 11-week training journal:</p>
+      <ul style="margin: 0; padding-left: 20px; font-size: 0.92rem; color: var(--ink); line-height: 1.6;">
+        <li><strong>Glute & Hip Powerhouse:</strong> Hip Thrust advanced from 100.4kg to an incredible 140.4kg peak (+39.8%). Hip Abduction surged from 42.5kg to 92.5kg (+117.6%).</li>
+        <li><strong>Upper Body Pull Surge:</strong> Lat Pulldown jumped from 25.9kg to 42.5kg (+64.1%) and Seated/Chest Rows scaled from 15kg to 40kg (+166.7%).</li>
+        <li><strong>Shift Resilience:</strong> Managed heavy progress even during night-shift blocks in Weeks 2 and 8, leveraging smart substitutions (Leg Press) when gym was packed.</li>
+        <li><strong>Core & Stability:</strong> Pallof press and dead bugs advanced from 10 to 15 strict reps (+50% capacity).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Interactive Exercise Progression Explorer -->
+  <section>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+      <div>
+        <h2 class="section-title" style="margin-bottom: 4px;">Exercise Progression Cards</h2>
+        <p class="section-desc" style="margin-bottom: 0;">Click on any card to open the interactive set-by-set deep dive, e1RM curves, and notes.</p>
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All Movements</button>
+      <button class="filter-btn" data-filter="lower-a">Lower A</button>
+      <button class="filter-btn" data-filter="upper-a">Upper A</button>
+      <button class="filter-btn" data-filter="lower-b">Lower B</button>
+      <button class="filter-btn" data-filter="upper-b">Upper B</button>
+      <input type="text" id="exercise-search" class="search-box" placeholder="Search exercises (e.g. thrust, row, press)...">
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="exercises-grid" id="exercises-grid">
+      <!-- Rendered dynamically -->
+    </div>
+  </section>
+
+  <!-- Weekly Journal Panel (Bullet Points) -->
+  <section class="journal-section">
+    <div style="margin-bottom: 20px;">
+      <h2 class="section-title">Weekly Training Notes & Journal</h2>
+      <p class="section-desc" style="margin-bottom: 0;">Chronological week-by-week bullet points capturing your sleep, energy, cycle phases, and qualitative gym reflections.</p>
+    </div>
+    <div id="journal-list">
+      <!-- Rendered dynamically -->
+    </div>
+  </section>
+
+  <footer>
+    <p>Galatea · 12-Week Gym Plan Archive</p>
+  </footer>
+
+  <!-- Deep-Dive Modal -->
+  <div class="modal-overlay" id="exercise-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+            <span class="badge-workout" id="modal-workout-tag">Lower A</span>
+            <span class="badge-gain" id="modal-gain-badge">+39.8% PR</span>
+          </div>
+          <h3 class="modal-title" id="modal-exercise-name">Exercise Name</h3>
+          <p class="modal-subtitle" id="modal-summary-text">Baseline W1: 100kg → Peak W7: 140kg</p>
+        </div>
+        <button class="close-btn" id="modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Metric Switcher -->
+        <div class="chart-controls">
+          <button class="metric-toggle active" data-metric="weight">Peak Weight (kg)</button>
+          <button class="metric-toggle" data-metric="e1rm">Estimated 1RM (kg)</button>
+          <button class="metric-toggle" data-metric="volume">Session Volume (kg × reps)</button>
+          <button class="metric-toggle" data-metric="reps">Total Reps</button>
+        </div>
+
+        <!-- Modal Chart -->
+        <div class="modal-chart-wrapper">
+          <canvas id="modal-chart"></canvas>
+        </div>
+
+        <!-- Set History Table -->
+        <h4 class="sets-table-title">Full Set-by-Set Session History</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Context / Shifts</th>
+                <th>Sets Performed (Weight × Reps)</th>
+                <th>Top Weight</th>
+                <th>Est. 1RM</th>
+                <th>Session Note</th>
+              </tr>
+            </thead>
+            <tbody id="modal-sets-table">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Static Fallback Data
+    const FALLBACK_DATA = {
+      logs: {
+        "1:upper-a": {
+          "pulldown-a": [{ weight: "25.9", reps: "10" }, { weight: "25.9", reps: "9" }, { weight: "25.9", reps: "8" }],
+          "incline-press": [{ weight: "16", reps: "10" }, { weight: "20", reps: "9" }, { weight: "20", reps: "8" }],
+          "chest-row": [{ weight: "15", reps: "10" }, { weight: "15", reps: "8" }, { weight: "15", reps: "10" }],
+          "lateral-raise": [{ weight: "5", reps: "8" }, { weight: "5", reps: "8" }],
+          "pressdown": [{ weight: "15", reps: "10" }, { weight: "12.5", reps: "8" }],
+          "incline-curl": [{ weight: "14", reps: "8" }, { weight: "14", reps: "10" }],
+          sessionNote: "Added abdominal crunches at end. Sleep was fine, woke up a little bit groggy, cramps before gym, took paracetamol 1g. Felt strong but mindful next week may not be the same “beginners gain”. Felt I did the highest weight possible for rep allowance"
+        },
+        "1:lower-a": {
+          "smith-squat": [{ weight: "40", reps: "8" }, { weight: "40", reps: "8" }, { weight: "50", reps: "8" }],
+          "hip-thrust": [{ weight: "60.4", reps: "8" }, { weight: "80.4", reps: "8" }, { weight: "100.4", reps: "8" }],
+          "split-squat": [{ weight: "12.5", reps: "8" }, { weight: "12.5", reps: "10" }],
+          "leg-curl-a": [{ weight: "27.5", reps: "8" }, { weight: "20", reps: "10" }, { weight: "20", reps: "8" }],
+          "abduction-a": [{ weight: "42.5", reps: "8" }, { weight: "35", reps: "8" }],
+          "pallof": [{ weight: "", reps: "10" }, { weight: "", reps: "10" }],
+          sessionNote: "Sleep was good, wasn’t really groggy (shorter sleep?) impressed about 100kg on hip thrust"
+        },
+        "1:upper-b": {
+          "shoulder-press": [{ weight: "16", reps: "8" }, { weight: "19", reps: "6" }, { weight: "19", reps: "8" }],
+          "cable-row": [{ weight: "36.5", reps: "6" }, { weight: "28.5", reps: "9" }, { weight: "30", reps: "8" }],
+          "cable-curl": [{ weight: "8", reps: "10" }, { weight: "9", reps: "10" }],
+          "chest-press": [{ weight: "25", reps: "8" }, { weight: "30", reps: "8" }],
+          "pulldown-b": [{ weight: "35", reps: "8" }, { weight: "17.5", reps: "8" }],
+          "reverse-pec": [{ weight: "20", reps: "8" }, { weight: "20", reps: "8" }],
+          "lateral-raise-b": [{ weight: "8", reps: "15" }, { weight: "16", reps: "12" }, { weight: "14", reps: "10" }],
+          "overhead-triceps": [{ weight: "12.5", reps: "10" }, { weight: "12.5", reps: "11" }],
+          "cable-crunch": [{ weight: "12.5", reps: "10" }, { weight: "21.25", reps: "10" }],
+          sessionNote: "Sleep was good, felt good rest, ?is period here, temp remains high.\nDid extra set hammer curls by accident.\nChest press via barbell as machine taken\nNeutral pulldown - did x1 assisted pull up and x1 neutral lat pulldown"
+        },
+        "2:lower-b": {
+          "glute-bridge": [{ weight: "39", reps: "10" }, { weight: "59", reps: "10" }, { weight: "79", reps: "10" }],
+          "rdl": [{ weight: "29", reps: "10" }, { weight: "39", reps: "10" }],
+          "cable-kickback-b": [{ weight: "5", reps: "10" }, { weight: "7.50", reps: "10" }],
+          "dead-bug": [{ weight: "", reps: "10" }, { weight: "", reps: "10" }],
+          sessionNote: "Sleep was good, day 4 period but bleeding for 6 days. Finished x3 in a row shifts but feeling fine. Good energy and mood. Calf raises 35kg 10x 55kg x10 55kg x10. Guy hogging the hip abductors so will add to next workout \nDid and crunch instead of deadbugs"
+        },
+        "2:upper-a": {
+          "pulldown-a": [{ weight: "25.9", reps: "8" }, { weight: "25.9", reps: "8" }, { weight: "25.9", reps: "8" }],
+          "chest-row": [{ weight: "35", reps: "8" }, { weight: "35", reps: "8" }, { weight: "35", reps: "6" }],
+          "incline-press": [{ weight: "30", reps: "6" }, { weight: "30", reps: "6" }],
+          "lateral-raise": [{ weight: "8", reps: "8" }, { weight: "5", reps: "10" }],
+          "pressdown": [{ weight: "15", reps: "10" }, { weight: "21.25", reps: "10" }],
+          "incline-curl": [{ weight: "7.5", reps: "8" }, { weight: "7.5", reps: "8" }],
+          sessionNote: "Seated row instead of chest supported row"
+        },
+        "2:lower-a": {
+          "abduction-a": [{ weight: "35", reps: "10" }, { weight: "42.5", reps: "12" }],
+          "hip-thrust": [{ weight: "80.4", reps: "8" }, { weight: "100.4", reps: "6" }, { weight: "100.4", reps: "6" }],
+          "long-stride-lunge": [{ weight: "16", reps: "8" }, { weight: "20", reps: "8" }],
+          "cable-kickback-a": [{ weight: "7.5", reps: "10" }, { weight: "7.5", reps: "10" }],
+          "pallof": [{ weight: "0", reps: "10" }, { weight: "0", reps: "10" }]
+        },
+        "2:upper-b": {
+          "cable-row": [{ weight: "35", reps: "8" }, { weight: "35", reps: "8" }, { weight: "36.5", reps: "8" }],
+          "shoulder-press": [{ weight: "21.5", reps: "6" }, { weight: "19", reps: "6" }, { weight: "19", reps: "6" }],
+          "pulldown-b": [{ weight: "35", reps: "8" }, { weight: "35", reps: "8" }],
+          "chest-press": [{ weight: "27.5", reps: "6" }, { weight: "20", reps: "8" }],
+          "lateral-raise-b": [{ weight: "5", reps: "12" }, { weight: "5", reps: "12" }, { weight: "5", reps: "12" }],
+          "cable-curl": [{ weight: "5", reps: "10" }, { weight: "5", reps: "10" }]
+        },
+        "3:upper-a": {
+          "pulldown-a": [{ weight: "25.9", reps: "8" }, { weight: "27.15", reps: "8" }, { weight: "28.4", reps: "9" }],
+          "incline-press": [{ weight: "30", reps: "6" }, { weight: "20", reps: "8" }, { weight: "20", reps: "9" }],
+          "chest-row": [{ weight: "25.4", reps: "6" }, { weight: "35", reps: "8" }, { weight: "35", reps: "8" }],
+          "incline-curl": [{ weight: "10", reps: "8" }, { weight: "8", reps: "8" }],
+          "lateral-raise": [{ weight: "5", reps: "8" }, { weight: "7.5", reps: "8" }],
+          "pressdown": [{ weight: "15", reps: "8" }, { weight: "17.5", reps: "8" }],
+          sessionNote: "Day after nights"
+        },
+        "3:lower-a": {
+          "long-stride-lunge": [{ weight: "15", reps: "15" }, { weight: "15", reps: "15" }],
+          "hip-thrust": [{ weight: "100.4", reps: "8" }, { weight: "100.4", reps: "6" }, { weight: "100.4", reps: "6" }],
+          "cable-kickback-a": [{ weight: "7.50", reps: "10" }, { weight: "7.50", reps: "10" }],
+          "abduction-a": [{ weight: "80", reps: "10" }, { weight: "42.5", reps: "12" }],
+          "pallof": [{ weight: "", reps: "10" }, { weight: "", reps: "10" }],
+          sessionNote: "Early morning. Gym before work"
+        },
+        "3:upper-b": {
+          "cable-row": [{ weight: "36.5", reps: "8" }, { weight: "36.5", reps: "8" }, { weight: "36.5", reps: "8" }],
+          "shoulder-press": [{ weight: "19", reps: "6" }, { weight: "19", reps: "6" }, { weight: "19", reps: "5" }],
+          "chest-press": [{ weight: "22.5", reps: "8" }, { weight: "22.5", reps: "9" }],
+          "pulldown-b": [{ weight: "13.75", reps: "10" }, { weight: "21.25", reps: "8" }],
+          "lateral-raise-b": [{ weight: "5", reps: "12" }, { weight: "5", reps: "11" }, { weight: "5", reps: "12" }],
+          "overhead-triceps": [{ weight: "17.5", reps: "10" }, { weight: "17.5", reps: "10" }],
+          "cable-crunch": [{ weight: "15", reps: "10" }, { weight: "21.25", reps: "10" }],
+          "reverse-pec": [{ weight: "20", reps: "8" }, { weight: "20", reps: "8" }]
+        },
+        "3:lower-b": {
+          "rdl": [{ weight: "40", reps: "7" }, { weight: "50", reps: "6" }],
+          "glute-bridge": [{ weight: "", reps: "10" }, { weight: "", reps: "10" }, { weight: "", reps: "10" }],
+          "cable-kickback-b": [{ weight: "7.5", reps: "10" }, { weight: "7.5", reps: "10" }],
+          "abduction-b": [{ weight: "80", reps: "10" }, { weight: "80", reps: "12" }],
+          "calf-raise": [{ weight: "55", reps: "10" }, { weight: "45", reps: "10" }, { weight: "55", reps: "10" }],
+          sessionNote: "Went after work, felt dizzy and tired. Did leg press at the end instead of glute bridges"
+        },
+        "4:upper-a": {
+          "pulldown-a": [{ weight: "30.4", reps: "8" }, { weight: "28.4", reps: "8" }, { weight: "29.65", reps: "8" }],
+          "chest-row": [{ weight: "35", reps: "8" }, { weight: "40", reps: "8" }, { weight: "36.5", reps: "8" }],
+          "lateral-raise": [{ weight: "5", reps: "10" }, { weight: "6", reps: "10" }],
+          "pressdown": [{ weight: "17.5", reps: "10" }, { weight: "21.25", reps: "10" }],
+          "incline-press": [{ weight: "17.7", reps: "8" }, { weight: "17.7", reps: "9" }, { weight: "17.7", reps: "8" }],
+          "incline-curl": [{ weight: "8", reps: "8" }, { weight: "8", reps: "" }]
+        },
+        "4:lower-b": {
+          "cable-kickback-b": [{ weight: "7.5", reps: "10" }, { weight: "7.5", reps: "10" }],
+          "rdl": [{ weight: "40", reps: "8" }, { weight: "40", reps: "8" }],
+          "abduction-b": [{ weight: "80", reps: "10" }, { weight: "80", reps: "10" }],
+          "calf-raise": [{ weight: "55", reps: "10" }, { weight: "55", reps: "10" }, { weight: "55", reps: "10" }],
+          sessionNote: "Gym v busy, did leg press with 133kg x6x2 over glute bridges as it was taken constantly"
+        },
+        "4:upper-b": {
+          "shoulder-press": [{ weight: "19", reps: "8" }, { weight: "19", reps: "6" }, { weight: "19", reps: "6" }],
+          "cable-row": [{ weight: "35", reps: "8" }, { weight: "35", reps: "8" }, { weight: "35", reps: "8" }],
+          "lateral-raise-b": [{ weight: "5", reps: "10" }, { weight: "5", reps: "10" }, { weight: "5", reps: "10" }],
+          "pulldown-b": [{ weight: "21.5", reps: "10" }, { weight: "29", reps: "10" }],
+          "chest-press": [{ weight: "20", reps: "8" }, { weight: "20", reps: "8" }],
+          "overhead-triceps": [{ weight: "15", reps: "10" }, { weight: "15", reps: "10" }]
+        },
+        "5:lower-a": {
+          "cable-kickback-a": [{ weight: "7.5", reps: "12" }, { weight: "7.5", reps: "10" }],
+          "long-stride-lunge": [{ weight: "10", reps: "8" }, { weight: "10", reps: "9" }],
+          "hip-thrust": [{ weight: "100.4", reps: "8" }, { weight: "110.4", reps: "7" }, { weight: "120.4", reps: "6" }, { weight: "120.4", reps: "5" }],
+          "abduction-a": [{ weight: "80", reps: "12" }, { weight: "87.5", reps: "12" }],
+          "pallof": [{ weight: "", reps: "15" }, { weight: "", reps: "15" }]
+        },
+        "5:upper-a": {
+          "pulldown-a": [{ weight: "30.4", reps: "6" }, { weight: "29.65", reps: "8" }, { weight: "29.65", reps: "8" }],
+          "incline-press": [{ weight: "17.7", reps: "8" }, { weight: "17.7", reps: "8" }, { weight: "17.7", reps: "8" }],
+          "chest-row": [{ weight: "36.5", reps: "8" }, { weight: "36.5", reps: "8" }, { weight: "36.5", reps: "8" }],
+          "lateral-raise": [{ weight: "5", reps: "10" }, { weight: "5", reps: "10" }],
+          "pressdown": [{ weight: "15", reps: "10" }, { weight: "12.5", reps: "10" }],
+          "incline-curl": [{ weight: "7.5", reps: "10" }, { weight: "7.5", reps: "10" }]
+        },
+        "5:lower-b": {
+          "glute-bridge": [{ weight: "49", reps: "10" }, { weight: "69", reps: "8" }],
+          "cable-kickback-b": [{ weight: "8.5", reps: "10" }, { weight: "8.5", reps: "10" }],
+          "calf-raise": [{ weight: "55", reps: "10" }, { weight: "55", reps: "10" }],
+          "abduction-b": [{ weight: "87.5", reps: "12" }, { weight: "87.5", reps: "12" }],
+          sessionNote: "Did 1x 153kg x6 leg press instead of deadlift bc of time"
+        },
+        "6:upper-b": {
+          "cable-row": [{ weight: "35", reps: "8" }, { weight: "36", reps: "8" }, { weight: "37", reps: "8" }],
+          "lateral-raise-b": [{ weight: "2.5", reps: "10" }, { weight: "2.5", reps: "10" }, { weight: "2.5", reps: "10" }],
+          "pulldown-b": [{ weight: "21.25", reps: "8" }, { weight: "17.5", reps: "10" }],
+          "shoulder-press": [{ weight: "14", reps: "8" }, { weight: "14", reps: "8" }, { weight: "14", reps: "8" }],
+          "chest-press": [{ weight: "22.5", reps: "8" }, { weight: "25", reps: "8" }],
+          "overhead-triceps": [{ weight: "15", reps: "10" }, { weight: "15", reps: "10" }]
+        },
+        "6:lower-a": {
+          "hip-thrust": [{ weight: "120.4", reps: "6" }, { weight: "110.4", reps: "6" }, { weight: "110.4", reps: "6" }],
+          "cable-kickback-a": [{ weight: "7.5", reps: "10" }, { weight: "8.5", reps: "10" }],
+          "pallof": [{ weight: "0", reps: "10" }, { weight: "0", reps: "10" }],
+          "long-stride-lunge": [{ weight: "7", reps: "10" }, { weight: "14", reps: "8" }]
+        },
+        "6:upper-a": {
+          "pulldown-a": [{ weight: "28.79", reps: "6" }, { weight: "28.79", reps: "6" }, { weight: "28.79", reps: "6" }],
+          "incline-press": [{ weight: "17.7", reps: "9" }, { weight: "19.95", reps: "8" }, { weight: "19.95", reps: "8" }],
+          "lateral-raise": [{ weight: "6", reps: "12" }, { weight: "5", reps: "12" }],
+          "pressdown": [{ weight: "15", reps: "12" }, { weight: "16", reps: "10" }],
+          "chest-row": [{ weight: "35", reps: "8" }, { weight: "36", reps: "8" }, { weight: "36", reps: "8" }],
+          "incline-curl": [{ weight: "9", reps: "8" }, { weight: "9", reps: "8" }]
+        },
+        "7:upper-b": {
+          "cable-row": [{ weight: "35", reps: "9" }, { weight: "42.5", reps: "8" }, { weight: "38", reps: "8" }],
+          "shoulder-press": [{ weight: "19", reps: "6" }, { weight: "14", reps: "8" }, { weight: "14", reps: "8" }],
+          "pulldown-b": [{ weight: "35", reps: "8" }, { weight: "42.5", reps: "8" }],
+          "lateral-raise-b": [{ weight: "5", reps: "10" }, { weight: "5", reps: "10" }, { weight: "5", reps: "10" }],
+          sessionNote: "Day before exam"
+        },
+        "7:lower-a": {
+          "pallof": [{ weight: "", reps: "10" }, { weight: "", reps: "12" }],
+          "hip-thrust": [{ weight: "140.4", reps: "5" }, { weight: "100.4", reps: "8" }, { weight: "120.4", reps: "6" }, { weight: "120.4", reps: "6" }],
+          "long-stride-lunge": [{ weight: "20", reps: "10" }, { weight: "25", reps: "10" }],
+          "cable-kickback-a": [{ weight: "7.5", reps: "10" }, { weight: "7.5", reps: "10" }],
+          "abduction-a": [{ weight: "87.5", reps: "12" }, { weight: "87.5", reps: "12" }],
+          sessionNote: "Added calf raises x3 sets"
+        },
+        "7:upper-a": {
+          "pulldown-a": [{ weight: "30.9", reps: "8" }, { weight: "28.4", reps: "8" }, { weight: "28.4", reps: "6" }],
+          "incline-press": [{ weight: "17.7", reps: "8" }, { weight: "17.7", reps: "8" }, { weight: "17.7", reps: "8" }],
+          "chest-row": [{ weight: "36", reps: "6" }, { weight: "36", reps: "8" }, { weight: "36", reps: "8" }],
+          "lateral-raise": [{ weight: "2.5", reps: "12" }, { weight: "2.5", reps: "10" }],
+          "pressdown": [{ weight: "15", reps: "10" }, { weight: "17.5", reps: "10" }],
+          "incline-curl": [{ weight: "8", reps: "10" }, { weight: "8", reps: "10" }]
+        },
+        "8:upper-a": {
+          "pulldown-a": [{ weight: "27.9", reps: "8" }, { weight: "27.9", reps: "8" }],
+          "incline-press": [{ weight: "17.7", reps: "10" }, { weight: "20.2", reps: "9" }],
+          "chest-row": [{ weight: "36", reps: "8" }, { weight: "36", reps: "10" }],
+          "incline-curl": [{ weight: "7.5", reps: "10" }],
+          "pressdown": [{ weight: "15", reps: "11" }],
+          "lateral-raise": [{ weight: "5", reps: "12" }]
+        },
+        "8:lower-a": {
+          "cable-kickback-a": [{ weight: "7.5", reps: "11" }],
+          "long-stride-lunge": [{ weight: "20", reps: "8" }],
+          "abduction-a": [{ weight: "87.5", reps: "12" }],
+          "hip-thrust": [{ weight: "120.4", reps: "6" }, { weight: "120.4", reps: "6" }],
+          "pallof": [{ weight: "", reps: "10" }]
+        },
+        "8:lower-b": {
+          "cable-kickback-b": [{ weight: "7.5", reps: "10" }],
+          "abduction-b": [{ weight: "87.5", reps: "12" }],
+          "calf-raise": [{ weight: "55", reps: "10" }, { weight: "55", reps: "10" }],
+          "glute-bridge": [{ weight: "49", reps: "10" }, { weight: "69", reps: "10" }],
+          "rdl": [{ weight: "49", reps: "6" }]
+        },
+        "8:upper-b": {
+          "shoulder-press": [{ weight: "19", reps: "7" }, { weight: "19", reps: "6" }],
+          "cable-row": [{ weight: "37", reps: "8" }, { weight: "37", reps: "8" }],
+          "chest-press": [{ weight: "27.5", reps: "6" }],
+          "pulldown-b": [{ weight: "36", reps: "8" }],
+          "overhead-triceps": [{ weight: "15", reps: "11" }],
+          "cable-crunch": [{ weight: "17.5", reps: "10" }],
+          sessionNote: "Incline press instead 22.70, bicep curls 8kg x8, 9kg x8"
+        },
+        "9:lower-a": {
+          "abduction-a": [{ weight: "87.5", reps: "10" }, { weight: "87.5", reps: "12" }]
+        },
+        "9:lower-b": {
+          "rdl": [{ weight: "50", reps: "6" }, { weight: "50", reps: "6" }],
+          "abduction-b": [{ weight: "87.5", reps: "10" }, { weight: "87.5", reps: "12" }],
+          "calf-raise": [{ weight: "55", reps: "10" }, { weight: "55", reps: "10" }, { weight: "55", reps: "10" }],
+          "cable-kickback-b": [{ weight: "8.5", reps: "10" }, { weight: "8.5", reps: "10" }]
+        },
+        "9:upper-a": {
+          "chest-row": [{ weight: "40", reps: "6" }, { weight: "35", reps: "8" }, { weight: "35", reps: "8" }],
+          "pulldown-a": [{ weight: "33", reps: "8" }, { weight: "40", reps: "4" }, { weight: "35", reps: "7" }],
+          "lateral-raise": [{ weight: "5", reps: "12" }, { weight: "5", reps: "12" }],
+          "pressdown": [{ weight: "17.5", reps: "12" }, { weight: "17.5", reps: "10" }],
+          "incline-press": [{ weight: "26", reps: "8" }, { weight: "26", reps: "8" }, { weight: "26", reps: "6" }],
+          "incline-curl": [{ weight: "7.5", reps: "10" }, { weight: "9", reps: "10" }],
+          sessionNote: "Pull ups, chin ups and dips. Stretching and core"
+        },
+        "10:lower-a": {
+          "cable-kickback-a": [{ weight: "7.5", reps: "10" }, { weight: "8.5", reps: "10" }],
+          "long-stride-lunge": [{ weight: "20", reps: "8" }, { weight: "20", reps: "8" }],
+          "abduction-a": [{ weight: "87.5", reps: "12" }, { weight: "92.5", reps: "12" }],
+          "pallof": [{ weight: "", reps: "10" }, { weight: "", reps: "10" }],
+          "hip-thrust": [{ weight: "100.4", reps: "6" }, { weight: "120.4", reps: "6" }, { weight: "120.4", reps: "6" }, { weight: "120.4", reps: "6" }]
+        },
+        "10:upper-a": {
+          "chest-row": [{ weight: "37", reps: "8" }, { weight: "38", reps: "8" }, { weight: "38", reps: "8" }],
+          "pulldown-a": [{ weight: "30.9", reps: "6" }, { weight: "35", reps: "9" }, { weight: "42.5", reps: "8" }],
+          "incline-curl": [{ weight: "8", reps: "10" }, { weight: "9", reps: "10" }],
+          "incline-press": [{ weight: "25", reps: "8" }, { weight: "25", reps: "8" }, { weight: "25", reps: "8" }],
+          "lateral-raise": [{ weight: "2.5", reps: "12" }, { weight: "2.5", reps: "12" }],
+          "pressdown": [{ weight: "17.5", reps: "10" }, { weight: "17.5", reps: "10" }],
+          sessionNote: "Incline dumbbell curl -> bicep curls, ab leg raises x10 x3"
+        },
+        "10:lower-b": {
+          "calf-raise": [{ weight: "57.5", reps: "10" }, { weight: "57.5", reps: "10" }, { weight: "60", reps: "10" }],
+          "abduction-b": [{ weight: "87.5", reps: "10" }, { weight: "92.5", reps: "10" }],
+          "cable-kickback-b": [{ weight: "7.5", reps: "10" }, { weight: "7.5", reps: "10" }],
+          "rdl": [{ weight: "49", reps: "6" }, { weight: "49", reps: "6" }],
+          sessionNote: "Ab leg raises 10x 3x"
+        },
+        "11:upper-b": {
+          "chest-press": [{ weight: "26", reps: "8" }, { weight: "28.5", reps: "6" }],
+          "shoulder-press": [{ weight: "20", reps: "6" }, { weight: "15", reps: "6" }, { weight: "15", reps: "6" }],
+          "pulldown-b": [{ weight: "29.5", reps: "8" }, { weight: "35", reps: "8" }],
+          "cable-row": [{ weight: "35", reps: "8" }, { weight: "42.5", reps: "6" }, { weight: "37", reps: "7" }],
+          "lateral-raise-b": [{ weight: "5", reps: "12" }, { weight: "5", reps: "10" }, { weight: "5", reps: "12" }],
+          "overhead-triceps": [{ weight: "17.5", reps: "9" }]
+        }
+      },
+      weights: {
+        "1": [{ value: 58.0 }],
+        "2": [{ value: 56.7 }],
+        "3": [{ value: 56.4 }],
+        "4": [{ value: 57.2, at: "17 Aug" }, { value: 57.2, at: "21 Aug" }],
+        "5": [{ value: 57.4, at: "27 Aug" }],
+        "6": [{ value: 57.8, at: "1 Sep" }, { value: 56.4, at: "9 Sep" }],
+        "8": [{ value: 56.5, at: "20 Sep" }],
+        "10": [{ value: 56.2, at: "29 Sep" }],
+        "11": [{ value: 57.3, at: "4 Oct" }]
+      },
+      readiness: {
+        "1": { sleep: 4, energy: 4, soreness: 1, symptoms: 2 },
+        "2": { sleep: 5, energy: 4, soreness: 2, symptoms: 1 },
+        "3:upper-b": { sleep: 3, energy: 4, soreness: 1, symptoms: 4 },
+        "3:lower-a": { sleep: 4, energy: 4, soreness: 1, symptoms: 2 },
+        "3:lower-b": { sleep: 3, energy: 2, soreness: 3, symptoms: 3 },
+        "4:lower-b": { sleep: 3, energy: 3, soreness: 2, symptoms: 3 },
+        "5:upper-a": { sleep: 3, energy: 3, soreness: 1, symptoms: 3 },
+        "6:lower-a": { sleep: 3, energy: 2, soreness: 3, symptoms: 3 },
+        "8:lower-b": { sleep: 5, energy: 3, soreness: 3, symptoms: 3 }
+      },
+      cycleContexts: {
+        "1:upper-b": "Luteal",
+        "2:upper-a": "Bleeding",
+        "2:lower-a": "Bleeding",
+        "2:upper-b": "Follicular",
+        "3:upper-a": "Follicular",
+        "3:upper-b": "Ovulation",
+        "4:upper-a": "Luteal",
+        "4:lower-b": "Luteal",
+        "5:upper-a": "Luteal",
+        "6:upper-b": "Luteal"
+      },
+      nightWeeks: { 1: false, 2: true, 3: false, 7: false, 8: true }
+    };
+
+    // Load active localStorage data if available, or fall back to embedded data
+    function loadData() {
+      try {
+        const stored = localStorage.getItem("twelveWeekGymPlanV1");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.logs && Object.keys(parsed.logs).length > 0) {
+            return {
+              logs: parsed.logs || FALLBACK_DATA.logs,
+              weights: parsed.weights || FALLBACK_DATA.weights,
+              readiness: parsed.readiness || FALLBACK_DATA.readiness,
+              cycleContexts: parsed.cycleContexts || FALLBACK_DATA.cycleContexts,
+              nightWeeks: parsed.nightWeeks || FALLBACK_DATA.nightWeeks
+            };
+          }
+        }
+      } catch (e) {
+        console.warn("Could not read localStorage twelveWeekGymPlanV1, using fallback dataset", e);
+      }
+      return FALLBACK_DATA;
+    }
+
+    const RAW_DATA = loadData();
+
+    // Exercise Definitions & Meta
+    const EXERCISE_META = {
+      "hip-thrust": { name: "Barbell / Smith Hip Thrust", workoutId: "lower-a", workoutName: "Lower A", focus: "Glutes" },
+      "long-stride-lunge": { name: "Long-Stride Reverse Lunge", workoutId: "lower-a", workoutName: "Lower A", focus: "Glutes & Hamstrings" },
+      "cable-kickback-a": { name: "Cable Glute Kickback (A)", workoutId: "lower-a", workoutName: "Lower A", focus: "Glute Isolation" },
+      "abduction-a": { name: "Hip-Abduction Machine", workoutId: "lower-a", workoutName: "Lower A", focus: "Glute Medius" },
+      "pallof": { name: "Pallof Press", workoutId: "lower-a", workoutName: "Lower A", focus: "Anti-Rotation Core", unweighted: true },
+      "smith-squat": { name: "Smith High-Bar Squat", workoutId: "lower-a", workoutName: "Lower A (Archived)", focus: "Quads" },
+      "split-squat": { name: "Bulgarian Split Squat", workoutId: "lower-a", workoutName: "Lower A (Archived)", focus: "Single Leg" },
+      "leg-curl-a": { name: "Seated Leg Curl", workoutId: "lower-a", workoutName: "Lower A (Archived)", focus: "Hamstrings" },
+
+      "pulldown-a": { name: "Lat Pulldown", workoutId: "upper-a", workoutName: "Upper A", focus: "Vertical Pull" },
+      "incline-press": { name: "Incline Dumbbell Press", workoutId: "upper-a", workoutName: "Upper A", focus: "Incline Chest" },
+      "chest-row": { name: "Chest-Supported Row", workoutId: "upper-a", workoutName: "Upper A", focus: "Upper Back" },
+      "lateral-raise": { name: "Cable Lateral Raise", workoutId: "upper-a", workoutName: "Upper A", focus: "Side Delts" },
+      "pressdown": { name: "Rope Pressdown", workoutId: "upper-a", workoutName: "Upper A", focus: "Triceps" },
+      "incline-curl": { name: "Incline Dumbbell Curl", workoutId: "upper-a", workoutName: "Upper A", focus: "Biceps" },
+
+      "glute-bridge": { name: "Barbell / Smith Glute Bridge", workoutId: "lower-b", workoutName: "Lower B", focus: "Glutes" },
+      "rdl": { name: "Romanian Deadlift (RDL)", workoutId: "lower-b", workoutName: "Lower B", focus: "Posterior Chain" },
+      "cable-kickback-b": { name: "Cable Glute Kickback (B)", workoutId: "lower-b", workoutName: "Lower B", focus: "Glute Isolation" },
+      "abduction-b": { name: "Cable Hip Abduction", workoutId: "lower-b", workoutName: "Lower B", focus: "Glute Medius" },
+      "calf-raise": { name: "Standing Calf Raise", workoutId: "lower-b", workoutName: "Lower B", focus: "Calves" },
+      "dead-bug": { name: "Dead Bug", workoutId: "lower-b", workoutName: "Lower B", focus: "Core Stability", unweighted: true },
+
+      "shoulder-press": { name: "Dumbbell / Smith Shoulder Press", workoutId: "upper-b", workoutName: "Upper B", focus: "Overhead Press" },
+      "cable-row": { name: "Seated Cable Row", workoutId: "upper-b", workoutName: "Upper B", focus: "Horizontal Pull" },
+      "chest-press": { name: "Machine Chest Press", workoutId: "upper-b", workoutName: "Upper B", focus: "Horizontal Press" },
+      "pulldown-b": { name: "Neutral-Grip Pulldown", workoutId: "upper-b", workoutName: "Upper B", focus: "Lats & Biceps" },
+      "lateral-raise-b": { name: "Cable Lateral Raise (B)", workoutId: "upper-b", workoutName: "Upper B", focus: "Side Delts" },
+      "reverse-pec": { name: "Reverse Pec Deck", workoutId: "upper-b", workoutName: "Upper B", focus: "Rear Delts" },
+      "overhead-triceps": { name: "Overhead Cable Triceps Ext", workoutId: "upper-b", workoutName: "Upper B", focus: "Triceps Long Head" },
+      "cable-crunch": { name: "Cable Crunch", workoutId: "upper-b", workoutName: "Upper B", focus: "Abdominals" },
+      "cable-curl": { name: "Cable Curl", workoutId: "upper-b", workoutName: "Upper B (Archived)", focus: "Biceps" }
+    };
+
+    // Parse Data into Structured Objects
+    const parsedExercises = {};
+
+    Object.entries(RAW_DATA.logs).forEach(([sessionKey, sessionData]) => {
+      const [weekStr, workoutId] = sessionKey.split(":");
+      const week = parseInt(weekStr, 10);
+      const note = sessionData.sessionNote || "";
+
+      Object.entries(sessionData).forEach(([exId, setList]) => {
+        if (exId === "sessionNote" || !Array.isArray(setList)) return;
+
+        // Filter valid sets
+        const validSets = setList.map(s => {
+          const w = parseFloat(s.weight);
+          const r = parseInt(s.reps, 10);
+          return {
+            weight: isNaN(w) ? 0 : w,
+            reps: isNaN(r) ? 0 : r,
+            rawWeight: s.weight,
+            rawReps: s.reps
+          };
+        }).filter(s => s.weight > 0 || s.reps > 0);
+
+        if (validSets.length === 0) return;
+
+        if (!parsedExercises[exId]) {
+          const meta = EXERCISE_META[exId] || { name: exId, workoutId, workoutName: workoutId, focus: "Movement" };
+          parsedExercises[exId] = {
+            id: exId,
+            name: meta.name,
+            workoutId: meta.workoutId,
+            workoutName: meta.workoutName,
+            focus: meta.focus,
+            unweighted: Boolean(meta.unweighted),
+            sessions: []
+          };
+        }
+
+        let bestSet = validSets[0];
+        let maxWeight = 0;
+        let maxReps = 0;
+        let maxE1RM = 0;
+        let sessionVolume = 0;
+        let totalReps = 0;
+
+        validSets.forEach(s => {
+          sessionVolume += s.weight * s.reps;
+          totalReps += s.reps;
+          if (s.reps > maxReps) maxReps = s.reps;
+          if (s.weight > maxWeight || (s.weight === maxWeight && s.reps > (bestSet ? bestSet.reps : 0))) {
+            maxWeight = s.weight;
+            bestSet = s;
+          }
+          const e1rm = s.weight > 0 ? s.weight * (1 + s.reps / 30) : 0;
+          if (e1rm > maxE1RM) maxE1RM = e1rm;
+        });
+
+        parsedExercises[exId].sessions.push({
+          week,
+          workoutId,
+          sets: validSets,
+          bestSet,
+          maxWeight,
+          maxReps,
+          maxE1RM: parseFloat(maxE1RM.toFixed(1)),
+          sessionVolume: Math.round(sessionVolume),
+          totalReps,
+          sessionNote: note
+        });
+      });
+    });
+
+    // Compute Overall Progression Stats per Exercise
+    const exerciseList = Object.values(parsedExercises).map(ex => {
+      ex.sessions.sort((a, b) => a.week - b.week);
+      const baseline = ex.sessions[0];
+      const latest = ex.sessions[ex.sessions.length - 1];
+
+      let peakSession = ex.sessions[0];
+      ex.sessions.forEach(s => {
+        const valToCompare = ex.unweighted ? s.maxReps : s.maxWeight;
+        const peakVal = ex.unweighted ? peakSession.maxReps : peakSession.maxWeight;
+        if (valToCompare > peakVal) {
+          peakSession = s;
+        }
+      });
+
+      let peakPct = 0;
+      let latestPct = 0;
+
+      if (ex.unweighted) {
+        const base = baseline.maxReps || 1;
+        peakPct = ((peakSession.maxReps - base) / base) * 100;
+        latestPct = ((latest.maxReps - base) / base) * 100;
+      } else {
+        const base = baseline.maxWeight || 1;
+        peakPct = ((peakSession.maxWeight - base) / base) * 100;
+        latestPct = ((latest.maxWeight - base) / base) * 100;
+      }
+
+      return {
+        ...ex,
+        baseline,
+        peakSession,
+        latest,
+        peakPct: parseFloat(peakPct.toFixed(1)),
+        latestPct: parseFloat(latestPct.toFixed(1))
+      };
+    });
+
+    // Render Podium
+    function renderPodium() {
+      const sorted = [...exerciseList]
+        .filter(e => !e.unweighted && e.sessions.length >= 3 && e.peakPct > 0)
+        .sort((a, b) => b.peakPct - a.peakPct)
+        .slice(0, 5);
+
+      const medals = ["🥇 1st Place", "🥈 2nd Place", "🥉 3rd Place", "✨ 4th Place", "✨ 5th Place"];
+      const container = document.getElementById("podium-grid");
+
+      container.innerHTML = sorted.map((ex, idx) => `
+        <div class="podium-item" onclick="openExerciseModal('${ex.id}')" style="cursor: pointer;">
+          <div>
+            <div class="podium-rank">${medals[idx]}</div>
+            <div class="podium-name">${ex.name}</div>
+          </div>
+          <div>
+            <div class="podium-gain">+${ex.peakPct}%</div>
+            <div class="podium-meta">${ex.baseline.maxWeight}kg (W${ex.baseline.week}) → <strong>${ex.peakSession.maxWeight}kg (W${ex.peakSession.week})</strong></div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // Render Body Weight Chart
+    let weightChartInstance = null;
+    function renderWeightChart() {
+      const weightData = [];
+      for (let w = 1; w <= 11; w++) {
+        const entries = RAW_DATA.weights[String(w)];
+        if (entries && entries.length > 0) {
+          entries.forEach(e => {
+            const val = typeof e === "object" ? Number(e.value) : Number(e);
+            if (!isNaN(val) && val > 0) {
+              weightData.push({
+                week: w,
+                label: e.at ? `W${w} (${e.at})` : `W${w}`,
+                weight: val
+              });
+            }
+          });
+        }
+      }
+
+      const ctx = document.getElementById("weight-chart").getContext("2d");
+      weightChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: weightData.map(d => d.label),
+          datasets: [{
+            label: "Body Weight (kg)",
+            data: weightData.map(d => d.weight),
+            borderColor: "#b85f76",
+            backgroundColor: "rgba(184, 95, 118, 0.08)",
+            borderWidth: 2.5,
+            pointBackgroundColor: "#fff",
+            pointBorderColor: "#824457",
+            pointBorderWidth: 2,
+            pointRadius: 4.5,
+            pointHoverRadius: 6,
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` Weight: ${ctx.parsed.y} kg`
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 55,
+              max: 59,
+              grid: { color: "#f0e4e6" },
+              ticks: { stepSize: 0.5, font: { size: 11 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Render Exercise Cards
+    function renderExerciseCards(filter = "all", searchQuery = "") {
+      const container = document.getElementById("exercises-grid");
+      const q = searchQuery.toLowerCase().trim();
+
+      const filtered = exerciseList.filter(ex => {
+        const matchesCategory = (filter === "all") || (ex.workoutId === filter);
+        const matchesSearch = !q || ex.name.toLowerCase().includes(q) || ex.focus.toLowerCase().includes(q);
+        return matchesCategory && matchesSearch;
+      });
+
+      // Sort by workout then sessions count
+      filtered.sort((a, b) => b.sessions.length - a.sessions.length);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--muted);">No matching exercises found.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(ex => {
+        const isNeutral = ex.peakPct === 0;
+        const isNegative = ex.peakPct < 0;
+        const badgeClass = isNeutral ? "neutral" : (isNegative ? "negative" : "");
+        const prefix = ex.peakPct > 0 ? "+" : "";
+        const gainText = ex.unweighted
+          ? `${prefix}${ex.peakPct}% Reps (W${ex.peakSession.week})`
+          : `${prefix}${ex.peakPct}% PR (W${ex.peakSession.week})`;
+
+        const baseDisplay = ex.unweighted
+          ? `${ex.baseline.bestSet.reps} reps`
+          : `${ex.baseline.bestSet.weight}kg × ${ex.baseline.bestSet.reps}`;
+
+        const peakDisplay = ex.unweighted
+          ? `${ex.peakSession.bestSet.reps} reps`
+          : `${ex.peakSession.bestSet.weight}kg × ${ex.peakSession.bestSet.reps}`;
+
+        const latestDisplay = ex.unweighted
+          ? `${ex.latest.bestSet.reps} reps`
+          : `${ex.latest.bestSet.weight}kg × ${ex.latest.bestSet.reps}`;
+
+        const latestDiffText = ex.peakPct !== ex.latestPct
+          ? `Now: ${ex.latestPct > 0 ? "+" : ""}${ex.latestPct}%`
+          : "At peak";
+
+        return `
+          <div class="exercise-card" onclick="openExerciseModal('${ex.id}')">
+            <div class="card-top">
+              <span class="badge-workout">${ex.workoutName}</span>
+              <span class="badge-gain ${badgeClass}">${gainText}</span>
+            </div>
+            <h3 class="exercise-name">${ex.name}</h3>
+            
+            <div class="stats-table">
+              <div class="stat-col">
+                <span class="stat-label">Baseline (W${ex.baseline.week})</span>
+                <span class="stat-val">${baseDisplay}</span>
+              </div>
+              <div class="stat-col">
+                <span class="stat-label">Peak (W${ex.peakSession.week})</span>
+                <span class="stat-val" style="color: var(--sage-ink);">${peakDisplay}</span>
+              </div>
+              <div class="stat-col">
+                <span class="stat-label">Latest (W${ex.latest.week})</span>
+                <span class="stat-val">${latestDisplay}</span>
+                <span class="stat-detail">${latestDiffText}</span>
+              </div>
+            </div>
+
+            <div class="sparkline-wrapper">
+              <canvas id="spark-${ex.id}"></canvas>
+            </div>
+
+            <div class="card-footer">
+              <span>${ex.sessions.length} logged session${ex.sessions.length > 1 ? "s" : ""}</span>
+              <span>Inspect deep dive →</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Render sparklines after DOM insertion
+      filtered.forEach(ex => {
+        const canvas = document.getElementById(`spark-${ex.id}`);
+        if (!canvas) return;
+
+        const dataPoints = ex.sessions.map(s => ex.unweighted ? s.maxReps : s.maxWeight);
+        const labels = ex.sessions.map(s => `W${s.week}`);
+
+        new Chart(canvas.getContext("2d"), {
+          type: "line",
+          data: {
+            labels,
+            datasets: [{
+              data: dataPoints,
+              borderColor: "#b85f76",
+              backgroundColor: "rgba(184, 95, 118, 0.08)",
+              borderWidth: 2,
+              pointRadius: 2.5,
+              pointBackgroundColor: "#824457",
+              tension: 0.3,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: true } },
+            scales: {
+              x: { display: false },
+              y: { display: false }
+            }
+          }
+        });
+      });
+    }
+
+    // Modal & Deep-Dive Logic
+    let currentModalExercise = null;
+    let modalChartInstance = null;
+    let currentModalMetric = "weight";
+
+    function openExerciseModal(exId) {
+      const ex = exerciseList.find(e => e.id === exId);
+      if (!ex) return;
+      currentModalExercise = ex;
+
+      document.getElementById("modal-workout-tag").textContent = ex.workoutName;
+      document.getElementById("modal-exercise-name").textContent = ex.name;
+
+      const prefix = ex.peakPct > 0 ? "+" : "";
+      document.getElementById("modal-gain-badge").textContent = ex.unweighted
+        ? `${prefix}${ex.peakPct}% Reps (Peak W${ex.peakSession.week})`
+        : `${prefix}${ex.peakPct}% Peak PR (W${ex.peakSession.week})`;
+
+      document.getElementById("modal-summary-text").textContent = ex.unweighted
+        ? `First logged W${ex.baseline.week}: ${ex.baseline.maxReps} reps · Peak W${ex.peakSession.week}: ${ex.peakSession.maxReps} reps · Latest W${ex.latest.week}: ${ex.latest.maxReps} reps`
+        : `First logged W${ex.baseline.week}: ${ex.baseline.maxWeight}kg · Peak W${ex.peakSession.week}: ${ex.peakSession.maxWeight}kg · Latest W${ex.latest.week}: ${ex.latest.maxWeight}kg`;
+
+      updateModalChart(currentModalMetric);
+      renderModalTable(ex);
+
+      document.getElementById("exercise-modal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("exercise-modal").classList.remove("active");
+    }
+
+    function updateModalChart(metric) {
+      if (!currentModalExercise) return;
+      const ex = currentModalExercise;
+      currentModalMetric = metric;
+
+      // Update button active state
+      document.querySelectorAll(".metric-toggle").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.metric === metric);
+      });
+
+      const labels = ex.sessions.map(s => `Week ${s.week}`);
+      let chartData = [];
+      let labelName = "Load";
+      let unit = "kg";
+
+      if (metric === "weight") {
+        chartData = ex.sessions.map(s => s.maxWeight);
+        labelName = "Peak Load (kg)";
+        unit = "kg";
+      } else if (metric === "e1rm") {
+        chartData = ex.sessions.map(s => s.maxE1RM);
+        labelName = "Estimated 1RM (kg)";
+        unit = "kg";
+      } else if (metric === "volume") {
+        chartData = ex.sessions.map(s => s.sessionVolume);
+        labelName = "Session Volume Load";
+        unit = "kg total";
+      } else if (metric === "reps") {
+        chartData = ex.sessions.map(s => s.totalReps);
+        labelName = "Total Reps Completed";
+        unit = "reps";
+      }
+
+      if (modalChartInstance) {
+        modalChartInstance.destroy();
+      }
+
+      const ctx = document.getElementById("modal-chart").getContext("2d");
+      modalChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: labelName,
+            data: chartData,
+            borderColor: "#824457",
+            backgroundColor: "rgba(184, 95, 118, 0.12)",
+            borderWidth: 2.8,
+            pointBackgroundColor: "#fff",
+            pointBorderColor: "#824457",
+            pointBorderWidth: 2.5,
+            pointRadius: 5.5,
+            pointHoverRadius: 7.5,
+            tension: 0.25,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${labelName}: ${ctx.parsed.y} ${unit}`
+              }
+            }
+          },
+          scales: {
+            y: {
+              grid: { color: "#f0e3e5" },
+              ticks: { font: { size: 11 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11, weight: 600 } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderModalTable(ex) {
+      const tbody = document.getElementById("modal-sets-table");
+      tbody.innerHTML = ex.sessions.map(s => {
+        const isNight = RAW_DATA.nightWeeks[String(s.week)];
+        const cycle = RAW_DATA.cycleContexts[`${s.week}:${s.workoutId}`];
+        
+        const badges = [];
+        if (isNight) badges.push(`<span class="tag tag-night">🌙 Night Shift</span>`);
+        if (cycle) badges.push(`<span class="tag tag-cycle">🌸 ${cycle}</span>`);
+
+        const setsChips = s.sets.map((set, idx) => {
+          const isPR = (set.weight === ex.peakSession.maxWeight && set.weight > 0) || (ex.unweighted && set.reps === ex.peakSession.maxReps);
+          const prClass = isPR ? "pr" : "";
+          const weightPart = set.weight > 0 ? `${set.weight}kg × ` : "";
+          return `<span class="set-chip ${prClass}">Set ${idx + 1}: ${weightPart}${set.reps} reps</span>`;
+        }).join("");
+
+        return `
+          <tr>
+            <td><strong>Week ${s.week}</strong></td>
+            <td>${badges.length > 0 ? badges.join(" ") : "<span style='color:#aaa;'>Standard</span>"}</td>
+            <td><div class="set-chips">${setsChips}</div></td>
+            <td><strong>${s.maxWeight > 0 ? s.maxWeight + " kg" : "—"}</strong></td>
+            <td>${s.maxE1RM > 0 ? s.maxE1RM + " kg" : "—"}</td>
+            <td style="font-size: 0.82rem; color: var(--muted); max-width: 220px;">${s.sessionNote ? s.sessionNote : "—"}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // Render Weekly Journal
+    function renderJournal() {
+      const container = document.getElementById("journal-list");
+      const weeksArr = [];
+      for (let w = 1; w <= 11; w++) weeksArr.push(w);
+
+      container.innerHTML = weeksArr.map(w => {
+        const isNight = RAW_DATA.nightWeeks[String(w)];
+        const weightEntries = RAW_DATA.weights[String(w)] || [];
+        const weightStr = weightEntries.map(e => {
+          const v = typeof e === "object" ? e.value : e;
+          return `${v}kg`;
+        }).filter(Boolean).join(", ");
+
+        // Collect all notes and context for this week
+        const sessionNotes = [];
+        const cycleContexts = [];
+        let readinessScore = null;
+
+        ["lower-a", "upper-a", "lower-b", "upper-b"].forEach(workoutId => {
+          const key = `${w}:${workoutId}`;
+          const session = RAW_DATA.logs[key];
+          if (session && session.sessionNote) {
+            sessionNotes.push({ workout: workoutId, note: session.sessionNote });
+          }
+          if (RAW_DATA.cycleContexts[key]) {
+            cycleContexts.push(RAW_DATA.cycleContexts[key]);
+          }
+          if (RAW_DATA.readiness[key]) {
+            readinessScore = RAW_DATA.readiness[key];
+          }
+        });
+
+        if (!readinessScore && RAW_DATA.readiness[String(w)]) {
+          readinessScore = RAW_DATA.readiness[String(w)];
+        }
+
+        const tags = [];
+        if (isNight) tags.push(`<span class="tag tag-night">🌙 Night-Shift Block</span>`);
+        if (cycleContexts.length > 0) {
+          const uniqueCycles = [...new Set(cycleContexts)];
+          tags.push(`<span class="tag tag-cycle">🌸 ${uniqueCycles.join(", ")}</span>`);
+        }
+        if (readinessScore) {
+          tags.push(`<span class="tag tag-readiness">Sleep: ${readinessScore.sleep}/5 · Energy: ${readinessScore.energy}/5</span>`);
+        }
+        if (weightStr) {
+          tags.push(`<span class="tag tag-weight">⚖️ ${weightStr}</span>`);
+        }
+
+        const notesContent = sessionNotes.length > 0
+          ? `<ul class="bullet-list">${sessionNotes.map(n => `
+              <li><span class="workout-label-chip">${n.workout}</span> ${n.note.replace(/\n/g, "<br>")}</li>
+            `).join("")}</ul>`
+          : `<p style="margin: 0; font-size: 0.88rem; color: var(--muted); font-style: italic;">No session notes recorded for this week. Lifting sets completed as scheduled.</p>`;
+
+        return `
+          <div class="week-card">
+            <div class="week-header">
+              <h3 class="week-title">Week ${w}</h3>
+              <div class="week-tags">${tags.join("")}</div>
+            </div>
+            ${notesContent}
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Init & Event Listeners
+    document.addEventListener("DOMContentLoaded", () => {
+      renderPodium();
+      renderWeightChart();
+      renderExerciseCards();
+      renderJournal();
+
+      // Filter Buttons
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          const searchVal = document.getElementById("exercise-search").value;
+          renderExerciseCards(btn.dataset.filter, searchVal);
+        });
+      });
+
+      // Search Box
+      document.getElementById("exercise-search").addEventListener("input", (e) => {
+        const activeFilter = document.querySelector(".filter-btn.active").dataset.filter;
+        renderExerciseCards(activeFilter, e.target.value);
+      });
+
+      // Modal Metric Toggles
+      document.querySelectorAll(".metric-toggle").forEach(btn => {
+        btn.addEventListener("click", () => {
+          updateModalChart(btn.dataset.metric);
+        });
+      });
+
+      // Close Modal
+      document.getElementById("modal-close").addEventListener("click", closeModal);
+      document.getElementById("exercise-modal").addEventListener("click", (e) => {
+        if (e.target.id === "exercise-modal") closeModal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      // Archive dropdown behavior matching Galatea
+      document.addEventListener("click", (event) => {
+        document.querySelectorAll("details.gym-archive-dropdown[open]").forEach((dropdown) => {
+          if (!dropdown.contains(event.target)) dropdown.removeAttribute("open");
+        });
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          document.querySelectorAll("details.gym-archive-dropdown[open]").forEach((dropdown) => {
+            dropdown.removeAttribute("open");
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

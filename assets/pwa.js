@@ -64,4 +64,20 @@
       setStatus("Offline support could not be enabled. Connect once and reload.", "warning");
     }
   });
+
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll("details.nav-dropdown[open]").forEach((dropdown) => {
+      if (!dropdown.contains(event.target)) {
+        dropdown.removeAttribute("open");
+      }
+    });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      document.querySelectorAll("details.nav-dropdown[open]").forEach((dropdown) => {
+        dropdown.removeAttribute("open");
+      });
+    }
+  });
 })();

@@ -1,9 +1,11 @@
-const CACHE_NAME = "galatea-shell-v21";
+const CACHE_NAME = "galatea-shell-v24";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./gym/",
   "./gym/index.html",
+  "./gym/progress/",
+  "./gym/progress/index.html",
   "./style/",
   "./style/index.html",
   "./ibclc/",
@@ -20,6 +22,7 @@ const APP_SHELL = [
   "./assets/site.css",
   "./assets/ibclc.css",
   "./assets/pwa.js",
+  "./assets/chart.umd.min.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",

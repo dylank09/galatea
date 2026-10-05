@@ -124,19 +124,96 @@ summary:focus-visible {
   align-items: center;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 8px 10px;
+  border: 0;
   border-radius: 9px;
+  background: transparent;
   color: var(--muted);
+  font-family: inherit;
   font-size: 0.9rem;
   font-weight: 750;
+  line-height: inherit;
   text-decoration: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .nav-links a[aria-current="page"],
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-dropdown-toggle:hover,
+.nav-dropdown[open] > .nav-dropdown-toggle,
+.nav-dropdown-toggle[aria-current="page"] {
   color: var(--navy-deep);
   background: #e9eef2;
+}
+
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown summary {
+  list-style: none;
+}
+
+.nav-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-dropdown-caret {
+  display: inline-block;
+  font-size: 0.68rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.nav-dropdown[open] .nav-dropdown-caret {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 190px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 10px 28px rgba(30, 47, 68, 0.12), 0 2px 6px rgba(30, 47, 68, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 100;
+}
+
+.nav-dropdown-menu a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus {
+  color: var(--navy-deep);
+  background: #e9eef2;
+  outline: none;
+}
+
+.nav-dropdown-menu a[aria-current="page"] {
+  color: var(--navy-deep);
+  background: #e0e8ef;
 }
 
 .page-shell {
@@ -1110,7 +1187,8 @@ h3 {
     min-height: 58px;
   }
 
-  .nav-links a {
+  .nav-links a,
+  .nav-dropdown-toggle {
     padding: 7px;
     font-size: 0.8rem;
   }
