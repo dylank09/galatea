@@ -1127,7 +1127,7 @@
     const isHolidayWeek = (week) => week >= 3 && week <= 6;
     const phaseForWeek = (week) => {
       if (week === 0) {
-        return { name: "Week 0: Test Drive & Setup", note: "Test new machines (hack squat, glute leg press, pull-ups/dips) and find starting weights." };
+        return { name: "Week 0: Test Drive & Setup", note: "Test setups (step-up height, glute leg press, pull-ups/dips) and find starting weights." };
       }
       if (isHolidayWeek(week)) {
         return { name: "Holiday block (29 Oct – 22 Nov)", note: "Travel & holiday · Aim for 3 core sessions with full gym routines open." };
@@ -1140,7 +1140,7 @@
         intro: "Five easy cardio minutes, hip mobility, then 2–4 non-fatiguing hip-thrust ramp sets.",
         exercises: [
           { id: "hip-thrust", name: "Barbell or Smith hip thrust", sets: 3, reps: "6–10", rest: "2 min", alt: "Barbell glute bridge or cable pull-through", cue: "Pause briefly only if it stays controlled. Keep ribs down, chin tucked, and drive through mid-foot and heels.", priority: true },
-          { id: "leg-press-a", name: "Glute-focused leg press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Smith squat (feet forward) or hack squat", cue: "Place feet high and wide on platform with toes angled out ~30°. Lower deep until knees approach armpits without rounding lower back.", priority: true },
+          { id: "leg-press-a", name: "Glute-focused leg press", sets: 3, reps: "8–12", rest: "90 sec", alt: "High-stance Smith squat (feet forward) or deficit reverse lunge", cue: "Place feet high and shoulder-width on platform with a natural slight flare (~10–15°, not ultra-wide). Lower deep until knees track in line with shoulders without pelvic tucking. Drive through mid-foot and heels to maximize glute stretch and avoid inner-thigh overload.", priority: true },
           { id: "split-squat", name: "Bulgarian split squat or reverse lunge", sets: 3, reps: "8–12 / side", rest: "75 sec", alt: "Long-stride reverse lunge or step-up", cue: "Take a stable stance with slight forward torso lean to load the working glute. Lower with control and drive through front heel.", priority: true },
           { id: "cable-kickback-a", name: "Cable glute kickback", sets: 3, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep the pelvis square and move from the hip. Squeeze upper glute without arching your lower back.", priority: true },
           { id: "abduction-a", name: "Hip-abduction machine", sets: 3, reps: "12–15", rest: "60 sec", alt: "Cable hip abduction", cue: "Lean slightly forward from the hip. Hold a 1–2 second isometric squeeze at full abduction.", priority: true },
@@ -1155,24 +1155,23 @@
           { id: "pull-up", name: "Assisted pull-up", sets: 3, reps: "6–10", rest: "90 sec", alt: "Lat pulldown or band-assisted pull-up", cue: "Overhand grip. Drive elbows straight down toward ribs. Chest up to bar, control lowering all the way down.", priority: true },
           { id: "chest-press-a", name: "Machine chest press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Incline dumbbell press or push-ups", cue: "Keep shoulder blades pinned to pad. Press smoothly, avoiding harsh elbow lockout.", priority: true },
           { id: "cable-row-a", name: "Seated cable row", sets: 3, reps: "8–12", rest: "90 sec", alt: "Chest-supported row", cue: "Chest tall, row handle into lower abdomen. Squeeze shoulder blades together with controlled reach.", priority: true },
-          { id: "shoulder-press", name: "Dumbbell or machine shoulder press", sets: 3, reps: "8–12", rest: "90 sec", alt: "Smith machine shoulder press", cue: "Press smoothly overhead with ribs stacked over pelvis. Control the eccentric to ear level.", priority: true },
           { id: "dips", name: "Assisted tricep dips", sets: 3, reps: "8–12", rest: "75–90 sec", alt: "Bench dips or close-grip push-ups", cue: "Torso slightly upright to bias triceps (or slight lean for chest/tricep balance). Lower to 90° elbow bend and press through palms.", priority: true },
-          { id: "lateral-raise", name: "Cable lateral raise", sets: 3, reps: "12–15", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Lead with elbows, keeping hands slightly below elbow height. Squeeze side delts at top." },
           { id: "bicep-curl", name: "Dumbbell or cable bicep curl", sets: 3, reps: "10–12", rest: "60 sec", alt: "Incline dumbbell curl or EZ-bar curl", cue: "Elbows glued to sides. Supinate wrists at top for full bicep peak contraction." },
-          { id: "cable-crunch-a", name: "Kneeling cable crunch", sets: 3, reps: "10–15", rest: "60 sec", alt: "Hanging knee raise or floor crunch", cue: "Hips stationary; curl your ribcage down into your pelvis like rolling up a poster. Squeeze abs hard at bottom." }
+          { id: "lateral-raise", name: "Cable lateral raise", sets: 3, reps: "12–15", rest: "45–60 sec", alt: "Dumbbell lateral raise", cue: "Lead with elbows in scapular plane. Squeeze side delts at top, slow 2-second eccentric.", superset: 1 },
+          { id: "cable-crunch-a", name: "Kneeling cable crunch", sets: 3, reps: "10–15", rest: "60 sec", alt: "Hanging knee raise or floor crunch", cue: "Same cable stack: adjust pin down, kneel, and curl ribcage into pelvis like rolling up a poster. Squeeze abs hard at bottom.", superset: 1 }
         ]
       },
       {
-        id: "lower-b", short: "Day 3: Lower B", title: "Lower B", focus: "Glute leg press, hack squat & glute stretch",
+        id: "lower-b", short: "Day 3: Lower B", title: "Lower B", focus: "Glute leg press, step-ups & glute stretch",
         intro: "Five easy cardio minutes, hip mobility, then 2–4 non-fatiguing ramp sets on the leg press.",
         exercises: [
-          { id: "leg-press", name: "Glute-focused leg press", sets: 4, reps: "8–12", rest: "2 min", alt: "Smith squat (feet forward) or reverse hack squat", cue: "Feet high and wide on platform, toes 30° out. Lower deep until knees track outside ribs. Drive through mid-foot and heels.", priority: true },
-          { id: "hack-squat", name: "Hack squat (glute-focused)", sets: 3, reps: "8–10", rest: "90 sec", alt: "Reverse hack squat or dumbbell RDL", cue: "Feet placed high and moderately wide on sled, toes flared out ~30°. Lower deep to feel glute stretch; push through heels without rounding lower back.", priority: true },
+          { id: "leg-press", name: "Glute-focused leg press", sets: 4, reps: "8–12", rest: "2 min", alt: "High-stance Smith squat (feet forward) or reverse hack squat", cue: "Place feet high and shoulder-width on platform with a natural slight flare (~10–15°). Lower deep until knees track in line with shoulders without pelvic tucking. Drive through mid-foot and heels to isolate glutes and spare inner thighs.", priority: true },
+          { id: "glute-step-up", name: "Glute-biased box step-up", sets: 3, reps: "8–10 / side", rest: "75–90 sec", alt: "Reverse hack squat or Bulgarian split squat", cue: "Set box to mid-shin/knee height. Lean torso forward ~30° over working thigh. Keep the trailing foot completely dead (do not bounce or push off with calves); drive through front heel to stand.", priority: true },
           { id: "glute-extension", name: "45° Glute back extension", sets: 3, reps: "10–15", rest: "60 sec", alt: "Dumbbell Romanian deadlift or lying leg curl", cue: "Round upper back slightly and flare toes out 45°. Squeeze glutes hard to raise torso; do not hyperextend lower back.", priority: true },
           { id: "cable-kickback-b", name: "Cable glute kickback", sets: 3, reps: "10–15 / side", rest: "45–60 sec", alt: "Quadruped cable kickback", cue: "Keep torso steady. Arc heel back and slightly outwards to target gluteus maximus and medius.", priority: true },
           { id: "abduction-b", name: "Hip-abduction machine", sets: 3, reps: "12–15", rest: "60 sec", alt: "Cable hip abduction", cue: "Hold a 2-second pause at full abduction on every rep. Push against the pads with knees, not feet.", priority: true },
           { id: "calf-raise", name: "Standing calf raise", sets: 3, reps: "10–15", rest: "45–60 sec", alt: "Seated calf raise or leg-press calf press", cue: "Pause 1 second at full ankle elevation. Lower under control to stretch the calves." },
-          { id: "ab-leg-raise-b", name: "Hanging or captain's chair ab leg raise", sets: 3, reps: "10–15", rest: "60 sec", alt: "Incline bench leg raise or reverse crunch", cue: "Curl pelvis upward at top of rep. Slow 2-second eccentric on the way down." }
+          { id: "pallof-lower", name: "Pallof press", sets: 3, reps: "10–12 / side", rest: "45–60 sec", alt: "Dead bug or side plank", cue: "Stand tall with ribs stacked over pelvis. Hold cable or band at sternum height, press straight forward, and hold for a 2-second isometric freeze, actively resisting rotational torque. Build 360° abdominal wall stiffness without thickening the waist." }
         ]
       },
       {
@@ -1274,7 +1273,10 @@
       { id: "overhead-triceps", name: "Overhead cable triceps extension", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true },
       { id: "cable-crunch", name: "Cable crunch", workoutId: "upper-b", workoutName: "Upper B, archived", archived: true },
       { id: "pulldown-a", name: "Lat pulldown", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true },
-      { id: "pressdown", name: "Rope pressdown", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true }
+      { id: "pressdown", name: "Rope pressdown", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true },
+      { id: "shoulder-press", name: "Dumbbell or machine shoulder press", workoutId: "upper-a", workoutName: "Upper A, archived", archived: true },
+      { id: "hack-squat", name: "Hack squat (glute-focused)", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true },
+      { id: "ab-leg-raise-b", name: "Hanging or captain's chair ab leg raise", workoutId: "lower-b", workoutName: "Lower B, archived", archived: true }
     ];
     const performanceExercises = [
       ...workouts.flatMap((workout) =>
@@ -1639,7 +1641,7 @@
     }
     function renderRoadmap() {
       const roadmap = [
-        ["Week 0", "Test Drive (5–11 Oct)", "Test machine setups (hack squat, glute leg press, pull-ups/dips) and establish baseline weights."],
+        ["Week 0", "Test Drive (5–11 Oct)", "Test setups (step-up height, glute leg press, pull-ups/dips) and establish baseline weights."],
         ["Weeks 1–2", "Home Base (12–25 Oct)", "Launch official 10-week plan with your 3 core sessions + 1 optional session."],
         ["Weeks 3–6", "Holiday Block (29 Oct – 22 Nov)", "Travel & holiday: aim for your 3 core sessions with full workouts open."],
         ["Weeks 7–10", "Home Peak & PRs", "Progressive overload, peak definition, and finish out strong before Christmas."]
