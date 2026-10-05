@@ -10,7 +10,7 @@
   <link rel="manifest" href="../../manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="64x64" href="../../icons/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../../icons/apple-touch-icon.png">
-  <title>Gym Progress & Analytics · Galatea</title>
+  <title>Cycle 1 Progress & Analytics (Jul–Oct 2026) · Galatea</title>
   <!-- Local offline Chart.js with CDN fallback -->
   <script src="../../assets/chart.umd.min.js"></script>
   <script>
@@ -725,14 +725,14 @@
       <summary class="home-link" aria-haspopup="menu" aria-current="page">Archive <span class="gym-archive-caret" aria-hidden="true">▾</span></summary>
       <div class="gym-archive-menu" role="menu">
         <a href="../../ibclc/" role="menuitem">IBCLC Practice Lab</a>
-        <a href="./" role="menuitem" aria-current="page">12-Week Gym Progress</a>
+        <a href="./" role="menuitem" aria-current="page">Cycle 1 Progress (Jul–Oct 2026)</a>
       </div>
     </details>
   </div>
 
   <!-- Hero -->
   <header class="hero">
-    <p class="eyebrow">Archived Progress · 12-Week Gym Plan</p>
+    <p class="eyebrow">Archived Progress · Cycle 1 (Jul–Oct 2026)</p>
     <h1>Progress & Strength Analytics</h1>
     <p class="subtitle">Complete visual trajectory of loads, rep capacities, body recomposition, and weekly context across 11 weeks of consistent training.</p>
   </header>
@@ -832,7 +832,7 @@
   </section>
 
   <footer>
-    <p>Galatea · 12-Week Gym Plan Archive</p>
+    <p>Galatea · Cycle 1 Gym Plan Archive (Jul–Oct 2026)</p>
   </footer>
 
   <!-- Deep-Dive Modal -->
@@ -872,7 +872,7 @@
                 <th>Week</th>
                 <th>Context / Shifts</th>
                 <th>Sets Performed (Weight × Reps)</th>
-                <th>Top Weight</th>
+                <th>Top Load / Reps</th>
                 <th>Est. 1RM</th>
                 <th>Session Note</th>
               </tr>
@@ -1194,19 +1194,30 @@
       nightWeeks: { 1: false, 2: true, 3: false, 7: false, 8: true }
     };
 
+    function escapeHtml(str) {
+      return String(str ?? "").replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[m]));
+    }
+
     // Load active localStorage data if available, or fall back to embedded data
     function loadData() {
       try {
         const stored = localStorage.getItem("twelveWeekGymPlanV1");
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed && parsed.logs && Object.keys(parsed.logs).length > 0) {
+          const has12WeekLogs = parsed && parsed.logs && (parsed.logs["11:upper-b"] || Object.keys(parsed.logs).length >= 20);
+          if (has12WeekLogs) {
             return {
-              logs: parsed.logs || FALLBACK_DATA.logs,
-              weights: parsed.weights || FALLBACK_DATA.weights,
-              readiness: parsed.readiness || FALLBACK_DATA.readiness,
-              cycleContexts: parsed.cycleContexts || FALLBACK_DATA.cycleContexts,
-              nightWeeks: parsed.nightWeeks || FALLBACK_DATA.nightWeeks
+              logs: parsed.logs,
+              weights: parsed.weights && Object.keys(parsed.weights).length > 0 ? parsed.weights : FALLBACK_DATA.weights,
+              readiness: parsed.readiness && Object.keys(parsed.readiness).length > 0 ? parsed.readiness : FALLBACK_DATA.readiness,
+              cycleContexts: parsed.cycleContexts && Object.keys(parsed.cycleContexts).length > 0 ? parsed.cycleContexts : FALLBACK_DATA.cycleContexts,
+              nightWeeks: parsed.nightWeeks && Object.keys(parsed.nightWeeks).length > 0 ? parsed.nightWeeks : FALLBACK_DATA.nightWeeks
             };
           }
         }
@@ -1456,7 +1467,13 @@
     }
 
     // Render Exercise Cards
+    let sparklineInstances = [];
     function renderExerciseCards(filter = "all", searchQuery = "") {
+      sparklineInstances.forEach(c => {
+        try { c.destroy(); } catch (e) {}
+      });
+      sparklineInstances = [];
+
       const container = document.getElementById("exercises-grid");
       const q = searchQuery.toLowerCase().trim();
 
@@ -1543,7 +1560,7 @@
         const dataPoints = ex.sessions.map(s => ex.unweighted ? s.maxReps : s.maxWeight);
         const labels = ex.sessions.map(s => `W${s.week}`);
 
-        new Chart(canvas.getContext("2d"), {
+        const inst = new Chart(canvas.getContext("2d"), {
           type: "line",
           data: {
             labels,
@@ -1568,6 +1585,7 @@
             }
           }
         });
+        sparklineInstances.push(inst);
       });
     }
 
@@ -1593,6 +1611,7 @@
         ? `First logged W${ex.baseline.week}: ${ex.baseline.maxReps} reps · Peak W${ex.peakSession.week}: ${ex.peakSession.maxReps} reps · Latest W${ex.latest.week}: ${ex.latest.maxReps} reps`
         : `First logged W${ex.baseline.week}: ${ex.baseline.maxWeight}kg · Peak W${ex.peakSession.week}: ${ex.peakSession.maxWeight}kg · Latest W${ex.latest.week}: ${ex.latest.maxWeight}kg`;
 
+      currentModalMetric = ex.unweighted ? "reps" : "weight";
       updateModalChart(currentModalMetric);
       renderModalTable(ex);
 
@@ -1693,7 +1712,7 @@
         
         const badges = [];
         if (isNight) badges.push(`<span class="tag tag-night">🌙 Night Shift</span>`);
-        if (cycle) badges.push(`<span class="tag tag-cycle">🌸 ${cycle}</span>`);
+        if (cycle) badges.push(`<span class="tag tag-cycle">🌸 ${escapeHtml(cycle)}</span>`);
 
         const setsChips = s.sets.map((set, idx) => {
           const isPR = (set.weight === ex.peakSession.maxWeight && set.weight > 0) || (ex.unweighted && set.reps === ex.peakSession.maxReps);
@@ -1702,14 +1721,18 @@
           return `<span class="set-chip ${prClass}">Set ${idx + 1}: ${weightPart}${set.reps} reps</span>`;
         }).join("");
 
+        const topMetric = ex.unweighted
+          ? (s.maxReps > 0 ? `${s.maxReps} reps` : "—")
+          : (s.maxWeight > 0 ? `${s.maxWeight} kg` : "—");
+
         return `
           <tr>
             <td><strong>Week ${s.week}</strong></td>
             <td>${badges.length > 0 ? badges.join(" ") : "<span style='color:#aaa;'>Standard</span>"}</td>
             <td><div class="set-chips">${setsChips}</div></td>
-            <td><strong>${s.maxWeight > 0 ? s.maxWeight + " kg" : "—"}</strong></td>
+            <td><strong>${topMetric}</strong></td>
             <td>${s.maxE1RM > 0 ? s.maxE1RM + " kg" : "—"}</td>
-            <td style="font-size: 0.82rem; color: var(--muted); max-width: 220px;">${s.sessionNote ? s.sessionNote : "—"}</td>
+            <td style="font-size: 0.82rem; color: var(--muted); max-width: 220px;">${s.sessionNote ? escapeHtml(s.sessionNote) : "—"}</td>
           </tr>
         `;
       }).join("");
@@ -1756,7 +1779,7 @@
         if (isNight) tags.push(`<span class="tag tag-night">🌙 Night-Shift Block</span>`);
         if (cycleContexts.length > 0) {
           const uniqueCycles = [...new Set(cycleContexts)];
-          tags.push(`<span class="tag tag-cycle">🌸 ${uniqueCycles.join(", ")}</span>`);
+          tags.push(`<span class="tag tag-cycle">🌸 ${escapeHtml(uniqueCycles.join(", "))}</span>`);
         }
         if (readinessScore) {
           tags.push(`<span class="tag tag-readiness">Sleep: ${readinessScore.sleep}/5 · Energy: ${readinessScore.energy}/5</span>`);
@@ -1767,7 +1790,7 @@
 
         const notesContent = sessionNotes.length > 0
           ? `<ul class="bullet-list">${sessionNotes.map(n => `
-              <li><span class="workout-label-chip">${n.workout}</span> ${n.note.replace(/\n/g, "<br>")}</li>
+              <li><span class="workout-label-chip">${escapeHtml(n.workout)}</span> ${escapeHtml(n.note).replace(/\n/g, "<br>")}</li>
             `).join("")}</ul>`
           : `<p style="margin: 0; font-size: 0.88rem; color: var(--muted); font-style: italic;">No session notes recorded for this week. Lifting sets completed as scheduled.</p>`;
 
@@ -1785,6 +1808,12 @@
 
     // Init & Event Listeners
     document.addEventListener("DOMContentLoaded", () => {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("../../sw.js", { scope: "../../", updateViaCache: "none" }).catch((err) => {
+          console.warn("Service worker registration failed", err);
+        });
+      }
+
       renderPodium();
       renderWeightChart();
       renderExerciseCards();

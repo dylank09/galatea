@@ -891,14 +891,14 @@
         <summary class="home-link" aria-haspopup="menu">Archive <span class="gym-archive-caret" aria-hidden="true">▾</span></summary>
         <div class="gym-archive-menu" role="menu">
           <a href="../ibclc/" role="menuitem">IBCLC Practice Lab</a>
-          <a href="./progress/" role="menuitem">12-Week Gym Progress</a>
+          <a href="./progress/" role="menuitem">Cycle 1 Progress (Jul–Oct 2026)</a>
         </div>
       </details>
     </div>
     <section id="plan" class="tab-view active" aria-labelledby="plan-title">
       <div class="hero">
-        <p class="eyebrow">27 July to 18 October 2026</p>
-        <h1 id="plan-title">12-Week Gym Plan</h1>
+        <p class="eyebrow">5 October to 20 December 2026</p>
+        <h1 id="plan-title">10-Week Gym Plan</h1>
         <p class="subtle">Glute-prioritised strength, thigh-minimising lower-body work, core strength and fitness, built around a changing midwife roster.</p>
         <span class="goal-line">Recomposition first, 3 kg is aspirational</span>
       </div>
@@ -1018,7 +1018,7 @@
       <section id="panel-evolt" class="card progress-panel hidden" aria-labelledby="panel-evolt-title">
         <button class="button-quiet panel-back" data-progress-back type="button">← All progress</button>
         <h2 id="panel-evolt-title">Evolt scan</h2>
-        <p class="small">Weeks 1, 6 and 12 are scheduled. Keep hydration, food, prior exercise, bladder status and menstrual context similar where practical. BIA values vary, so compare trends only.</p>
+        <p class="small">Weeks 1, 5 and 10 are scheduled. Keep hydration, food, prior exercise, bladder status and menstrual context similar where practical. BIA values vary, so compare trends only.</p>
         <div class="progress-form">
           <label>Plan week<select id="evolt-week"></select></label>
           <label>Body weight, kg<input id="evolt-weight" type="number" inputmode="decimal" step="0.1"></label>
@@ -1351,10 +1351,16 @@
       try {
         localStorage.setItem("__gym_plan_test__", "1");
         localStorage.removeItem("__gym_plan_test__");
+      } catch (error) {
+        storageAvailable = false;
+        return;
+      }
+      try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) data = { ...defaultData(), ...JSON.parse(saved) };
       } catch (error) {
-        storageAvailable = false;
+        console.warn("Could not parse saved gym plan data, resetting to default.", error);
+        data = defaultData();
       }
     }
     function saveData() {
@@ -1458,10 +1464,10 @@
       ));
       return pending[pending.length - 1];
     }
-    function workoutById(id) {
+    function workoutById(id, week = Number(data.selectedWeek)) {
       if (id === "day-4") {
-        const week = Number(data.selectedWeek);
-        const act = getFourthActivity(week);
+        const targetWeek = typeof week === "number" && !Number.isNaN(week) ? week : Number(data.selectedWeek);
+        const act = getFourthActivity(targetWeek);
         if (act.type === "full-body") return fullBodyWorkout;
         if (act.type === "upper-b") return workouts.find((workout) => workout.id === "upper-b") || fullBodyWorkout;
         return {
@@ -1481,7 +1487,7 @@
       const nextCore = core.find((w) => !data.completed?.[sessionKey(week, w.id)]);
       if (nextCore) return nextCore;
       if (!isFourthWorkoutCompleted(week)) {
-        return workoutById("day-4");
+        return workoutById("day-4", week);
       }
       return workouts[0];
     }
@@ -1579,7 +1585,7 @@
     function latestExerciseLogs(workoutId, exerciseId, week) {
       for (let candidateWeek = week; candidateWeek >= 0; candidateWeek -= 1) {
         const logs = exerciseSets(candidateWeek, workoutId, exerciseId);
-        if (logs.length) return { logs, week: candidateWeek };
+        if (loggedSets(logs).length) return { logs, week: candidateWeek };
       }
       return { logs: [], week: null };
     }
@@ -1644,7 +1650,7 @@
         ["Week 0", "Test Drive (5–11 Oct)", "Test setups (step-up height, glute leg press, pull-ups/dips) and establish baseline weights."],
         ["Weeks 1–2", "Home Base (12–25 Oct)", "Launch official 10-week plan with your 3 core sessions + 1 optional session."],
         ["Weeks 3–6", "Holiday Block (29 Oct – 22 Nov)", "Travel & holiday: aim for your 3 core sessions with full workouts open."],
-        ["Weeks 7–10", "Home Peak & PRs", "Progressive overload, peak definition, and finish out strong before Christmas."]
+        ["Weeks 7–10", "Home Peak & PRs (23 Nov – 20 Dec)", "Progressive overload, peak definition, and finish out strong before Christmas."]
       ];
       document.getElementById("roadmap").innerHTML = `<ul class="roadmap">${roadmap.map((item) =>
         `<li><strong>${item[0]} · ${item[1]}</strong><br><span class="small">${item[2]}</span></li>`
@@ -1671,6 +1677,10 @@
         <span class="pill">${statusPill}</span>
         <span class="pill amber">${latestWeight ? `${escapeHtml(latestWeight.value)} kg logged` : "Weight not logged"}</span>
       `;
+      const markNightBtn = document.getElementById("mark-night");
+      if (markNightBtn) {
+        markNightBtn.textContent = data.nightWeeks?.[week] ? "Clear night-block week" : "Mark night-block week";
+      }
       renderBackupReminders();
     }
     function renderBackupReminders() {
@@ -1683,13 +1693,16 @@
         });
         return;
       }
-      const complete = completedWorkoutCount(week) === workouts.length;
+      const coreDone = completedCoreWorkoutCount(week) === coreWorkoutCount();
+      const allDone = completedWorkoutCount(week) >= workouts.length;
       const calendarEnded = calendarWeekHasEnded(week);
-      const trigger = complete && calendarEnded
-        ? "All four planned sessions are complete and the calendar week has ended."
-        : complete
+      const trigger = (allDone || coreDone) && calendarEnded
+        ? (allDone ? "All four planned sessions are complete" : "All three core sessions are complete") + " and the calendar week has ended."
+        : allDone
           ? "All four planned sessions are complete."
-          : "The calendar week has ended.";
+          : coreDone
+            ? "All three core sessions are complete."
+            : "The calendar week has ended.";
       const markup = `
         <strong>Week ${week} backup reminder</strong><br>
         ${trigger} Your data is stored on this phone, so download a JSON backup now.
@@ -2102,6 +2115,7 @@
         || "";
 
       if (activity.type === "full-body") {
+        const fullBodyExercises = data.shortMode ? fullBodyWorkout.exercises.filter((exercise) => exercise.priority) : fullBodyWorkout.exercises;
         return `
           <section class="card">
             ${switcher}
@@ -2110,7 +2124,8 @@
               <span class="pill">55–65 min</span>
             </div>
             <p class="subtle">${fullBodyWorkout.intro}</p>
-            ${groupExercises(fullBodyWorkout.exercises).map((group) => sessionBlockMarkup(fullBodyWorkout, group, week)).join("")}
+            <label class="toggle-row"><input id="short-mode" type="checkbox" ${data.shortMode ? "checked" : ""}>Short mode (priority lifts only)</label>
+            ${groupExercises(fullBodyExercises).map((group) => sessionBlockMarkup(fullBodyWorkout, group, week)).join("")}
             <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(sessionNoteValue)}</textarea></label>
             <label class="session-complete"><input id="complete-session" type="checkbox" ${isDone ? "checked" : ""}>Mark Full Body complete</label>
           </section>`;
@@ -2118,6 +2133,7 @@
 
       if (activity.type === "upper-b") {
         const upperB = workouts.find((w) => w.id === "upper-b");
+        const upperBExercises = data.shortMode ? upperB.exercises.filter((exercise) => exercise.priority) : upperB.exercises;
         return `
           <section class="card">
             ${switcher}
@@ -2126,7 +2142,8 @@
               <span class="pill">50–65 min</span>
             </div>
             <p class="subtle">${upperB.intro}</p>
-            ${groupExercises(upperB.exercises).map((group) => sessionBlockMarkup(upperB, group, week)).join("")}
+            <label class="toggle-row"><input id="short-mode" type="checkbox" ${data.shortMode ? "checked" : ""}>Short mode (priority lifts only)</label>
+            ${groupExercises(upperBExercises).map((group) => sessionBlockMarkup(upperB, group, week)).join("")}
             <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(sessionNoteValue)}</textarea></label>
             <label class="session-complete"><input id="complete-session" type="checkbox" ${isDone ? "checked" : ""}>Mark Upper B complete</label>
           </section>`;
@@ -2279,7 +2296,7 @@
         return;
       }
       const workout = workoutById(activeId);
-      const exercises = workout.exercises;
+      const exercises = data.shortMode ? workout.exercises.filter((exercise) => exercise.priority) : workout.exercises;
       document.getElementById("workout-content").innerHTML = `
         <section class="card">
           <div class="workout-header">
@@ -2287,6 +2304,7 @@
             <span class="pill">50–65 min</span>
           </div>
           <p class="subtle">${workout.intro}</p>
+          <label class="toggle-row"><input id="short-mode" type="checkbox" ${data.shortMode ? "checked" : ""}>Short mode (priority lifts only)</label>
           ${groupExercises(exercises).map((group) => sessionBlockMarkup(workout, group, week)).join("")}
           <label class="exercise-notes">Session note<textarea id="session-note" placeholder="How did sleep, symptoms, technique and energy affect today?">${escapeHtml(data.logs?.[sessionKey(week, workout.id)]?.sessionNote || "")}</textarea></label>
           <label class="session-complete"><input id="complete-session" type="checkbox" ${data.completed?.[sessionKey(week, workout.id)] ? "checked" : ""}>Mark ${workout.short} complete</label>
@@ -2329,7 +2347,10 @@
       return [];
     }
     function loggedWeightEntries() {
-      return weeks.flatMap((week) =>
+      const allWeeks = [...new Set([...weeks, ...Object.keys(data.weights || {}).map(Number)])]
+        .filter((w) => Number.isInteger(w) && w >= 0)
+        .sort((a, b) => a - b);
+      return allWeeks.flatMap((week) =>
         weightEntriesFor(week).map((entry, index) => ({ week, index, value: Number(entry.value), at: entry.at || null }))
       );
     }
@@ -2361,7 +2382,7 @@
     }
     function savedEvoltWeeks() {
       // Show every saved week, not just the scheduled ones, so an entry can never go missing.
-      return [...new Set(Object.keys(data.evolt || {}).map(Number).filter((week) => weeks.includes(week)))]
+      return [...new Set(Object.keys(data.evolt || {}).map(Number).filter((week) => Number.isInteger(week) && week >= 0))]
         .sort((a, b) => a - b);
     }
     function renderEvoltSection() {
@@ -2380,7 +2401,10 @@
         `<option value="${exercise.id}">${exercise.workoutName} · ${exercise.name}</option>`
       ).join("");
       select.value = selected.id;
-      const entries = weeks.flatMap((week) => {
+      const allWeeks = [...new Set([...weeks, ...Object.keys(data.logs || {}).map((k) => Number(k.split(":")[0]))])]
+        .filter((w) => Number.isInteger(w) && w >= 0)
+        .sort((a, b) => a - b);
+      const entries = allWeeks.flatMap((week) => {
         const values = exerciseSets(week, selected.workoutId, selected.id)
           .filter((set) => set.weight !== "" && Number.isFinite(Number(set.weight)))
           .map((set) => Number(set.weight));
@@ -2474,7 +2498,7 @@
       renderCycleContext();
     }
     function exportData(week) {
-      const isWeekly = week !== undefined && week !== null;
+      const isWeekly = typeof week === "number" && !Number.isNaN(week);
       if (isWeekly) {
         data.weeklyBackups ||= {};
         weeks.filter((item) => item <= week).forEach((item) => {
@@ -2502,6 +2526,8 @@
           const restored = JSON.parse(reader.result);
           if (!restored || typeof restored !== "object") throw new Error("Invalid data");
           data = { ...defaultData(), ...restored };
+          migrateLegacyPelvicCareSelections();
+          repairStoredLogs();
           saveData();
           renderAll();
           alert("Backup restored.");
@@ -2597,6 +2623,7 @@
         if (!button) return;
         data.activeSession = button.dataset.session;
         data.selectedWorkout = data.activeSession;
+        data.shortMode = false;
         saveData();
         toggleActivityDropdown(false);
         renderWorkout();
@@ -2680,6 +2707,12 @@
       workoutContent.addEventListener("change", (event) => {
         const input = event.target;
         if (input.matches("[data-log-workout]")) refreshExerciseSuggestion(input.dataset.logExercise);
+        if (input.id === "short-mode") {
+          data.shortMode = input.checked;
+          saveData();
+          renderWorkout();
+          return;
+        }
         if (input.dataset.activityField) {
           const week = Number(data.selectedWeek);
           data.fourthActivities ||= {};
@@ -2698,8 +2731,16 @@
             const act = getFourthActivity(week);
             data.completed[sessionKey(week, "day-4")] = input.checked;
             data.completed[sessionKey(week, act.type)] = input.checked;
-            if (act.type === "upper-b") data.completed[sessionKey(week, "upper-b")] = input.checked;
-            if (act.type === "full-body") data.completed[sessionKey(week, "full-body")] = input.checked;
+            if (!input.checked) {
+              data.completed[sessionKey(week, "upper-b")] = false;
+              data.completed[sessionKey(week, "full-body")] = false;
+              data.completed[sessionKey(week, "run")] = false;
+              data.completed[sessionKey(week, "class")] = false;
+              data.completed[sessionKey(week, "other")] = false;
+            } else {
+              if (act.type === "upper-b") data.completed[sessionKey(week, "upper-b")] = true;
+              if (act.type === "full-body") data.completed[sessionKey(week, "full-body")] = true;
+            }
           } else {
             data.completed[sessionKey(week, activeId)] = input.checked;
           }
@@ -2771,24 +2812,32 @@
       document.getElementById("add-rest-time").addEventListener("click", () => addRestTime(30));
       document.getElementById("save-weight").addEventListener("click", () => {
         const week = Number(document.getElementById("weight-week").value);
-        const value = document.getElementById("weight-value").value;
-        if (!value) return;
-        data.weights[week] = [...weightEntriesFor(week), { value, at: new Date().toISOString() }];
+        const input = document.getElementById("weight-value");
+        const val = parseFloat(input.value.trim());
+        if (isNaN(val) || val <= 0) return;
+        data.weights[week] = [...weightEntriesFor(week), { value: String(val), at: new Date().toISOString() }];
         saveData();
-        document.getElementById("weight-value").value = "";
+        input.value = "";
         renderProgress();
         renderPlan();
       });
       document.getElementById("save-evolt").addEventListener("click", () => {
         const week = Number(document.getElementById("evolt-week").value);
+        const weight = document.getElementById("evolt-weight").value.trim();
+        const fat = document.getElementById("evolt-fat").value.trim();
+        const lean = document.getElementById("evolt-lean").value.trim();
+        const muscle = document.getElementById("evolt-muscle").value.trim();
+        const visceral = document.getElementById("evolt-visceral").value.trim();
+        const water = document.getElementById("evolt-water").value.trim();
+        if (!weight && !fat && !lean && !muscle && !visceral && !water) return;
         data.evolt[week] = {
           week,
-          weight: document.getElementById("evolt-weight").value,
-          fat: document.getElementById("evolt-fat").value,
-          lean: document.getElementById("evolt-lean").value,
-          muscle: document.getElementById("evolt-muscle").value,
-          visceral: document.getElementById("evolt-visceral").value,
-          water: document.getElementById("evolt-water").value
+          weight,
+          fat,
+          lean,
+          muscle,
+          visceral,
+          water
         };
         saveData();
         renderProgress();
@@ -2837,7 +2886,7 @@
         renderProgress();
         renderPlan();
       });
-      document.getElementById("export-data").addEventListener("click", exportData);
+      document.getElementById("export-data").addEventListener("click", () => exportData());
       document.getElementById("import-data").addEventListener("change", (event) => {
         if (event.target.files?.[0]) restoreData(event.target.files[0]);
         event.target.value = "";

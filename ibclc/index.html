@@ -125,10 +125,11 @@
     function show(view){document.querySelectorAll(".view").forEach(node=>node.classList.remove("active")); $(view+"View").classList.add("active"); state.view=view; if(view==="home"){clearInterval(state.interval);clearInterval(state.breakInterval);renderHome();}}
     function shuffle(items){return [...items].sort(() => Math.random()-.5);}
     function download(name, content, type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-    function persist(){localStorage.setItem("ibclc-prep-last",JSON.stringify({report:state.lastReport,when:new Date().toISOString()}));}
+    function persist(){try{localStorage.setItem("ibclc-prep-last",JSON.stringify({report:state.lastReport,when:new Date().toISOString()}));}catch(e){console.warn("Could not save last report to localStorage",e);}}
     function renderHome(){
       $("bankCount").textContent=BANK.length;
-      const saved=JSON.parse(localStorage.getItem("ibclc-prep-last")||"null");
+      let saved=null;
+      try{saved=JSON.parse(localStorage.getItem("ibclc-prep-last")||"null");}catch(e){}
       $("lastRun").innerHTML=saved?.report ? `<strong>${saved.report.correct}/${saved.report.total} correct (${Math.round(saved.report.percent)}%)</strong><br><span class="small">${esc(saved.report.mode)} · ${new Date(saved.when).toLocaleDateString()}</span>` : "No completed runs yet.<br>Start with the 50-item diagnostic.";
     }
     function start(mode, items){
