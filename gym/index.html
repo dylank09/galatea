@@ -1544,6 +1544,109 @@
       });
       return repaired;
     }
+    // The 10-week plan reuses this storage key, week numbers and workout ids from the
+    // 12-week Cycle 1 plan (Jul–Oct 2026), so Cycle 1 entries surfaced as 10-week data.
+    // Move them into data.cycle1Archive once. Nothing is deleted. Rules:
+    // - weeks 2+ (and the Cycle 1-only week 11/12) are all Cycle 1: no 10-week week 2 had
+    //   started when this shipped;
+    // - week 0 is new-plan only;
+    // - week 1 is mixed: keep sets for current-plan exercises, archive the rest;
+    // - timestamped entries (weigh-ins, pelvic-care logs) go by date; untimestamped
+    //   legacy weigh-ins predate the 10-week plan.
+    // Runs on load and after a restore, so old backups cannot reintroduce the overlap.
+    function splitCycleOneData() {
+      if (data.cycle1Split) return false;
+      const planStart = dateForWeek(0).getTime();
+      const currentIds = new Set([
+        ...workouts.flatMap((workout) => workout.exercises.map((exercise) => exercise.id)),
+        ...fullBodyWorkout.exercises.map((exercise) => exercise.id)
+      ]);
+      const archive = data.cycle1Archive && typeof data.cycle1Archive === "object" ? data.cycle1Archive : {};
+      const weekOf = (key) => Number(String(key).split(":")[0]);
+      const isCycleOneWeek = (key) => {
+        const week = weekOf(key);
+        return Number.isFinite(week) && week >= 2;
+      };
+      const move = (section, key, value) => {
+        archive[section] ||= {};
+        archive[section][key] = value;
+      };
+      ["completed", "readiness", "cycleContexts", "nightWeeks", "measurements", "evolt",
+        "pelvicCare", "pelvicCareNotes", "fourthActivities", "weights"].forEach((section) => {
+        const source = data[section];
+        if (!source || typeof source !== "object") return;
+        Object.keys(source).forEach((key) => {
+          // Readiness keyed by week alone is the pre-per-session format: always Cycle 1.
+          const legacyWeekReadiness = section === "readiness" && !String(key).includes(":") && weekOf(key) >= 1;
+          if (isCycleOneWeek(key) || legacyWeekReadiness) {
+            move(section, key, source[key]);
+            delete source[key];
+          }
+        });
+      });
+      Object.keys(data.logs || {}).forEach((key) => {
+        const session = data.logs[key];
+        if (isCycleOneWeek(key)) {
+          move("logs", key, session);
+          delete data.logs[key];
+          return;
+        }
+        if (weekOf(key) !== 1 || !session || typeof session !== "object") return;
+        const archived = {};
+        Object.keys(session).forEach((exerciseId) => {
+          if (exerciseId === "sessionNote") return;
+          const sets = Array.isArray(session[exerciseId]) ? session[exerciseId] : [];
+          const hasSets = sets.some((set) => set && (String(set.weight ?? "") !== "" || String(set.reps ?? "") !== ""));
+          if (currentIds.has(exerciseId) && hasSets) return;
+          if (hasSets) archived[exerciseId] = session[exerciseId];
+          delete session[exerciseId];
+        });
+        if (Object.keys(archived).length) move("logs", key, { ...(archive.logs?.[key] || {}), ...archived });
+        if (!Object.keys(session).some((id) => id !== "sessionNote") && !session.sessionNote) delete data.logs[key];
+      });
+      // Week 1 Day 4 under the old plan was Upper B; under this plan it is whatever the
+      // stored fourth activity says. Archive Upper B session flags unless she chose it.
+      if (data.fourthActivities?.[1]?.type !== "upper-b" && !data.logs?.["1:upper-b"]) {
+        ["completed", "readiness", "cycleContexts"].forEach((section) => {
+          if (data[section] && "1:upper-b" in data[section]) {
+            move(section, "1:upper-b", data[section]["1:upper-b"]);
+            delete data[section]["1:upper-b"];
+          }
+        });
+      }
+      Object.keys(data.weights || {}).forEach((key) => {
+        const stored = data.weights[key];
+        const entries = Array.isArray(stored) ? stored : [stored];
+        const isOld = (entry) => !entry?.at || new Date(entry.at).getTime() < planStart;
+        const old = entries.filter(isOld);
+        const kept = entries.filter((entry) => !isOld(entry));
+        if (!old.length) return;
+        move("weights", key, Array.isArray(stored) ? old : stored);
+        if (kept.length) data.weights[key] = kept;
+        else delete data.weights[key];
+      });
+      if (Array.isArray(data.pelvicCareLogs)) {
+        const old = data.pelvicCareLogs.filter((entry) => new Date(entry?.timestamp).getTime() < planStart);
+        if (old.length) {
+          archive.pelvicCareLogs = [...(archive.pelvicCareLogs || []), ...old];
+          data.pelvicCareLogs = data.pelvicCareLogs.filter((entry) => !old.includes(entry));
+        }
+      }
+      // A weekly-backup flag stamped before its own 10-week week began came from a Cycle 1
+      // export (exports flag every earlier week at once). Clear it so the 10-week reminder
+      // fires; the old value is kept in the archive.
+      Object.keys(data.weeklyBackups || {}).forEach((key) => {
+        const week = weekOf(key);
+        if (week >= 1 && (week > 10 || new Date(data.weeklyBackups[key]).getTime() < dateForWeek(week).getTime())) {
+          move("weeklyBackups", key, data.weeklyBackups[key]);
+          delete data.weeklyBackups[key];
+        }
+      });
+      archive.archivedAt ||= new Date().toISOString();
+      data.cycle1Archive = archive;
+      data.cycle1Split = true;
+      return true;
+    }
     function parseRepRange(reps) {
       const values = String(reps).match(/\d+/g);
       if (!values || values.length < 2) return null;
@@ -2528,6 +2631,7 @@
           data = { ...defaultData(), ...restored };
           migrateLegacyPelvicCareSelections();
           repairStoredLogs();
+          splitCycleOneData();
           data.selectedWeek = (data.selectedWeek !== null && data.selectedWeek !== undefined) ? clampWeek(data.selectedWeek) : currentPlanWeek();
           if (!workouts.some((workout) => workout.id === data.selectedWorkout) && data.selectedWorkout !== "day-4" && data.selectedWorkout !== "full-body") data.selectedWorkout = workouts[0].id;
           if (!workouts.some((workout) => workout.id === data.activeSession) && data.activeSession !== "day-4" && data.activeSession !== "full-body") data.activeSession = data.selectedWorkout;
@@ -2928,7 +3032,8 @@
     }
     initialiseStorage();
     migrateLegacyPelvicCareSelections();
-    if (repairStoredLogs()) saveData();
+    const repairedLogs = repairStoredLogs();
+    if (splitCycleOneData() || repairedLogs) saveData();
     data.selectedWeek = (data.selectedWeek !== null && data.selectedWeek !== undefined) ? clampWeek(data.selectedWeek) : currentPlanWeek();
     if (!workouts.some((workout) => workout.id === data.selectedWorkout) && data.selectedWorkout !== "day-4" && data.selectedWorkout !== "full-body") data.selectedWorkout = workouts[0].id;
     if (!workouts.some((workout) => workout.id === data.activeSession) && data.activeSession !== "day-4" && data.activeSession !== "full-body") data.activeSession = data.selectedWorkout;

@@ -1210,6 +1210,9 @@
         const stored = localStorage.getItem("twelveWeekGymPlanV1");
         if (stored) {
           const parsed = JSON.parse(stored);
+          // Once the gym page has moved Cycle 1 entries out of the active plan, the active
+          // logs belong to the 10-week plan. FALLBACK_DATA is the full Cycle 1 record.
+          if (parsed && parsed.cycle1Split) return FALLBACK_DATA;
           const has12WeekLogs = parsed && parsed.logs && (parsed.logs["11:upper-b"] || Object.keys(parsed.logs).length >= 20);
           if (has12WeekLogs) {
             return {
